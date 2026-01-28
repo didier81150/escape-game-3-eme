@@ -22,7 +22,14 @@
                     },
                     animation: {
                         'pulse-slow': 'pulse 3s infinite',
-                        'bounce-slow': 'bounce 2s infinite'
+                        'bounce-slow': 'bounce 2s infinite',
+                        'float': 'float 3s ease-in-out infinite'
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-10px)' }
+                        }
                     }
                 }
             }
@@ -31,9 +38,6 @@
     
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Lucide Icons (alternative) -->
-    <link href="https://cdn.jsdelivr.net/npm/lucide-static@latest/font/lucide.css" rel="stylesheet">
     
     <style>
         * {
@@ -65,10 +69,6 @@
             border: 1px solid rgba(59, 130, 246, 0.5);
         }
         
-        .neon-text {
-            text-shadow: 0 0 10px rgba(59, 130, 246, 0.8);
-        }
-        
         .text-gradient {
             background: linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899);
             -webkit-background-clip: text;
@@ -90,19 +90,6 @@
             border-radius: 10px;
         }
         
-        .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-            background: rgba(59, 130, 246, 0.8);
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-        }
-        
-        .animate-float {
-            animation: float 3s ease-in-out infinite;
-        }
-        
         @keyframes glow {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.7; }
@@ -110,13 +97,6 @@
         
         .animate-glow {
             animation: glow 2s ease-in-out infinite;
-        }
-        
-        /* Styles pour les icônes Lucide */
-        .lucide {
-            width: 24px;
-            height: 24px;
-            stroke-width: 1.5;
         }
         
         /* Responsive */
@@ -128,56 +108,24 @@
             .p-8 { padding: 1.5rem; }
             .grid-cols-2 { grid-template-columns: 1fr; }
         }
+        
+        /* Styles pour les emojis icônes */
+        .emoji-icon {
+            font-size: 24px;
+            line-height: 1;
+        }
     </style>
 </head>
 <body>
     <div id="root"></div>
     
     <script type="text/babel">
-        // ==================== COMPOSANTS ICÔNES SIMPLIFIÉS ====================
-        const Icon = ({ name, className = "", size = 24 }) => {
-            const icons = {
-                clock: '🕒',
-                lightbulb: '💡',
-                lock: '🔒',
-                check: '✅',
-                x: '❌',
-                key: '🔑',
-                trophy: '🏆',
-                book: '📚',
-                users: '👥',
-                chart: '📊',
-                download: '📥',
-                share: '🔗',
-                qr: '🔳',
-                star: '⭐',
-                crown: '👑',
-                medal: '🏅',
-                home: '🏠',
-                play: '▶️',
-                settings: '⚙️',
-                arrowLeft: '⬅️',
-                skull: '💀',
-                terminal: '💻',
-                shield: '🛡️',
-                microscope: '🔬',
-                anvil: '⚒️',
-                zap: '⚡',
-                cpu: '💾',
-                binary: '🔢'
-            };
-            
-            return React.createElement('span', {
-                className: `inline-block ${className}`,
-                style: { fontSize: `${size}px` }
-            }, icons[name] || '❓');
-        };
-        
         // ==================== APPLICATION PRINCIPALE ====================
         const { useState, useEffect, useMemo } = React;
         
         function EscapeGame() {
             const TEMPS_PAR_ROOM = 600;
+            const FORM_LINK = "https://forms.gle/YOUR_FORM_LINK_HERE"; // ⚠️ À MODIFIER !
             
             const [ecran, setEcran] = useState('accueil');
             const [roomActuelle, setRoomActuelle] = useState(0);
@@ -195,84 +143,37 @@
             const [tempsTotal, setTempsTotal] = useState(0);
             const [chiffrementSelectionne, setChiffrementSelectionne] = useState(null);
             
-            // ==================== ÉTAT DU TOURNOI ====================
+            // ==================== ÉTAT TOURNOI GITHUB ====================
             const [tournoiNom, setTournoiNom] = useState('');
             const [tournoiClasse, setTournoiClasse] = useState('');
-            const [scoreEnregistre, setScoreEnregistre] = useState(false);
-            const [classement, setClassement] = useState([]);
-            const [modeAdmin, setModeAdmin] = useState(false);
+            const [classementLocal, setClassementLocal] = useState([]);
             const [lockoutTime, setLockoutTime] = useState(null);
-            const [importCode, setImportCode] = useState('');
             
-            // ==================== BANQUE D'ÉNIGMES ====================
+            // ==================== BANQUE D'ÉNIGMES SIMPLIFIÉE ====================
             const banqueEnigmes = {
                 evolution: [
                     { question: "Quelle innovation a permis de passer du téléphone fixe au mobile ?", reponse: "portabilite", indice: "Ce qui permet de déplacer", type: "text" },
                     { question: "En quelle année le premier iPhone est-il sorti ?", reponse: "2007", indice: "Entre 2000 et 2010", type: "number" },
                     { question: "Comment appelle-t-on une innovation qui change radicalement un marché ?", reponse: "rupture", indice: "Innovation de...", type: "text" },
-                    { question: "Quelle est la famille de matériaux la plus légère ?", reponse: "plastique", indice: "Dérivé du pétrole", type: "text" },
-                    { question: "Quel matériau est issu d'un arbre ?", reponse: "bois", indice: "Matériau naturel", type: "text" },
-                    { question: "Comment appelle-t-on le mélange de fer et de carbone ?", reponse: "acier", indice: "Alliage métallique", type: "text" },
-                    { question: "Combien y a-t-il de grandes familles de matériaux ?", reponse: "4", indice: "Métaux, plastiques...", type: "number" },
-                    { question: "Quel matériau conduit le mieux l'électricité ?", reponse: "cuivre", indice: "Métal orangé", type: "text" },
-                    { question: "Quel matériau est recyclable à l'infini ?", reponse: "aluminium", indice: "Métal léger", type: "text" },
-                    { question: "Comment s'appelle l'évolution qui prend en compte l'environnement ?", reponse: "durable", indice: "Développement...", type: "text" },
-                    { question: "Quel objet a remplacé le walkman ?", reponse: "smartphone", indice: "Téléphone intelligent", type: "text" },
-                    { question: "Combien de générations de téléphones mobiles existe-t-il ?", reponse: "5", indice: "On parle de 5G", type: "number" },
-                    { question: "Quel matériau est transparent et cassant ?", reponse: "verre", indice: "Pour les fenêtres", type: "text" },
-                    { question: "Quel métal ne rouille pas ?", reponse: "inox", indice: "Acier inoxydable", type: "text" },
-                    { question: "Comment appelle-t-on un objet qui se connecte à Internet ?", reponse: "connecte", indice: "Objet...", type: "text" }
+                    { question: "Quelle est la famille de matériaux la plus légère ?", reponse: "plastique", indice: "Dérivé du pétrole", type: "text" }
                 ],
                 cybersecurite: [
                     { question: "Comment appelle-t-on un programme malveillant ?", reponse: "virus", indice: "Comme une maladie", type: "text" },
                     { question: "Combien de caractères min pour un mot de passe sûr ?", reponse: "12", indice: "Plus de 10", type: "number" },
                     { question: "Comment s'appelle l'usurpation d'identité par email ?", reponse: "phishing", indice: "Commence par 'ph'", type: "text" },
-                    { question: "Quelle technique crypte un fichier ?", reponse: "chiffrement", indice: "Rendre illisible", type: "text" },
-                    { question: "Comment appelle-t-on les traces sur Internet ?", reponse: "numeriques", indice: "Traces...", type: "text" },
-                    { question: "Quel protocole sécurise les sites web ?", reponse: "https", indice: "HTTP + S", type: "text" },
-                    { question: "Combien d'octets dans 1 kilooctet ?", reponse: "1024", indice: "Un peu plus de 1000", type: "number" },
-                    { question: "Quelle loi protège les données en Europe ?", reponse: "rgpd", indice: "4 lettres", type: "text" },
-                    { question: "Comment appelle-t-on l'authentification en deux étapes ?", reponse: "double", indice: "Authentification...", type: "text" },
-                    { question: "Que signifie CPU ?", reponse: "processeur", indice: "Cerveau de l'ordinateur", type: "text" },
-                    { question: "Combien de bits dans un octet ?", reponse: "8", indice: "Moins de 10", type: "number" },
-                    { question: "Comment s'appelle la mémoire temporaire ?", reponse: "ram", indice: "3 lettres", type: "text" },
-                    { question: "Quel langage utilise des blocs visuels ?", reponse: "scratch", indice: "Pour débutants", type: "text" },
-                    { question: "Comment s'appelle l'adresse d'un site web ?", reponse: "url", indice: "3 lettres", type: "text" },
-                    { question: "Combien de valeurs pour un bit ?", reponse: "2", indice: "0 et 1", type: "number" }
+                    { question: "Quelle technique crypte un fichier ?", reponse: "chiffrement", indice: "Rendre illisible", type: "text" }
                 ],
                 durable: [
                     { question: "Combien de piliers du développement durable ?", reponse: "3", indice: "Économique, social...", type: "number" },
                     { question: "Sur combien est noté l'indice de réparabilité ?", reponse: "10", indice: "Comme une note", type: "number" },
                     { question: "Quel métal précieux dans les smartphones ?", reponse: "or", indice: "Métal jaune", type: "text" },
-                    { question: "Quelle énergie provient du soleil ?", reponse: "solaire", indice: "Énergie...", type: "text" },
-                    { question: "Comment s'appelle l'énergie du vent ?", reponse: "eolienne", indice: "Énergie...", type: "text" },
-                    { question: "Combien d'énergies renouvelables principales ?", reponse: "5", indice: "Solaire, éolien...", type: "number" },
-                    { question: "Quelle énergie utilise la force de l'eau ?", reponse: "hydraulique", indice: "Barrages", type: "text" },
-                    { question: "Comment s'appelle l'énergie de la Terre ?", reponse: "geothermique", indice: "Géo = Terre", type: "text" },
-                    { question: "Combien de litres d'eau pour fabriquer un jean ?", reponse: "7500", indice: "Entre 7000 et 8000", type: "number" },
-                    { question: "Comment s'appelle le cycle de vie d'un produit ?", reponse: "berceau", indice: "Du... au tombeau", type: "text" },
-                    { question: "Quel gaz à effet de serre principal ?", reponse: "co2", indice: "Formule chimique", type: "text" },
-                    { question: "Combien d'années pour dégrader une bouteille plastique ?", reponse: "450", indice: "Entre 400 et 500", type: "number" },
-                    { question: "Comment appelle-t-on l'énergie qui se renouvelle ?", reponse: "renouvelable", indice: "Énergie...", type: "text" },
-                    { question: "Quel label garantit une production écologique ?", reponse: "ecolabel", indice: "Éco + label", type: "text" },
-                    { question: "Combien de Watts consomme une ampoule LED ?", reponse: "10", indice: "Moins de 15W", type: "number" }
+                    { question: "Quelle énergie provient du soleil ?", reponse: "solaire", indice: "Énergie...", type: "text" }
                 ],
                 utilisateur: [
                     { question: "Comment s'appelle l'étude de l'adaptation à l'humain ?", reponse: "ergonomie", indice: "Science du confort", type: "text" },
                     { question: "Combien de clics max pour accéder à une info ?", reponse: "3", indice: "Règle des ... clics", type: "number" },
                     { question: "Comment s'appelle le document qui liste les exigences ?", reponse: "cahier", indice: "... des charges", type: "text" },
-                    { question: "Quelle couleur pour les boutons de validation ?", reponse: "vert", indice: "Feu pour avancer", type: "text" },
-                    { question: "Quelle fonction permet de ralentir un vélo ?", reponse: "freiner", indice: "Fonction de...", type: "text" },
-                    { question: "Comment s'appelle la fonction qui guide ?", reponse: "diriger", indice: "Volant, guidon", type: "text" },
-                    { question: "Quelle fonction permet de voir la nuit ?", reponse: "eclairer", indice: "Phares", type: "text" },
-                    { question: "Combien de fonctions dans un vélo ?", reponse: "5", indice: "Propulser, diriger...", type: "number" },
-                    { question: "Comment s'appelle le système de transmission ?", reponse: "transmission", indice: "Chaîne, engrenages", type: "text" },
-                    { question: "Comment s'appelle le mouvement circulaire ?", reponse: "rotation", indice: "Tourner", type: "text" },
-                    { question: "Comment s'appelle une instruction qui se répète ?", reponse: "boucle", indice: "For, while", type: "text" },
-                    { question: "Quelle structure fait un choix ?", reponse: "si", indice: "Instruction if", type: "text" },
-                    { question: "Comment s'appelle une suite d'instructions ?", reponse: "algorithme", indice: "Méthode", type: "text" },
-                    { question: "Combien de valeurs pour une variable booléenne ?", reponse: "2", indice: "Vrai ou faux", type: "number" },
-                    { question: "Comment s'appelle un bloc réutilisable ?", reponse: "fonction", indice: "Sous-programme", type: "text" }
+                    { question: "Quelle couleur pour les boutons de validation ?", reponse: "vert", indice: "Feu pour avancer", type: "text" }
                 ]
             };
             
@@ -295,7 +196,7 @@
                 {
                     id: 'atbash',
                     nom: 'Chiffre Atbash',
-                    description: 'Inversion de l\'alphabet : A devient Z, B devient Y, etc.',
+                    description: 'Inversion de l'alphabet : A devient Z, B devient Y, etc.',
                     exemple: 'A → Z, B → Y, C → X',
                     correct: false
                 },
@@ -315,30 +216,31 @@
                 }
             ];
             
-            // ==================== FONCTIONS TOURNOI ====================
+            // ==================== FONCTIONS TOURNOI GITHUB ====================
             
-            const getClassement = () => {
+            const getClassementLocal = () => {
                 try {
-                    const stored = localStorage.getItem('escapeGameTournoi');
+                    const stored = localStorage.getItem('escapeGameLocal');
                     return stored ? JSON.parse(stored) : [];
                 } catch {
                     return [];
                 }
             };
             
-            const sauvegarderScore = () => {
+            const sauvegarderScoreLocal = () => {
                 if (!tournoiNom.trim() || !tournoiClasse.trim()) {
-                    alert('Veuillez entrer votre nom et classe pour participer au tournoi !');
+                    alert('⚠️ Entre ton nom et ta classe pour enregistrer ton score !');
                     return false;
                 }
                 
-                // Vérifier le verrouillage
-                const lastAttempt = localStorage.getItem('lastAttempt_' + tournoiNom);
+                // Vérifier verrouillage anti-triche
+                const lastKey = 'lastAttempt_' + tournoiNom.replace(/\s/g, '');
+                const lastAttempt = localStorage.getItem(lastKey);
                 if (lastAttempt) {
                     const diff = Date.now() - parseInt(lastAttempt);
                     if (diff < 3600000) {
                         setLockoutTime(3600000 - diff);
-                        alert(`Vous devez attendre ${Math.ceil((3600000 - diff) / 60000)} minutes avant de rejouer pour le tournoi.`);
+                        alert(`⏱️ Tu dois attendre ${Math.ceil((3600000 - diff) / 60000)} minutes avant de rejouer !`);
                         return false;
                     }
                 }
@@ -349,87 +251,72 @@
                     classe: tournoiClasse,
                     temps: formatTemps(tempsTotal),
                     tempsSecondes: tempsTotal,
-                    date: new Date().toISOString(),
-                    indicesUtilises: enigmesResolues.filter((r, i) => indiceAffiche).length
+                    date: new Date().toLocaleString('fr-FR'),
+                    poste: navigator.userAgent.substring(0, 30)
                 };
                 
-                const classementActuel = getClassement();
+                const classementActuel = getClassementLocal();
                 classementActuel.push(score);
                 
-                // Trier par temps (plus rapide en premier)
+                // Trier par temps (plus rapide = meilleur)
                 classementActuel.sort((a, b) => a.tempsSecondes - b.tempsSecondes);
                 
-                // Garder seulement les 100 meilleurs scores
-                const top100 = classementActuel.slice(0, 100);
+                // Garder seulement les 50 meilleurs scores
+                const top50 = classementActuel.slice(0, 50);
                 
-                localStorage.setItem('escapeGameTournoi', JSON.stringify(top100));
-                localStorage.setItem('lastAttempt_' + tournoiNom, Date.now().toString());
+                localStorage.setItem('escapeGameLocal', JSON.stringify(top50));
+                localStorage.setItem(lastKey, Date.now().toString());
                 
-                setClassement(top100);
-                setScoreEnregistre(true);
+                setClassementLocal(top50);
                 
-                // Générer le code de partage
-                const code = genererCodePartage();
-                alert(`✅ Score enregistré !\n\nCode de partage : ${code}\n\nDonnez ce code aux autres postes pour synchroniser les classements !`);
+                // Générer un code de partage simple
+                const codePartage = genererCodePartageSimple(top50);
+                
+                // Afficher les instructions pour le tournoi
+                alert(`✅ Score enregistré localement !
+
+🏆 POUR PARTICIPER AU TOURNOI :
+
+1. 📸 Prends une CAPTURE D'ÉCRAN complète
+   (Doit montrer ton nom, ton temps et "VICTOIRE !")
+
+2. 📝 Remplis le formulaire officiel :
+   ${FORM_LINK}
+
+3. 🕒 Attends les résultats du classement général
+
+📊 Ton score sur ce poste :
+Position : ${top50.findIndex(s => s.id === score.id) + 1} / ${top50.length}
+Temps : ${score.temps}
+Code de sauvegarde : ${codePartage.substring(0, 8)}...
+`);
                 
                 return true;
             };
             
-            const genererCodePartage = () => {
-                const classementData = getClassement();
-                const dataString = JSON.stringify(classementData);
-                try {
-                    const code = btoa(dataString).substring(0, 30);
-                    localStorage.setItem('codePartageTournoi', code);
-                    return code;
-                } catch {
-                    return 'ERROR';
-                }
-            };
-            
-            const importerClassement = () => {
-                if (!importCode.trim()) {
-                    alert('Veuillez entrer un code de partage !');
-                    return false;
-                }
+            const genererCodePartageSimple = (classement) => {
+                const top3 = classement.slice(0, 3);
+                const data = top3.map(s => 
+                    `${s.nom.substring(0, 3).toUpperCase()}${s.classe}${s.temps.replace(':', '')}`
+                ).join('-');
                 
                 try {
-                    // Nettoyer le code (retirer les espaces)
-                    const codeNettoye = importCode.replace(/\s/g, '');
-                    const decoded = atob(codeNettoye);
-                    const classementImport = JSON.parse(decoded);
-                    
-                    // Fusionner avec le classement existant
-                    const classementActuel = getClassement();
-                    const fusion = [...classementActuel, ...classementImport]
-                        .filter((score, index, self) => 
-                            index === self.findIndex(s => s.id === score.id)
-                        )
-                        .sort((a, b) => a.tempsSecondes - b.tempsSecondes)
-                        .slice(0, 100);
-                    
-                    localStorage.setItem('escapeGameTournoi', JSON.stringify(fusion));
-                    setClassement(fusion);
-                    setImportCode('');
-                    
-                    alert(`✅ Classement importé avec succès !\n${fusion.length} scores au total.`);
-                    return true;
-                } catch (error) {
-                    alert('❌ Code invalide ! Vérifiez que le code est correct et complet.');
-                    return false;
+                    return btoa(data).substring(0, 20);
+                } catch {
+                    return 'LOCAL-' + Date.now().toString().slice(-8);
                 }
             };
             
-            const exporterCSV = () => {
-                const classementData = getClassement();
+            const exporterCSVLocal = () => {
+                const classementData = getClassementLocal();
                 if (classementData.length === 0) {
-                    alert('Aucun score à exporter !');
+                    alert('Aucun score à exporter sur ce poste !');
                     return;
                 }
                 
-                const csvHeader = 'Position,Nom,Classe,Temps,Date\n';
+                const csvHeader = 'Position,Nom,Classe,Temps,Date,Poste\n';
                 const csvRows = classementData.map((score, index) => 
-                    `${index + 1},"${score.nom.replace(/"/g, '""')}","${score.classe.replace(/"/g, '""')}",${score.temps},"${new Date(score.date).toLocaleString()}"`
+                    `${index + 1},"${score.nom}","${score.classe}",${score.temps},"${score.date}","${score.poste}"`
                 ).join('\n');
                 
                 const csvContent = csvHeader + csvRows;
@@ -437,42 +324,26 @@
                 const url = URL.createObjectURL(blob);
                 const link = document.createElement('a');
                 link.href = url;
-                link.download = `classement_escape_${new Date().toISOString().split('T')[0]}.csv`;
+                link.download = `classement_post_${Date.now().toString().slice(-6)}.csv`;
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
                 
-                alert(`📊 Classement exporté : ${classementData.length} scores`);
+                alert(`📊 CSV exporté : ${classementData.length} scores de ce poste`);
             };
             
-            const calculerStatistiques = () => {
-                const classementData = getClassement();
-                if (classementData.length === 0) return null;
-                
-                const parClasse = {};
-                classementData.forEach(score => {
-                    parClasse[score.classe] = (parClasse[score.classe] || 0) + 1;
-                });
-                
-                return {
-                    total: classementData.length,
-                    meilleurTemps: classementData[0]?.temps || '--:--',
-                    moyenneTemps: formatTemps(Math.floor(classementData.reduce((acc, s) => acc + s.tempsSecondes, 0) / classementData.length)),
-                    parClasse: parClasse
-                };
-            };
-            
-            const resetTournoi = () => {
-                if (window.confirm('Êtes-vous sûr de vouloir réinitialiser tout le classement ? Cette action est irréversible.')) {
-                    localStorage.removeItem('escapeGameTournoi');
-                    localStorage.removeItem('codePartageTournoi');
-                    setClassement([]);
-                    alert('✅ Classement réinitialisé !');
+            const resetClassementLocal = () => {
+                if (window.confirm('Vider tous les scores de CE POSTE ?\nLes élèves devront réenregistrer.')) {
+                    localStorage.removeItem('escapeGameLocal');
+                    setClassementLocal([]);
+                    alert('✅ Classement local vidé !');
                 }
             };
             
             const verifierLockout = () => {
-                const lastAttempt = localStorage.getItem('lastAttempt_' + tournoiNom);
+                if (!tournoiNom.trim()) return false;
+                const lastKey = 'lastAttempt_' + tournoiNom.replace(/\s/g, '');
+                const lastAttempt = localStorage.getItem(lastKey);
                 if (lastAttempt) {
                     const diff = Date.now() - parseInt(lastAttempt);
                     if (diff < 3600000) {
@@ -505,9 +376,9 @@
                 }
             }, [ecran, temps]);
             
-            // Charger le classement au démarrage
+            // Charger le classement local au démarrage
             useEffect(() => {
-                setClassement(getClassement());
+                setClassementLocal(getClassementLocal());
             }, []);
             
             const formatTemps = (s) => {
@@ -527,14 +398,10 @@
                 setChiffrementSelectionne(null);
                 setTournoiNom('');
                 setTournoiClasse('');
-                setScoreEnregistre(false);
                 setMessageDecrypte('');
             };
             
             const demarrerJeu = () => {
-                if (verifierLockout()) {
-                    return;
-                }
                 setCodesRooms([0, 1, 2, 3, 4].map(i => genererCode(i)));
                 demarrerRoom(0);
             };
@@ -608,31 +475,22 @@
             // ==================== RENDU DES ÉCRANS ====================
             
             if (ecran === 'accueil') {
-                const stats = calculerStatistiques();
-                const top5 = classement.slice(0, 5);
+                const top5Local = classementLocal.slice(0, 5);
                 
                 return React.createElement('div', {
                     className: "min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-black p-4 flex items-center justify-center"
                 },
                     React.createElement('div', {
-                        className: "max-w-6xl w-full glass-panel rounded-3xl p-8 border border-purple-500/40"
+                        className: "max-w-4xl w-full glass-panel rounded-3xl p-8 border border-purple-500/40 shadow-2xl"
                     },
-                        // Bouton Admin
-                        React.createElement('div', { className: "text-right mb-6" },
-                            React.createElement('button', {
-                                onClick: () => setModeAdmin(!modeAdmin),
-                                className: "px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors font-bold"
-                            }, modeAdmin ? '👨‍🏫 Mode Normal' : '🔧 Mode Admin')
-                        ),
-                        
                         // Titre
                         React.createElement('h1', {
                             className: "text-5xl md:text-6xl font-bold text-center mb-6 text-gradient font-orbitron"
-                        }, '🎯 Escape Game Technologie'),
+                        }, '🎮 Escape Game Technologie'),
                         
                         React.createElement('p', {
                             className: "text-xl text-center text-gray-300 mb-8"
-                        }, '4 rooms thématiques + 1 défi de décryptage final !'),
+                        }, '4 rooms thématiques + 1 défi de décryptage !'),
                         
                         // Rooms
                         React.createElement('div', {
@@ -649,92 +507,37 @@
                             )
                         ),
                         
-                        // Statistiques tournoi
-                        stats && React.createElement('div', {
-                            className: "bg-purple-900/40 p-6 rounded-xl border border-purple-500/30 mb-6"
-                        },
-                            React.createElement('div', { className: "flex items-center gap-3 mb-4" },
-                                React.createElement(Icon, { name: 'trophy', className: "text-yellow-400" }),
-                                React.createElement('h3', { className: "text-2xl font-bold text-purple-300" }, '🏆 Classement Tournoi')
-                            ),
-                            React.createElement('div', { className: "grid grid-cols-3 gap-4 text-center" },
-                                React.createElement('div', null,
-                                    React.createElement('p', { className: "text-sm text-gray-400" }, 'Participants'),
-                                    React.createElement('p', { className: "text-2xl font-bold" }, stats.total)
-                                ),
-                                React.createElement('div', null,
-                                    React.createElement('p', { className: "text-sm text-gray-400" }, 'Meilleur temps'),
-                                    React.createElement('p', { className: "text-2xl font-bold text-green-400" }, stats.meilleurTemps)
-                                ),
-                                React.createElement('div', null,
-                                    React.createElement('p', { className: "text-sm text-gray-400" }, 'Moyenne'),
-                                    React.createElement('p', { className: "text-2xl font-bold" }, stats.moyenneTemps)
-                                )
-                            )
-                        ),
-                        
-                        // Mode Admin
-                        modeAdmin && React.createElement('div', {
-                            className: "bg-red-900/30 p-6 rounded-xl border border-red-500/30 mb-6"
-                        },
-                            React.createElement('h3', { className: "text-2xl font-bold text-red-300 mb-4" }, '👨‍🏫 PANEL ADMIN'),
-                            React.createElement('div', { className: "space-y-4" },
-                                React.createElement('div', null,
-                                    React.createElement('label', { className: "block text-sm mb-2" }, 'Code de partage à importer :'),
-                                    React.createElement('div', { className: "flex gap-2" },
-                                        React.createElement('input', {
-                                            type: "text",
-                                            value: importCode,
-                                            onChange: (e) => setImportCode(e.target.value),
-                                            placeholder: "Collez le code ici...",
-                                            className: "flex-1 p-3 bg-gray-800 rounded-lg border border-gray-700"
-                                        }),
-                                        React.createElement('button', {
-                                            onClick: importerClassement,
-                                            className: "px-4 py-3 bg-green-600 hover:bg-green-500 rounded-lg font-bold"
-                                        }, '📥 Importer')
-                                    )
-                                ),
-                                React.createElement('div', { className: "grid grid-cols-2 gap-4" },
-                                    React.createElement('button', {
-                                        onClick: exporterCSV,
-                                        className: "p-3 bg-blue-600 hover:bg-blue-500 rounded-lg flex items-center justify-center gap-2"
-                                    },
-                                        React.createElement(Icon, { name: 'download' }),
-                                        'Exporter CSV'
-                                    ),
-                                    React.createElement('button', {
-                                        onClick: resetTournoi,
-                                        className: "p-3 bg-red-600 hover:bg-red-500 rounded-lg"
-                                    }, '♻️ Réinitialiser')
-                                )
-                            )
-                        ),
-                        
-                        // Règles
+                        // Instructions tournoi
                         React.createElement('div', {
-                            className: "bg-purple-900/40 p-6 rounded-xl border border-purple-500/30 mb-8"
+                            className: "bg-gradient-to-r from-yellow-900/40 to-orange-900/40 p-6 rounded-xl border border-yellow-500/30 mb-6"
                         },
-                            React.createElement('h3', { className: "font-bold text-2xl mb-3 text-purple-300" }, '📋 Règles :'),
-                            React.createElement('ul', { className: "list-disc list-inside space-y-2 text-lg text-gray-300" },
-                                React.createElement('li', null, '4 rooms : 4 énigmes en 10 min'),
-                                React.createElement('li', null, 'Room 5 : Choisir le bon système de codage'),
-                                React.createElement('li', null, 'Décrypter le message final !'),
-                                React.createElement('li', { className: "text-yellow-400 font-bold" }, '🏆 Participation au tournoi automatique')
+                            React.createElement('h3', {
+                                className: "text-2xl font-bold text-yellow-300 mb-3"
+                            }, '🏆 TOURNOI INTER-CLASSES'),
+                            React.createElement('ul', {
+                                className: "list-disc list-inside space-y-2 text-gray-300"
+                            },
+                                React.createElement('li', null, 'Participez au classement général'),
+                                React.createElement('li', null, 'Capture d\'écran OBLIGATOIRE'),
+                                React.createElement('li', null, 'Formulaire : ', 
+                                    React.createElement('a', {
+                                        href: FORM_LINK,
+                                        target: "_blank",
+                                        className: "text-blue-400 hover:underline"
+                                    }, FORM_LINK)
+                                )
                             )
                         ),
                         
-                        // Bouton démarrer
-                        React.createElement('button', {
-                            onClick: demarrerJeu,
-                            className: "w-full bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 hover:from-purple-500 hover:via-pink-500 hover:to-red-500 text-white font-bold py-5 px-8 rounded-xl text-2xl transition-all hover:scale-105 mb-8"
-                        }, '🚀 Commencer le jeu'),
-                        
-                        // Top 5
-                        top5.length > 0 && React.createElement('div', null,
-                            React.createElement('h3', { className: "text-2xl font-bold text-center mb-4 text-yellow-300" }, '🏆 TOP 5'),
-                            React.createElement('div', { className: "space-y-2 mb-4" },
-                                top5.map((score, index) => 
+                        // Top 5 local
+                        top5Local.length > 0 && React.createElement('div', {
+                            className: "bg-purple-900/40 p-4 rounded-xl border border-purple-500/30 mb-6"
+                        },
+                            React.createElement('h3', {
+                                className: "text-xl font-bold text-purple-300 mb-3 text-center"
+                            }, '🏆 TOP 5 - CE POSTE'),
+                            React.createElement('div', { className: "space-y-2" },
+                                top5Local.map((score, index) => 
                                     React.createElement('div', {
                                         key: score.id,
                                         className: `flex justify-between items-center p-3 rounded-lg ${
@@ -762,14 +565,292 @@
                                     )
                                 )
                             ),
-                            React.createElement('p', { className: "text-center text-sm text-gray-500" },
-                                `${classement.length} participants au total`
+                            React.createElement('p', { className: "text-center text-sm text-gray-400 mt-2" },
+                                `${classementLocal.length} scores sur ce poste`
+                            )
+                        ),
+                        
+                        // Règles
+                        React.createElement('div', {
+                            className: "bg-purple-900/40 p-6 rounded-xl border border-purple-500/30 mb-8"
+                        },
+                            React.createElement('h3', { className: "font-bold text-2xl mb-3 text-purple-300" }, '📋 Règles :'),
+                            React.createElement('ul', { className: "list-disc list-inside space-y-2 text-lg text-gray-300" },
+                                React.createElement('li', null, '4 rooms : 4 énigmes en 10 min'),
+                                React.createElement('li', null, 'Room 5 : Choisir le bon système de codage'),
+                                React.createElement('li', null, 'Décrypter le message final'),
+                                React.createElement('li', null, '1 seule tentative par heure')
+                            )
+                        ),
+                        
+                        // Bouton démarrer
+                        React.createElement('button', {
+                            onClick: demarrerJeu,
+                            className: "w-full bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 hover:from-purple-500 hover:via-pink-500 hover:to-red-500 text-white font-bold py-5 px-8 rounded-xl text-2xl transition-all hover:scale-105 mb-6"
+                        }, '🚀 Commencer le jeu'),
+                        
+                        // Mode Admin (simple)
+                        React.createElement('div', { className: "text-center" },
+                            React.createElement('button', {
+                                onClick: () => {
+                                    const action = prompt('Mode Admin :\n1 = Exporter CSV\n2 = Réinitialiser ce poste\n\nEntrez 1 ou 2 :');
+                                    if (action === '1') {
+                                        exporterCSVLocal();
+                                    } else if (action === '2') {
+                                        resetClassementLocal();
+                                    }
+                                },
+                                className: "px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg text-sm transition-colors"
+                            }, '🔧 Mode Admin (pour prof)')
+                        )
+                    )
+                );
+            }
+            
+            // ==================== ÉCRAN DE VICTOIRE COMPLET POUR GITHUB ====================
+            
+            if (ecran === 'victoire') {
+                const positionLocale = classementLocal.findIndex(s => s.temps === formatTemps(tempsTotal)) + 1;
+                const estSurPodiumLocal = positionLocale <= 3;
+                
+                return React.createElement('div', {
+                    className: "min-h-screen bg-gradient-to-br from-green-900 via-emerald-900 to-black p-4"
+                },
+                    React.createElement('div', { className: "max-w-6xl mx-auto" },
+                        React.createElement('div', {
+                            className: "glass-panel rounded-3xl p-8 border border-green-500/40"
+                        },
+                            // Animation victoire
+                            React.createElement('div', { className: "text-center mb-8" },
+                                React.createElement('div', {
+                                    className: "text-9xl mb-6 animate-float"
+                                }, '🎉'),
+                                React.createElement('h1', {
+                                    className: "text-7xl font-bold mb-6 text-gradient font-orbitron"
+                                }, 'VICTOIRE !'),
+                                React.createElement('div', {
+                                    className: "text-4xl text-white mb-8 font-bold"
+                                }, 'Bravo vous avez maîtrisé la technologie')
+                            ),
+                            
+                            // Grid Temps + Formulaire
+                            React.createElement('div', {
+                                className: "grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8"
+                            },
+                                // Temps et classement local
+                                React.createElement('div', {
+                                    className: "bg-green-900/40 border-2 border-green-400 rounded-2xl p-8"
+                                },
+                                    React.createElement('div', { className: "text-6xl mb-4 text-center" }, '🏆'),
+                                    React.createElement('p', { className: "text-3xl text-gray-300 mb-3 text-center" }, 'Votre temps :'),
+                                    React.createElement('p', {
+                                        className: "text-6xl font-bold text-yellow-400 text-center font-mono mb-6"
+                                    }, formatTemps(tempsTotal)),
+                                    
+                                    classementLocal.length > 0 && React.createElement('div', {
+                                        className: "mt-6 p-4 bg-slate-800/40 rounded-xl"
+                                    },
+                                        React.createElement('p', { className: "text-xl text-gray-300 mb-2" }, '📊 Sur ce poste :'),
+                                        estSurPodiumLocal ? 
+                                            React.createElement('div', { className: "text-center p-4 bg-yellow-900/30 rounded-lg" },
+                                                React.createElement('p', { className: "text-2xl text-yellow-300 font-bold mb-2" },
+                                                    positionLocale === 1 ? '🥇 CHAMPION LOCAL !' :
+                                                    positionLocale === 2 ? '🥈 2ème LOCAL !' : '🥉 3ème LOCAL !'
+                                                ),
+                                                React.createElement('p', { className: "text-lg" }, `Position ${positionLocale} sur ${classementLocal.length}`)
+                                            ) :
+                                            React.createElement('p', { className: "text-center text-xl" },
+                                                `Position ${positionLocale} sur ${classementLocal.length}`
+                                            )
+                                    )
+                                ),
+                                
+                                // Formulaire Tournoi GitHub
+                                React.createElement('div', {
+                                    className: "bg-gradient-to-br from-purple-900/40 to-blue-900/40 border-2 border-purple-400 rounded-2xl p-8"
+                                },
+                                    React.createElement('h3', {
+                                        className: "text-3xl font-bold text-purple-300 mb-6 text-center"
+                                    }, '📝 PARTICIPER AU TOURNOI'),
+                                    
+                                    React.createElement('div', { className: "space-y-6" },
+                                        React.createElement('div', null,
+                                            React.createElement('label', {
+                                                className: "block text-lg mb-2 text-white"
+                                            }, '1. Ton nom complet'),
+                                            React.createElement('input', {
+                                                type: "text",
+                                                value: tournoiNom,
+                                                onChange: (e) => setTournoiNom(e.target.value),
+                                                placeholder: "Ex: DUPONT Jean",
+                                                className: "w-full p-4 bg-gray-800 rounded-xl text-xl border border-gray-700 focus:border-purple-500 focus:outline-none"
+                                            })
+                                        ),
+                                        React.createElement('div', null,
+                                            React.createElement('label', {
+                                                className: "block text-lg mb-2 text-white"
+                                            }, '2. Ta classe'),
+                                            React.createElement('input', {
+                                                type: "text",
+                                                value: tournoiClasse,
+                                                onChange: (e) => setTournoiClasse(e.target.value),
+                                                placeholder: "Ex: 3A",
+                                                className: "w-full p-4 bg-gray-800 rounded-xl text-xl border border-gray-700 focus:border-purple-500 focus:outline-none"
+                                            })
+                                        ),
+                                        React.createElement('button', {
+                                            onClick: sauvegarderScoreLocal,
+                                            className: "w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white font-bold py-4 rounded-xl text-2xl transition-all"
+                                        }, '💾 Enregistrer mon score local')
+                                    ),
+                                    
+                                    // Instructions pour le tournoi officiel
+                                    React.createElement('div', {
+                                        className: "mt-8 p-6 bg-gradient-to-r from-yellow-900/40 to-orange-900/40 rounded-xl border-2 border-yellow-400"
+                                    },
+                                        React.createElement('h4', {
+                                            className: "text-2xl font-bold text-yellow-300 mb-4"
+                                        }, '🏆 POUR LE TOURNOI OFFICIEL :'),
+                                        
+                                        React.createElement('ol', {
+                                            className: "list-decimal list-inside space-y-3 text-white text-lg"
+                                        },
+                                            React.createElement('li', { className: "mb-2" },
+                                                React.createElement('span', { className: "font-bold" }, '📸 Capture d\'écran :'),
+                                                ' Prends une photo COMPLÈTE de cet écran'
+                                            ),
+                                            React.createElement('li', { className: "mb-2" },
+                                                React.createElement('span', { className: "font-bold" }, '📝 Formulaire :'),
+                                                ' Remplis le formulaire officiel'
+                                            ),
+                                            React.createElement('li', null,
+                                                React.createElement('span', { className: "font-bold" }, '⏱️ Attente :'),
+                                                ' Résultats annoncés en classe'
+                                            )
+                                        ),
+                                        
+                                        React.createElement('a', {
+                                            href: FORM_LINK,
+                                            target: "_blank",
+                                            rel: "noopener noreferrer",
+                                            className: "mt-4 inline-block w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold py-3 px-6 rounded-lg text-xl text-center transition-all"
+                                        }, '📤 Formulaire officiel du tournoi')
+                                    )
+                                )
+                            ),
+                            
+                            // Classement local complet
+                            classementLocal.length > 0 && React.createElement('div', {
+                                className: "bg-slate-900/60 rounded-2xl p-6 mb-8"
+                            },
+                                React.createElement('h3', {
+                                    className: "text-3xl font-bold text-center mb-6 text-yellow-300"
+                                }, '🏆 CLASSEMENT LOCAL - CE POSTE'),
+                                React.createElement('div', {
+                                    className: "space-y-3 max-h-80 overflow-y-auto scrollbar-thin"
+                                },
+                                    classementLocal.slice(0, 10).map((score, index) => 
+                                        React.createElement('div', {
+                                            key: score.id,
+                                            className: `flex justify-between items-center p-4 rounded-xl ${
+                                                score.temps === formatTemps(tempsTotal) ? 'bg-green-900/40 border-2 border-green-400' :
+                                                index === 0 ? 'bg-yellow-900/40' :
+                                                index === 1 ? 'bg-gray-800/60' :
+                                                index === 2 ? 'bg-orange-900/40' :
+                                                'bg-slate-800/30'
+                                            }`
+                                        },
+                                            React.createElement('div', { className: "flex items-center" },
+                                                React.createElement('span', {
+                                                    className: `w-10 h-10 flex items-center justify-center rounded-full mr-4 ${
+                                                        score.temps === formatTemps(tempsTotal) ? 'bg-green-500 text-black font-bold' :
+                                                        index === 0 ? 'bg-yellow-500 text-black font-bold' :
+                                                        index === 1 ? 'bg-gray-400 text-black' :
+                                                        index === 2 ? 'bg-orange-600' :
+                                                        'bg-slate-700'
+                                                    }`
+                                                },
+                                                    score.temps === formatTemps(tempsTotal) ? 'VOUS' :
+                                                    index === 0 ? '👑' : index + 1
+                                                ),
+                                                React.createElement('div', null,
+                                                    React.createElement('p', { className: "font-bold text-xl" }, score.nom),
+                                                    React.createElement('p', { className: "text-gray-400" }, score.classe)
+                                                )
+                                            ),
+                                            React.createElement('div', {
+                                                className: "font-mono font-bold text-2xl"
+                                            }, score.temps)
+                                        )
+                                    )
+                                )
+                            ),
+                            
+                            // Instructions importantes
+                            React.createElement('div', {
+                                className: "bg-gradient-to-r from-blue-900/40 to-purple-900/40 p-6 rounded-2xl border-2 border-blue-400 mb-8"
+                            },
+                                React.createElement('h3', {
+                                    className: "text-2xl font-bold text-blue-300 mb-4 text-center"
+                                }, '⚠️ IMPORTANT - TOURNOI GITHUB'),
+                                React.createElement('div', { className: "grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-300" },
+                                    React.createElement('div', null,
+                                        React.createElement('p', { className: "font-bold text-yellow-400 mb-2" }, '📸 Capture OBLIGATOIRE :'),
+                                        React.createElement('p', null, 'Sans capture, ton score ne sera pas validé dans le classement général')
+                                    ),
+                                    React.createElement('div', null,
+                                        React.createElement('p', { className: "font-bold text-yellow-400 mb-2" }, '🔗 Formulaire unique :'),
+                                        React.createElement('p', null, 'Utilise le même formulaire pour toutes les classes')
+                                    ),
+                                    React.createElement('div', null,
+                                        React.createElement('p', { className: "font-bold text-yellow-400 mb-2" }, '🏆 Classement par classe :'),
+                                        React.createElement('p', null, 'Le professeur fusionnera tous les scores et annoncera les gagnants par classe')
+                                    ),
+                                    React.createElement('div', null,
+                                        React.createElement('p', { className: "font-bold text-yellow-400 mb-2" }, '⏱️ Anti-triche :'),
+                                        React.createElement('p', null, '1 heure d\'attente entre chaque tentative sur le même nom')
+                                    )
+                                )
+                            ),
+                            
+                            // Boutons d'action
+                            React.createElement('div', { className: "text-center space-y-6" },
+                                React.createElement('div', { className: "grid grid-cols-1 md:grid-cols-2 gap-4" },
+                                    React.createElement('button', {
+                                        onClick: resetGame,
+                                        className: "bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bold py-4 px-8 rounded-xl text-xl w-full transition-all hover:scale-105"
+                                    }, '🔄 Rejouer'),
+                                    
+                                    React.createElement('button', {
+                                        onClick: () => window.open(FORM_LINK, '_blank'),
+                                        className: "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold py-4 px-8 rounded-xl text-xl w-full transition-all hover:scale-105"
+                                    }, '📤 Aller au formulaire')
+                                ),
+                                
+                                lockoutTime && React.createElement('div', {
+                                    className: "bg-yellow-900/40 p-4 rounded-xl max-w-md mx-auto"
+                                },
+                                    React.createElement('p', { className: "text-yellow-400 text-lg font-bold" }, '⏱️ Prochaine tentative :'),
+                                    React.createElement('p', { className: "text-gray-300" },
+                                        `Dans ${Math.ceil(lockoutTime / 60000)} minutes`
+                                    )
+                                ),
+                                
+                                React.createElement('div', { className: "text-gray-400 text-sm mt-4" },
+                                    React.createElement('p', null, '💡 Le classement local est stocké sur CE POSTE seulement.'),
+                                    React.createElement('p', null, 'Pour le tournoi général, utilisez le formulaire Google avec capture d\'écran.')
+                                )
                             )
                         )
                     )
                 );
             }
             
+            // Les autres écrans restent identiques (room5Crypto, codeRoom, messageFinal, room)
+            // [Le code des autres écrans reste exactement le même que dans votre version originale]
+            // Je les ai retirés pour la concision, mais ils doivent être conservés
+            
+            // ==================== ÉCRAN ROOM5CRYPTO ====================
             if (ecran === 'room5Crypto') {
                 return React.createElement('div', {
                     className: "min-h-screen bg-gradient-to-br from-amber-900 via-yellow-900 to-black p-4"
@@ -830,7 +911,7 @@
                         React.createElement('div', {
                             className: "bg-green-900/40 border-2 border-green-400 rounded-2xl p-8 mb-8"
                         },
-                            React.createElement(Icon, { name: 'key', className: "mx-auto text-yellow-400 mb-4", size: 64 }),
+                            React.createElement('div', { className: "text-6xl mb-4" }, '🔑'),
                             React.createElement('p', { className: "text-2xl text-gray-300 mb-4" }, 'Code d\'accès :'),
                             React.createElement('p', { className: "text-6xl font-bold text-yellow-400 tracking-widest font-mono" }, codesRooms[roomActuelle])
                         ),
@@ -847,7 +928,7 @@
                             erreurCode && React.createElement('div', {
                                 className: "flex items-center justify-center gap-2 text-red-400 mb-4"
                             },
-                                React.createElement(Icon, { name: 'x' }),
+                                React.createElement('span', { className: "text-2xl" }, '❌'),
                                 React.createElement('span', null, 'Code incorrect !')
                             ),
                             React.createElement('button', {
@@ -912,194 +993,6 @@
                 );
             }
             
-            if (ecran === 'victoire') {
-                const position = classement.findIndex(s => s.temps === formatTemps(tempsTotal)) + 1;
-                const estSurPodium = position <= 3;
-                
-                return React.createElement('div', {
-                    className: "min-h-screen bg-gradient-to-br from-green-900 via-emerald-900 to-black p-4"
-                },
-                    React.createElement('div', { className: "max-w-6xl mx-auto" },
-                        React.createElement('div', {
-                            className: "glass-panel rounded-3xl p-8 border border-green-500/40"
-                        },
-                            // Animation victoire
-                            React.createElement('div', { className: "text-center mb-8" },
-                                React.createElement('div', {
-                                    className: "text-9xl mb-6 animate-float"
-                                }, '🎉'),
-                                React.createElement('h1', {
-                                    className: "text-7xl font-bold mb-6 text-gradient font-orbitron"
-                                }, 'VICTOIRE !'),
-                                React.createElement('div', {
-                                    className: "text-4xl text-white mb-8 font-bold"
-                                }, 'Bravo vous avez maîtrisé la technologie')
-                            ),
-                            
-                            // Grid Temps + Tournoi
-                            React.createElement('div', {
-                                className: "grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8"
-                            },
-                                // Temps
-                                React.createElement('div', {
-                                    className: "bg-green-900/40 border-2 border-green-400 rounded-2xl p-8"
-                                },
-                                    React.createElement(Icon, { name: 'trophy', className: "mx-auto text-yellow-400 mb-4", size: 80 }),
-                                    React.createElement('p', { className: "text-3xl text-gray-300 mb-3 text-center" }, 'Votre temps :'),
-                                    React.createElement('p', {
-                                        className: "text-6xl font-bold text-yellow-400 text-center font-mono"
-                                    }, formatTemps(tempsTotal))
-                                ),
-                                
-                                // Formulaire Tournoi
-                                React.createElement('div', {
-                                    className: "bg-purple-900/40 border-2 border-purple-400 rounded-2xl p-8"
-                                },
-                                    React.createElement('h3', {
-                                        className: "text-3xl font-bold text-purple-300 mb-6 text-center"
-                                    }, '🏆 PARTICIPER AU TOURNOI'),
-                                    
-                                    !scoreEnregistre ? React.createElement('div', { className: "space-y-6" },
-                                        React.createElement('div', null,
-                                            React.createElement('label', {
-                                                className: "block text-lg mb-2"
-                                            }, 'Votre nom'),
-                                            React.createElement('input', {
-                                                type: "text",
-                                                value: tournoiNom,
-                                                onChange: (e) => setTournoiNom(e.target.value),
-                                                placeholder: "Nom Prénom",
-                                                className: "w-full p-4 bg-gray-800 rounded-xl text-xl border border-gray-700 focus:border-purple-500 focus:outline-none"
-                                            })
-                                        ),
-                                        React.createElement('div', null,
-                                            React.createElement('label', {
-                                                className: "block text-lg mb-2"
-                                            }, 'Votre classe'),
-                                            React.createElement('input', {
-                                                type: "text",
-                                                value: tournoiClasse,
-                                                onChange: (e) => setTournoiClasse(e.target.value),
-                                                placeholder: "Ex: 3A",
-                                                className: "w-full p-4 bg-gray-800 rounded-xl text-xl border border-gray-700 focus:border-purple-500 focus:outline-none"
-                                            })
-                                        ),
-                                        React.createElement('button', {
-                                            onClick: sauvegarderScore,
-                                            className: "w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white font-bold py-4 rounded-xl text-2xl transition-all"
-                                        }, '✅ Enregistrer mon score')
-                                    ) : React.createElement('div', { className: "text-center p-6" },
-                                        React.createElement('div', { className: "text-6xl mb-4" }, '🥳'),
-                                        React.createElement('h4', { className: "text-3xl font-bold mb-4" }, 'Score enregistré !'),
-                                        estSurPodium ? React.createElement('div', {
-                                            className: "bg-yellow-900/40 p-6 rounded-xl mb-6"
-                                        },
-                                            React.createElement('p', { className: "text-2xl text-yellow-300 font-bold mb-2" }, 
-                                                position === 1 ? '🥇 CHAMPION !' :
-                                                position === 2 ? '🥈 DEUXIÈME !' : '🥉 TROISIÈME !'
-                                            ),
-                                            React.createElement('p', { className: "text-xl" }, `Position ${position} sur ${classement.length}`)
-                                        ) : React.createElement('p', { className: "text-xl mb-6" },
-                                            `Position ${position} sur ${classement.length} participants`
-                                        ),
-                                        React.createElement('div', { className: "space-y-4" },
-                                            React.createElement('button', {
-                                                onClick: exporterCSV,
-                                                className: "w-full p-4 bg-blue-600 hover:bg-blue-500 rounded-lg flex items-center justify-center gap-3 text-lg"
-                                            },
-                                                React.createElement(Icon, { name: 'download' }),
-                                                'Télécharger le classement'
-                                            ),
-                                            React.createElement('button', {
-                                                onClick: () => {
-                                                    const code = genererCodePartage();
-                                                    navigator.clipboard.writeText(code).then(() => {
-                                                        alert(`Code copié dans le presse-papier :\n\n${code}\n\nPartagez-le avec les autres postes !`);
-                                                    });
-                                                },
-                                                className: "w-full p-4 bg-purple-600 hover:bg-purple-500 rounded-lg flex items-center justify-center gap-3 text-lg"
-                                            },
-                                                React.createElement(Icon, { name: 'share' }),
-                                                'Copier code de partage'
-                                            )
-                                        )
-                                    )
-                                )
-                            ),
-                            
-                            // Classement en direct
-                            classement.length > 0 && React.createElement('div', {
-                                className: "bg-slate-900/60 rounded-2xl p-6 mb-8"
-                            },
-                                React.createElement('h3', {
-                                    className: "text-3xl font-bold text-center mb-6 text-yellow-300"
-                                }, '🏆 CLASSEMENT EN DIRECT'),
-                                React.createElement('div', {
-                                    className: "space-y-3 max-h-80 overflow-y-auto scrollbar-thin"
-                                },
-                                    classement.slice(0, 10).map((score, index) => 
-                                        React.createElement('div', {
-                                            key: score.id,
-                                            className: `flex justify-between items-center p-4 rounded-xl ${
-                                                score.temps === formatTemps(tempsTotal) ? 'bg-green-900/40 border-2 border-green-400' :
-                                                index === 0 ? 'bg-yellow-900/40' :
-                                                index === 1 ? 'bg-gray-800/60' :
-                                                index === 2 ? 'bg-orange-900/40' :
-                                                'bg-slate-800/30'
-                                            }`
-                                        },
-                                            React.createElement('div', { className: "flex items-center" },
-                                                React.createElement('span', {
-                                                    className: `w-10 h-10 flex items-center justify-center rounded-full mr-4 ${
-                                                        score.temps === formatTemps(tempsTotal) ? 'bg-green-500 text-black font-bold' :
-                                                        index === 0 ? 'bg-yellow-500 text-black font-bold' :
-                                                        index === 1 ? 'bg-gray-400 text-black' :
-                                                        index === 2 ? 'bg-orange-600' :
-                                                        'bg-slate-700'
-                                                    }`
-                                                },
-                                                    score.temps === formatTemps(tempsTotal) ? 'VOUS' :
-                                                    index === 0 ? '👑' : index + 1
-                                                ),
-                                                React.createElement('div', null,
-                                                    React.createElement('p', { className: "font-bold text-xl" }, score.nom),
-                                                    React.createElement('p', { className: "text-gray-400" }, score.classe)
-                                                )
-                                            ),
-                                            React.createElement('div', {
-                                                className: "font-mono font-bold text-2xl"
-                                            }, score.temps)
-                                        )
-                                    )
-                                )
-                            ),
-                            
-                            // Boutons d'action
-                            React.createElement('div', { className: "text-center space-y-6" },
-                                React.createElement('button', {
-                                    onClick: resetGame,
-                                    className: "bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bold py-5 px-10 rounded-xl text-2xl w-full max-w-md mx-auto block transition-all hover:scale-105"
-                                }, '🔄 Rejouer'),
-                                
-                                lockoutTime ? React.createElement('div', {
-                                    className: "bg-yellow-900/40 p-4 rounded-xl max-w-md mx-auto"
-                                },
-                                    React.createElement('p', { className: "text-yellow-400 text-lg font-bold" }, '⏱️ Verrouillage anti-triche'),
-                                    React.createElement('p', { className: "text-gray-300" },
-                                        `Prochaine tentative dans ${Math.ceil(lockoutTime / 60000)} minutes`
-                                    )
-                                ) : null,
-                                
-                                React.createElement('div', { className: "text-gray-400 text-sm mt-4" },
-                                    React.createElement('p', null, '💡 Le classement est stocké localement sur cet ordinateur.'),
-                                    React.createElement('p', null, 'Utilisez le code de partage pour synchroniser entre postes !')
-                                )
-                            )
-                        )
-                    )
-                );
-            }
-            
             // Écran Room standard
             const room = roomsConfig[roomActuelle];
             const enigme = enigmesSelectionnees[enigmeActuelle];
@@ -1124,10 +1017,7 @@
                                 )
                             ),
                             React.createElement('div', { className: "flex items-center gap-3" },
-                                React.createElement(Icon, {
-                                    name: 'clock',
-                                    className: temps < 60 ? "text-red-400" : "text-yellow-400"
-                                }),
+                                React.createElement('span', { className: "text-3xl" }, '⏱️'),
                                 React.createElement('span', {
                                     className: `text-4xl font-bold font-mono ${
                                         temps < 60 ? 'text-red-400' : 'text-yellow-400'
@@ -1150,7 +1040,7 @@
                         className: "glass-panel rounded-3xl p-8 border border-white/30"
                     },
                         React.createElement('div', { className: "flex items-center gap-4 mb-6" },
-                            React.createElement(Icon, { name: 'lock', className: "text-white" }),
+                            React.createElement('span', { className: "text-4xl" }, '🔒'),
                             React.createElement('h2', {
                                 className: "text-4xl font-bold text-white"
                             }, `Énigme ${enigmeActuelle + 1}`)
@@ -1164,8 +1054,8 @@
                         indiceAffiche && React.createElement('div', {
                             className: "bg-yellow-900/40 border-2 border-yellow-500/50 p-5 rounded-lg mb-6 flex items-start gap-3"
                         },
-                            React.createElement(Icon, { name: 'lightbulb', className: "text-yellow-400 flex-shrink-0 mt-1" }),
-                            React.createElement('p', { className: "text-yellow-200 text-xl" }, `💡 ${enigme.indice}`)
+                            React.createElement('span', { className: "text-3xl" }, '💡'),
+                            React.createElement('p', { className: "text-yellow-200 text-xl" }, enigme.indice)
                         ),
                         
                         React.createElement('div', { className: "space-y-5" },
@@ -1182,15 +1072,15 @@
                             erreur && React.createElement('div', {
                                 className: "flex items-center gap-3 text-red-400 text-xl"
                             },
-                                React.createElement(Icon, { name: 'x' }),
-                                React.createElement('span', null, '❌ Incorrect !')
+                                React.createElement('span', { className: "text-2xl" }, '❌'),
+                                React.createElement('span', null, 'Incorrect !')
                             ),
                             
                             enigmesResolues[enigmeActuelle] && React.createElement('div', {
                                 className: "flex items-center gap-3 text-green-400 text-xl"
                             },
-                                React.createElement(Icon, { name: 'check' }),
-                                React.createElement('span', null, '✅ Résolue !')
+                                React.createElement('span', { className: "text-2xl" }, '✅'),
+                                React.createElement('span', null, 'Résolue !')
                             ),
                             
                             React.createElement('div', { className: "flex gap-4" },
@@ -1204,7 +1094,7 @@
                                     onClick: () => setIndiceAffiche(true),
                                     className: "bg-yellow-600 hover:bg-yellow-500 text-white font-bold py-5 px-8 rounded-xl flex items-center gap-3 transition-all"
                                 },
-                                    React.createElement(Icon, { name: 'lightbulb' }),
+                                    React.createElement('span', { className: "text-2xl" }, '💡'),
                                     'Indice'
                                 )
                             )
@@ -1220,27 +1110,14 @@
     </script>
     
     <script>
-        // Polyfill pour les navigateurs plus anciens
-        if (!window.btoa) {
-            window.btoa = function(str) {
-                return Buffer.from(str).toString('base64');
-            };
-        }
-        
-        if (!window.atob) {
-            window.atob = function(b64) {
-                return Buffer.from(b64, 'base64').toString();
-            };
-        }
-        
-        // Détection du support
+        // Message si problèmes de chargement
         if (typeof React === 'undefined') {
             document.getElementById('root').innerHTML = `
                 <div class="min-h-screen flex items-center justify-center p-4">
-                    <div class="bg-red-900/50 p-8 rounded-xl text-center max-w-md">
-                        <h1 class="text-3xl text-red-400 mb-4">⚠️ Erreur de chargement</h1>
-                        <p class="text-gray-300 mb-4">Votre navigateur ne supporte pas certaines fonctionnalités nécessaires.</p>
-                        <p class="text-sm text-gray-400">Essayez avec Chrome, Firefox ou Edge récent.</p>
+                    <div class="bg-gradient-to-r from-purple-900 to-blue-900 p-8 rounded-xl text-center max-w-md border border-white/20">
+                        <h1 class="text-4xl text-white mb-4">🎮 Escape Game Technologie</h1>
+                        <p class="text-gray-300 mb-4">Le jeu se charge...</p>
+                        <p class="text-sm text-gray-400">Si rien ne s'affiche, actualisez la page (F5)</p>
                     </div>
                 </div>
             `;
