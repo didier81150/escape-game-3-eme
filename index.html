@@ -3,743 +3,460 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escape Game Technologie - Tournoi Brevet</title>
-    
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        'orbitron': ['Orbitron', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
-    
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
-    
+    <title>Escape Game Technologie - Classe de 3ème</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        :root {
+            --primary-color: #6C63FF;
+            --secondary-color: #FF6584;
+            --background-color: #f8f9fa;
+            --card-color: #ffffff;
+            --text-color: #333333;
+            --pastel-blue: #a2d2ff;
+            --pastel-pink: #ffb3c6;
+            --pastel-green: #b7e4c7;
+            --pastel-yellow: #ffdfba;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #0f172a;
-            color: white;
+            background-color: var(--background-color);
             margin: 0;
             padding: 0;
-            min-height: 100vh;
+            color: var(--text-color);
+            line-height: 1.6;
         }
-        
-        .glass-panel {
-            background: rgba(30, 41, 59, 0.8);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: var(--card-color);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         }
-        
-        .text-gradient {
-            background: linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+
+        header {
+            text-align: center;
+            padding: 20px 0;
+            background: linear-gradient(135deg, var(--pastel-blue), var(--pastel-pink));
+            border-radius: 15px 15px 0 0;
+            color: white;
+            margin: -20px -20px 20px -20px;
         }
-        
-        .btn-primary {
-            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
-            transition: all 0.3s ease;
+
+        h1 {
+            margin: 0;
+            font-size: 2.5rem;
         }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+
+        h2 {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--pastel-yellow);
+            padding-bottom: 10px;
         }
-        
-        .btn-success {
-            background: linear-gradient(90deg, #10b981, #059669);
-            transition: all 0.3s ease;
+
+        #timer {
+            font-size: 1.5rem;
+            text-align: center;
+            margin: 20px 0;
+            color: var(--secondary-color);
+            font-weight: bold;
         }
-        
-        .btn-success:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
+
+        .room-selector {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin: 20px 0;
         }
-        
+
         .room-card {
-            transition: all 0.3s ease;
+            background-color: var(--card-color);
+            border-radius: 10px;
+            padding: 20px;
+            width: 200px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
             cursor: pointer;
+            margin: 10px;
+            border: 2px solid transparent;
         }
-        
+
         .room-card:hover {
             transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
         }
-        
-        .timer-warning {
-            animation: pulse 1s infinite;
+
+        .room-card.active {
+            border-color: var(--primary-color);
+            background-color: #f0f4ff;
         }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
+
+        .room-card i {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
         }
-        
-        .victory-animation {
-            animation: bounce 2s infinite;
+
+        .room {
+            display: none;
+            animation: fadeIn 0.5s;
         }
-        
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+
+        .room.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .question-card {
+            background-color: var(--card-color);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid var(--primary-color);
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            margin: 15px 0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            margin: 10px 5px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #5a4fcf;
+        }
+
+        .hint-button {
+            background-color: var(--pastel-green);
+            color: var(--text-color);
+        }
+
+        .hint-button:hover {
+            background-color: #95c9a1;
+        }
+
+        .code-display {
+            font-family: 'Courier New', monospace;
+            font-size: 1.5rem;
+            text-align: center;
+            margin: 20px 0;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 8px;
+            color: var(--secondary-color);
+            font-weight: bold;
+        }
+
+        #final-room {
+            text-align: center;
+        }
+
+        .coding-system {
+            background-color: var(--card-color);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        #coded-phrase {
+            font-family: monospace;
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .success-message {
+            color: #28a745;
+            font-size: 1.5rem;
+            text-align: center;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+
+        .error-message {
+            color: #dc3545;
+            font-size: 1.2rem;
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #6c757d;
+            font-size: 0.9rem;
         }
     </style>
 </head>
 <body>
-    <div id="app"></div>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-laptop-code"></i> Escape Game Technologie</h1>
+        </header>
+
+        <div id="timer">Temps restant : 300 secondes</div>
+
+        <div id="room-selection" class="room active">
+            <h2>Sélectionnez une pièce à explorer</h2>
+            <div class="room-selector">
+                <div class="room-card" onclick="startRoom('evolution_techno')">
+                    <i class="fas fa-microchip"></i>
+                    <h3>Évolution Technologique</h3>
+                </div>
+                <div class="room-card" onclick="startRoom('materiaux')">
+                    <i class="fas fa-flask"></i>
+                    <h3>Matériaux</h3>
+                </div>
+                <div class="room-card" onclick="startRoom('energie')">
+                    <i class="fas fa-bolt"></i>
+                    <h3>Énergie</h3>
+                </div>
+                <div class="room-card" onclick="startRoom('informatique')">
+                    <i class="fas fa-desktop"></i>
+                    <h3>Informatique</h3>
+                </div>
+            </div>
+        </div>
+
+        <div id="evolution_techno" class="room">
+            <h2><i class="fas fa-microchip"></i> Évolution Technologique</h2>
+            <div class="question-card">
+                <p id="evolution_techno-question"></p>
+                <input type="text" id="evolution_techno-answer" placeholder="Votre réponse">
+                <div>
+                    <button onclick="checkAnswer('evolution_techno')">Valider</button>
+                    <button class="hint-button" onclick="showHint('evolution_techno')"><i class="fas fa-lightbulb"></i> Indice</button>
+                </div>
+                <div id="evolution_techno-hint" class="error-message" style="display: none;"></div>
+                <div id="evolution_techno-code" class="code-display"></div>
+            </div>
+        </div>
+
+        <div id="materiaux" class="room">
+            <h2><i class="fas fa-flask"></i> Matériaux</h2>
+            <div class="question-card">
+                <p id="materiaux-question"></p>
+                <input type="text" id="materiaux-answer" placeholder="Votre réponse">
+                <div>
+                    <button onclick="checkAnswer('materiaux')">Valider</button>
+                    <button class="hint-button" onclick="showHint('materiaux')"><i class="fas fa-lightbulb"></i> Indice</button>
+                </div>
+                <div id="materiaux-hint" class="error-message" style="display: none;"></div>
+                <div id="materiaux-code" class="code-display"></div>
+            </div>
+        </div>
+
+        <div id="energie" class="room">
+            <h2><i class="fas fa-bolt"></i> Énergie</h2>
+            <div class="question-card">
+                <p id="energie-question"></p>
+                <input type="text" id="energie-answer" placeholder="Votre réponse">
+                <div>
+                    <button onclick="checkAnswer('energie')">Valider</button>
+                    <button class="hint-button" onclick="showHint('energie')"><i class="fas fa-lightbulb"></i> Indice</button>
+                </div>
+                <div id="energie-hint" class="error-message" style="display: none;"></div>
+                <div id="energie-code" class="code-display"></div>
+            </div>
+        </div>
+
+        <div id="informatique" class="room">
+            <h2><i class="fas fa-desktop"></i> Informatique</h2>
+            <div class="question-card">
+                <p id="informatique-question"></p>
+                <input type="text" id="informatique-answer" placeholder="Votre réponse">
+                <div>
+                    <button onclick="checkAnswer('informatique')">Valider</button>
+                    <button class="hint-button" onclick="showHint('informatique')"><i class="fas fa-lightbulb"></i> Indice</button>
+                </div>
+                <div id="informatique-hint" class="error-message" style="display: none;"></div>
+                <div id="informatique-code" class="code-display"></div>
+            </div>
+        </div>
+
+        <div id="final-room" class="room">
+            <h2><i class="fas fa-lock-open"></i> Pièce Finale : Décodage</h2>
+            <p>Félicitations ! Voici un résumé des systèmes de codage :</p>
+            <div class="coding-system">
+                <h3><i class="fas fa-code"></i> Systèmes de Codage</h3>
+                <ul>
+                    <li><strong>Binaire</strong> : Utilise des 0 et des 1.</li>
+                    <li><strong>Morse</strong> : Points et traits.</li>
+                    <li><strong>Chiffre de César</strong> : Décalage de lettres.</li>
+                    <li><strong>Hexadécimal</strong> : Base 16 (0-9, A-F).</li>
+                </ul>
+            </div>
+            <p>Décodez cette phrase : <span id="coded-phrase">01001000 01000101 01001100 01001100 01001111</span></p>
+            <input type="text" id="final-answer" placeholder="Votre réponse">
+            <button onclick="checkFinalAnswer()">Valider</button>
+            <div id="final-result" class="success-message"></div>
+        </div>
+
+        <footer>
+            <p>Créé par M. Boivin pour la classe de 3ème - Année 2026</p>
+        </footer>
+    </div>
 
     <script>
-        // Configuration du jeu
-        const CONFIG = {
-            TEMPS_PAR_ROOM: 600, // 10 minutes en secondes
-            FORM_LINK: "https://forms.gle/" // À REMPLACER PAR VOTRE LIEN
-        };
-
-        // Banque d'énigmes
-        const BANQUE_ENIGMES = {
-            evolution: [
-                { question: "Quelle innovation a permis de passer du téléphone fixe au mobile ?", reponse: "portabilite", indice: "Ce qui permet de déplacer" },
-                { question: "En quelle année le premier iPhone est-il sorti ?", reponse: "2007", indice: "Entre 2000 et 2010" },
-                { question: "Comment appelle-t-on une innovation qui change radicalement un marché ?", reponse: "rupture", indice: "Innovation de..." },
-                { question: "Quelle est la famille de matériaux la plus légère ?", reponse: "plastique", indice: "Dérivé du pétrole" }
+        // Données des questions et indices
+        const questions = {
+            evolution_techno: [
+                { question: "Quel est le premier ordinateur personnel grand public ?", answer: "Apple II", code: "A1", hint: "Créé par Steve Wozniak et Steve Jobs en 1977." },
+                { question: "En quelle année est né le World Wide Web ?", answer: "1989", code: "B2", hint: "Inventé par Tim Berners-Lee au CERN." },
+                { question: "Quel est le nom du premier smartphone moderne ?", answer: "iPhone", code: "C3", hint: "Lancé par Apple en 2007." },
+                { question: "Qui a inventé le téléphone ?", answer: "Graham Bell", code: "D4", hint: "Brevet déposé en 1876." }
             ],
-            cybersecurite: [
-                { question: "Comment appelle-t-on un programme malveillant ?", reponse: "virus", indice: "Comme une maladie" },
-                { question: "Combien de caractères min pour un mot de passe sûr ?", reponse: "12", indice: "Plus de 10" },
-                { question: "Comment s'appelle l'usurpation d'identité par email ?", reponse: "phishing", indice: "Commence par 'ph'" },
-                { question: "Quelle technique crypte un fichier ?", reponse: "chiffrement", indice: "Rendre illisible" }
+            materiaux: [
+                { question: "Quel est le matériau le plus recyclé au monde ?", answer: "acier", code: "E5", hint: "Utilisé dans les boîtes de conserve et les voitures." },
+                { question: "Quel matériau est utilisé pour fabriquer les bouteilles en plastique ?", answer: "PET", code: "F6", hint: "Un type de plastique transparent." },
+                { question: "Quel métal est liquide à température ambiante ?", answer: "mercure", code: "G7", hint: "Utilisé dans les thermomètres." },
+                { question: "Quel matériau est extrait de la bauxite ?", answer: "aluminium", code: "H8", hint: "Léger et résistant à la corrosion." }
             ],
-            durable: [
-                { question: "Combien de piliers du développement durable ?", reponse: "3", indice: "Économique, social..." },
-                { question: "Sur combien est noté l'indice de réparabilité ?", reponse: "10", indice: "Comme une note" },
-                { question: "Quel métal précieux dans les smartphones ?", reponse: "or", indice: "Métal jaune" },
-                { question: "Quelle énergie provient du soleil ?", reponse: "solaire", indice: "Énergie..." }
+            energie: [
+                { question: "Quel est le type d'énergie produit par les panneaux solaires ?", answer: "électrique", code: "I9", hint: "Utilisée pour alimenter les appareils." },
+                { question: "Quel gaz est produit par la combustion du charbon ?", answer: "CO2", code: "J0", hint: "Responsable de l'effet de serre." },
+                { question: "Quel type d'énergie utilise les éoliennes ?", answer: "cinétique", code: "K1", hint: "Liée au mouvement du vent." },
+                { question: "Quel est le principal gaz dans le biogaz ?", answer: "méthane", code: "L2", hint: "Produit par la fermentation de matières organiques." }
             ],
-            utilisateur: [
-                { question: "Comment s'appelle l'étude de l'adaptation à l'humain ?", reponse: "ergonomie", indice: "Science du confort" },
-                { question: "Combien de clics max pour accéder à une info ?", reponse: "3", indice: "Règle des ... clics" },
-                { question: "Comment s'appelle le document qui liste les exigences ?", reponse: "cahier", indice: "... des charges" },
-                { question: "Quelle couleur pour les boutons de validation ?", reponse: "vert", indice: "Feu pour avancer" }
+            informatique: [
+                { question: "Quel est le langage de programmation utilisé pour les pages web ?", answer: "HTML", code: "M3", hint: "Commence par H." },
+                { question: "Quel est le nom du système d'exploitation open source ?", answer: "Linux", code: "N4", hint: "Créé par Linus Torvalds." },
+                { question: "Quel est le nom du premier virus informatique ?", answer: "Creeper", code: "O5", hint: "Créé en 1971." },
+                { question: "Quel est le nom du fondateur de Microsoft ?", answer: "Bill Gates", code: "P6", hint: "Abandonna Harvard pour créer son entreprise." }
             ]
         };
 
-        const ROOMS_CONFIG = [
-            { nom: "Évolution Technologique", theme: "evolution", couleur: "from-purple-900 to-blue-900", icone: "🔬" },
-            { nom: "Cybersécurité", theme: "cybersecurite", couleur: "from-red-900 to-orange-900", icone: "🔐" },
-            { nom: "Développement Durable", theme: "durable", couleur: "from-green-900 to-emerald-900", icone: "🌍" },
-            { nom: "Expérience Utilisateur", theme: "utilisateur", couleur: "from-blue-900 to-cyan-900", icone: "👤" },
-            { nom: "Décryptage Final", theme: "crypto", couleur: "from-amber-900 to-yellow-900", icone: "🔑" }
-        ];
+        const hints = {
+            evolution_techno: [
+                "Créé par Steve Wozniak et Steve Jobs en 1977.",
+                "Inventé par Tim Berners-Lee au CERN.",
+                "Lancé par Apple en 2007.",
+                "Brevet déposé en 1876."
+            ],
+            materiaux: [
+                "Utilisé dans les boîtes de conserve et les voitures.",
+                "Un type de plastique transparent.",
+                "Utilisé dans les thermomètres.",
+                "Léger et résistant à la corrosion."
+            ],
+            energie: [
+                "Utilisée pour alimenter les appareils.",
+                "Responsable de l'effet de serre.",
+                "Liée au mouvement du vent.",
+                "Produit par la fermentation de matières organiques."
+            ],
+            informatique: [
+                "Commence par H.",
+                "Créé par Linus Torvalds.",
+                "Créé en 1971.",
+                "Abandonna Harvard pour créer son entreprise."
+            ]
+        };
 
-        // Application principale
-        class EscapeGame {
-            constructor() {
-                this.ecran = 'accueil';
-                this.roomActuelle = 0;
-                this.temps = CONFIG.TEMPS_PAR_ROOM;
-                this.enigmeActuelle = 0;
-                this.enigmesSelectionnees = [];
-                this.reponse = '';
-                this.erreur = false;
-                this.enigmesResolues = [false, false, false, false];
-                this.indiceAffiche = false;
-                this.codesRooms = [];
-                this.codeEntree = '';
-                this.erreurCode = false;
-                this.messageDecrypte = '';
-                this.tempsTotal = 0;
-                
-                // Tournoi
-                this.tournoiNom = '';
-                this.tournoiClasse = '';
-                this.classementLocal = this.getClassementLocal();
-                
-                this.timerInterval = null;
-                this.init();
+        let currentRoom = null;
+        let currentQuestionIndex = 0;
+        let roomCodes = {};
+        let timeLeft = 300;
+
+        // Minuterie
+        const timerElement = document.getElementById('timer');
+        const timer = setInterval(() => {
+            timeLeft--;
+            timerElement.textContent = `Temps restant : ${timeLeft} secondes`;
+            if (timeLeft <= 0) {
+                clearInterval(timer);
+                alert("Temps écoulé ! Le jeu est terminé.");
+                document.querySelectorAll('.room').forEach(room => room.classList.remove('active'));
+                document.getElementById('room-selection').classList.add('active');
             }
-            
-            init() {
-                this.render();
-                this.setupEventListeners();
-            }
-            
-            // Gestion du classement local
-            getClassementLocal() {
-                try {
-                    const stored = localStorage.getItem('escapeGameLocal');
-                    return stored ? JSON.parse(stored) : [];
-                } catch {
-                    return [];
-                }
-            }
-            
-            sauvegarderScoreLocal() {
-                if (!this.tournoiNom.trim() || !this.tournoiClasse.trim()) {
-                    alert('Veuillez entrer votre nom et classe !');
-                    return false;
-                }
-                
-                const score = {
-                    id: Date.now(),
-                    nom: this.tournoiNom,
-                    classe: this.tournoiClasse,
-                    temps: this.formatTemps(this.tempsTotal),
-                    tempsSecondes: this.tempsTotal,
-                    date: new Date().toLocaleString('fr-FR')
-                };
-                
-                const classementActuel = this.getClassementLocal();
-                classementActuel.push(score);
-                classementActuel.sort((a, b) => a.tempsSecondes - b.tempsSecondes);
-                
-                const top50 = classementActuel.slice(0, 50);
-                localStorage.setItem('escapeGameLocal', JSON.stringify(top50));
-                this.classementLocal = top50;
-                
-                alert(`✅ Score enregistré localement !\n\n📸 Prenez une capture d'écran\n📝 Remplissez le formulaire : ${CONFIG.FORM_LINK}\n🏆 Attendez les résultats !`);
-                
-                return true;
-            }
-            
-            exporterCSV() {
-                if (this.classementLocal.length === 0) {
-                    alert('Aucun score à exporter !');
-                    return;
-                }
-                
-                const csvHeader = 'Position,Nom,Classe,Temps,Date\n';
-                const csvRows = this.classementLocal.map((score, index) => 
-                    `${index + 1},"${score.nom}","${score.classe}",${score.temps},"${score.date}"`
-                ).join('\n');
-                
-                const csvContent = csvHeader + csvRows;
-                const blob = new Blob([csvContent], { type: 'text/csv' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `classement_escape_${Date.now()}.csv`;
-                a.click();
-            }
-            
-            resetClassementLocal() {
-                if (confirm('Vider tous les scores de ce poste ?')) {
-                    localStorage.removeItem('escapeGameLocal');
-                    this.classementLocal = [];
-                    alert('Classement local vidé !');
-                    this.render();
-                }
-            }
-            
-            // Fonctions du jeu
-            tirerEnigmes(theme) {
-                const banque = [...BANQUE_ENIGMES[theme]];
-                return banque.sort(() => Math.random() - 0.5).slice(0, 4);
-            }
-            
-            genererCode(index) {
-                const prefixes = ['EVO', 'CYB', 'DUR', 'UX', 'CRY'];
-                return prefixes[index] + Math.floor(1000 + Math.random() * 9000);
-            }
-            
-            formatTemps(secondes) {
-                const mins = Math.floor(secondes / 60);
-                const secs = secondes % 60;
-                return mins.toString().padStart(2, '0') + ':' + secs.toString().padStart(2, '0');
-            }
-            
-            demarrerJeu() {
-                this.codesRooms = [0, 1, 2, 3, 4].map(i => this.genererCode(i));
-                this.demarrerRoom(0);
-            }
-            
-            demarrerRoom(index) {
-                if (index === 4) {
-                    this.roomActuelle = index;
-                    this.temps = CONFIG.TEMPS_PAR_ROOM;
-                    this.ecran = 'room5Crypto';
+        }, 1000);
+
+        // Fonction pour démarrer une pièce
+        function startRoom(roomId) {
+            document.querySelectorAll('.room').forEach(room => room.classList.remove('active'));
+            document.getElementById(roomId).classList.add('active');
+            currentRoom = roomId;
+            currentQuestionIndex = 0;
+            showQuestion(roomId);
+        }
+
+        // Fonction pour afficher une question
+        function showQuestion(roomId) {
+            const questionData = questions[roomId][currentQuestionIndex];
+            document.getElementById(`${roomId}-question`).textContent = questionData.question;
+            document.getElementById(`${roomId}-answer`).value = '';
+            document.getElementById(`${roomId}-hint`).style.display = 'none';
+        }
+
+        // Fonction pour vérifier une réponse
+        function checkAnswer(roomId) {
+            const answerInput = document.getElementById(`${roomId}-answer`);
+            const questionData = questions[roomId][currentQuestionIndex];
+            if (answerInput.value.toLowerCase() === questionData.answer.toLowerCase()) {
+                if (!roomCodes[roomId]) roomCodes[roomId] = '';
+                roomCodes[roomId] += questionData.code;
+                document.getElementById(`${roomId}-code`).textContent = `Code : ${roomCodes[roomId]}`;
+
+                currentQuestionIndex++;
+                if (currentQuestionIndex < questions[roomId].length) {
+                    showQuestion(roomId);
                 } else {
-                    this.enigmesSelectionnees = this.tirerEnigmes(ROOMS_CONFIG[index].theme);
-                    this.roomActuelle = index;
-                    this.enigmeActuelle = 0;
-                    this.enigmesResolues = [false, false, false, false];
-                    this.temps = CONFIG.TEMPS_PAR_ROOM;
-                    this.reponse = '';
-                    this.erreur = false;
-                    this.indiceAffiche = false;
-                    this.ecran = 'room';
-                    this.startTimer();
+                    setTimeout(() => {
+                        alert(`Pièce terminée ! Code final : ${roomCodes[roomId]}`);
+                        document.getElementById(roomId).classList.remove('active');
+                        document.getElementById('room-selection').classList.add('active');
+
+                        // Vérifier si toutes les pièces sont terminées
+                        if (Object.keys(roomCodes).length === 4) {
+                            document.getElementById('room-selection').classList.remove('active');
+                            document.getElementById('final-room').classList.add('active');
+                        }
+                    }, 500);
                 }
-                this.render();
+            } else {
+                alert("Réponse incorrecte. Essayez encore !");
             }
-            
-            startTimer() {
-                if (this.timerInterval) clearInterval(this.timerInterval);
-                
-                this.timerInterval = setInterval(() => {
-                    if (this.temps > 0) {
-                        this.temps--;
-                        this.tempsTotal++;
-                        this.renderTimer();
-                    } else {
-                        clearInterval(this.timerInterval);
-                        alert('Temps écoulé !');
-                        this.ecran = 'accueil';
-                        this.render();
-                    }
-                }, 1000);
+        }
+
+        // Fonction pour afficher un indice
+        function showHint(roomId) {
+            const hintElement = document.getElementById(`${roomId}-hint`);
+            hintElement.textContent = hints[roomId][currentQuestionIndex];
+            hintElement.style.display = 'block';
+        }
+
+        // Fonction pour vérifier la réponse finale
+        function checkFinalAnswer() {
+            const answer = document.getElementById('final-answer').value.toLowerCase();
+            if (answer === 'hello') {
+                document.getElementById('final-result').textContent = 'Félicitations, vous avez réussi l\'escape game ! 🎉';
+            } else {
+                document.getElementById('final-result').textContent = 'Dommage, ce n\'est pas la bonne réponse. Essayez encore !';
             }
-            
-            renderTimer() {
-                const timerElement = document.getElementById('timer');
-                if (timerElement) {
-                    timerElement.textContent = this.formatTemps(this.temps);
-                    if (this.temps < 60) {
-                        timerElement.classList.add('text-red-500', 'timer-warning');
-                    } else {
-                        timerElement.classList.remove('text-red-500', 'timer-warning');
-                    }
-                }
-            }
-            
-            verifierReponse() {
-                const enigme = this.enigmesSelectionnees[this.enigmeActuelle];
-                if (this.reponse.toLowerCase().trim() === enigme.reponse.toLowerCase()) {
-                    this.enigmesResolues[this.enigmeActuelle] = true;
-                    this.erreur = false;
-                    
-                    if (this.enigmesResolues.every(r => r)) {
-                        setTimeout(() => {
-                            this.ecran = 'codeRoom';
-                            this.render();
-                        }, 1000);
-                    } else {
-                        setTimeout(() => {
-                            this.enigmeActuelle++;
-                            this.reponse = '';
-                            this.indiceAffiche = false;
-                            this.render();
-                        }, 1000);
-                    }
-                } else {
-                    this.erreur = true;
-                }
-                this.render();
-            }
-            
-            verifierCodeEntree() {
-                if (this.codeEntree.toUpperCase() === this.codesRooms[this.roomActuelle]) {
-                    this.codeEntree = '';
-                    this.erreurCode = false;
-                    if (this.roomActuelle < 4) {
-                        this.demarrerRoom(this.roomActuelle + 1);
-                    } else {
-                        this.ecran = 'messageFinal';
-                        this.render();
-                    }
-                } else {
-                    this.erreurCode = true;
-                    this.render();
-                }
-            }
-            
-            decrypterMessage() {
-                if (this.messageDecrypte.toLowerCase().trim() === "bravo vous avez maitrise la technologie") {
-                    this.ecran = 'victoire';
-                    if (this.timerInterval) clearInterval(this.timerInterval);
-                } else {
-                    alert("Ce n'est pas la bonne réponse. Réessayez !");
-                }
-                this.render();
-            }
-            
-            // Rendu des écrans
-            render() {
-                const app = document.getElementById('app');
-                
-                switch(this.ecran) {
-                    case 'accueil':
-                        app.innerHTML = this.renderAccueil();
-                        break;
-                    case 'room':
-                        app.innerHTML = this.renderRoom();
-                        break;
-                    case 'room5Crypto':
-                        app.innerHTML = this.renderRoom5Crypto();
-                        break;
-                    case 'codeRoom':
-                        app.innerHTML = this.renderCodeRoom();
-                        break;
-                    case 'messageFinal':
-                        app.innerHTML = this.renderMessageFinal();
-                        break;
-                    case 'victoire':
-                        app.innerHTML = this.renderVictoire();
-                        break;
-                }
-                
-                this.setupEventListeners();
-            }
-            
-            renderAccueil() {
-                const top5 = this.classementLocal.slice(0, 5);
-                
-                return `
-                    <div class="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-black p-4 md:p-8">
-                        <div class="max-w-6xl mx-auto">
-                            <!-- En-tête -->
-                            <div class="text-center mb-8 md:mb-12">
-                                <h1 class="text-4xl md:text-6xl font-bold mb-4 text-gradient font-orbitron">
-                                    🎮 ESCAPE GAME TECHNOLOGIE
-                                </h1>
-                                <p class="text-xl text-gray-300">5 salles pour réviser le Brevet - Tournoi inter-classes</p>
-                            </div>
-                            
-                            <!-- Instructions tournoi -->
-                            <div class="glass-panel rounded-2xl p-6 mb-8 border border-yellow-500/30">
-                                <h2 class="text-2xl font-bold text-yellow-400 mb-4">🏆 TOURNOI INTER-CLASSES</h2>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div>
-                                        <p class="text-gray-300 mb-2">📸 <strong>Capture d'écran obligatoire</strong></p>
-                                        <p class="text-gray-300 mb-2">📝 <strong>Formulaire unique :</strong></p>
-                                        <a href="${CONFIG.FORM_LINK}" target="_blank" class="text-blue-400 underline break-all">${CONFIG.FORM_LINK}</a>
-                                    </div>
-                                    <div>
-                                        <p class="text-gray-300 mb-2">⏱️ <strong>10 minutes par salle</strong></p>
-                                        <p class="text-gray-300">🏅 <strong>Classements par classe</strong></p>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Salles -->
-                            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
-                                ${ROOMS_CONFIG.map((room, i) => `
-                                    <div class="room-card bg-gradient-to-br ${room.couleur} p-4 rounded-xl border border-white/20 text-center">
-                                        <div class="text-3xl mb-2">${room.icone}</div>
-                                        <div class="text-white font-bold text-sm">${room.nom}</div>
-                                    </div>
-                                `).join('')}
-                            </div>
-                            
-                            <!-- Top 5 local -->
-                            ${top5.length > 0 ? `
-                                <div class="glass-panel rounded-2xl p-6 mb-8">
-                                    <h3 class="text-xl font-bold text-purple-400 mb-4 text-center">🏆 TOP 5 - CE POSTE</h3>
-                                    <div class="space-y-2">
-                                        ${top5.map((score, index) => `
-                                            <div class="flex justify-between items-center p-3 rounded-lg ${
-                                                index === 0 ? 'bg-yellow-900/30' :
-                                                index === 1 ? 'bg-gray-800/30' :
-                                                index === 2 ? 'bg-orange-900/30' :
-                                                'bg-slate-800/30'
-                                            }">
-                                                <div class="flex items-center">
-                                                    <span class="w-8 h-8 flex items-center justify-center rounded-full mr-3 ${
-                                                        index === 0 ? 'bg-yellow-500 text-black' :
-                                                        index === 1 ? 'bg-gray-400 text-black' :
-                                                        index === 2 ? 'bg-orange-600' :
-                                                        'bg-slate-700'
-                                                    }">
-                                                        ${index === 0 ? '👑' : index + 1}
-                                                    </span>
-                                                    <div>
-                                                        <p class="font-bold">${score.nom}</p>
-                                                        <p class="text-sm text-gray-400">${score.classe}</p>
-                                                    </div>
-                                                </div>
-                                                <div class="font-mono font-bold">${score.temps}</div>
-                                            </div>
-                                        `).join('')}
-                                    </div>
-                                </div>
-                            ` : ''}
-                            
-                            <!-- Bouton démarrer -->
-                            <div class="text-center">
-                                <button onclick="game.demarrerJeu()" class="btn-primary text-white font-bold py-4 px-12 rounded-xl text-2xl w-full max-w-md">
-                                    🚀 COMMENCER LE JEU
-                                </button>
-                                
-                                <!-- Mode Admin -->
-                                <div class="mt-6">
-                                    <button onclick="game.exporterCSV()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg mr-2">
-                                        📥 Exporter CSV
-                                    </button>
-                                    <button onclick="game.resetClassementLocal()" class="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg">
-                                        ♻️ Réinitialiser
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
-            
-            renderRoom() {
-                const room = ROOMS_CONFIG[this.roomActuelle];
-                const enigme = this.enigmesSelectionnees[this.enigmeActuelle];
-                const progression = (this.enigmesResolues.filter(Boolean).length / 4) * 100;
-                
-                return `
-                    <div class="min-h-screen bg-gradient-to-br ${room.couleur} p-4 md:p-8">
-                        <div class="max-w-4xl mx-auto">
-                            <!-- En-tête -->
-                            <div class="glass-panel rounded-2xl p-6 mb-6">
-                                <div class="flex justify-between items-center mb-4">
-                                    <div class="flex items-center gap-4">
-                                        <div class="text-3xl">${room.icone}</div>
-                                        <div>
-                                            <h2 class="text-2xl font-bold text-white">Room ${this.roomActuelle + 1}: ${room.nom}</h2>
-                                            <p class="text-gray-300">Énigme ${this.enigmeActuelle + 1} / 4</p>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-center gap-3">
-                                        <span class="text-2xl">⏱️</span>
-                                        <span id="timer" class="text-3xl font-bold font-mono ${
-                                            this.temps < 60 ? 'text-red-500 timer-warning' : 'text-yellow-400'
-                                        }">
-                                            ${this.formatTemps(this.temps)}
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="w-full bg-gray-700 rounded-full h-3">
-                                    <div class="bg-gradient-to-r from-green-500 to-emerald-500 h-3 rounded-full transition-all duration-500"
-                                         style="width: ${progression}%"></div>
-                                </div>
-                            </div>
-                            
-                            <!-- Énigme -->
-                            <div class="glass-panel rounded-2xl p-6 md:p-8">
-                                <div class="mb-6">
-                                    <h3 class="text-2xl font-bold text-white mb-4">Énigme ${this.enigmeActuelle + 1}</h3>
-                                    <div class="bg-white/10 p-6 rounded-xl border border-white/20">
-                                        <p class="text-xl text-white">${enigme.question}</p>
-                                    </div>
-                                </div>
-                                
-                                ${this.indiceAffiche ? `
-                                    <div class="bg-yellow-900/30 p-4 rounded-xl border border-yellow-500/50 mb-6">
-                                        <p class="text-yellow-300">💡 ${enigme.indice}</p>
-                                    </div>
-                                ` : ''}
-                                
-                                <div class="space-y-4">
-                                    <input type="text" 
-                                           id="reponseInput"
-                                           value="${this.reponse}"
-                                           placeholder="Votre réponse..."
-                                           class="w-full p-4 bg-gray-800 border-2 border-white/30 rounded-xl text-white text-lg focus:outline-none focus:border-blue-500"
-                                           ${this.enigmesResolues[this.enigmeActuelle] ? 'disabled' : ''}>
-                                    
-                                    ${this.erreur ? `
-                                        <div class="text-red-400 flex items-center gap-2">
-                                            <span>❌</span>
-                                            <span>Réponse incorrecte !</span>
-                                        </div>
-                                    ` : ''}
-                                    
-                                    ${this.enigmesResolues[this.enigmeActuelle] ? `
-                                        <div class="text-green-400 flex items-center gap-2">
-                                            <span>✅</span>
-                                            <span class="font-bold">Énigme résolue !</span>
-                                        </div>
-                                    ` : ''}
-                                    
-                                    <div class="flex gap-4">
-                                        <button onclick="game.verifierReponse()" 
-                                                ${this.enigmesResolues[this.enigmeActuelle] || !this.reponse ? 'disabled' : ''}
-                                                class="btn-success text-white font-bold py-4 px-8 rounded-xl flex-1 ${
-                                                    this.enigmesResolues[this.enigmeActuelle] || !this.reponse ? 'opacity-50 cursor-not-allowed' : ''
-                                                }">
-                                            Valider
-                                        </button>
-                                        
-                                        ${!this.indiceAffiche && !this.enigmesResolues[this.enigmeActuelle] ? `
-                                            <button onclick="game.indiceAffiche = true; game.render();" 
-                                                    class="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-4 px-6 rounded-xl">
-                                                💡 Indice
-                                            </button>
-                                        ` : ''}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
-            
-            renderRoom5Crypto() {
-                const systemes = [
-                    { id: 'cesar', nom: 'Chiffre de César', description: 'Décalage de lettres', exemple: 'A → D (+3)', correct: true },
-                    { id: 'atbash', nom: 'Atbash', description: 'Alphabet inversé', exemple: 'A → Z, B → Y', correct: false },
-                    { id: 'morse', nom: 'Code Morse', description: 'Points et traits', exemple: 'A = .-', correct: false },
-                    { id: 'binaire', nom: 'Binaire', description: '0 et 1', exemple: 'A = 01000001', correct: false }
-                ];
-                
-                return `
-                    <div class="min-h-screen bg-gradient-to-br from-amber-900 to-yellow-900 p-4 md:p-8">
-                        <div class="max-w-6xl mx-auto">
-                            <div class="glass-panel rounded-3xl p-6 md:p-8">
-                                <div class="text-center mb-8">
-                                    <div class="text-6xl mb-4">🔑</div>
-                                    <h1 class="text-4xl font-bold mb-4 text-gradient font-orbitron">ROOM 5 : SYSTÈMES DE CODAGE</h1>
-                                    <p class="text-xl text-gray-300">Choisis le bon système pour décrypter le message !</p>
-                                </div>
-                                
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                                    ${systemes.map(sys => `
-                                        <div class="cursor-pointer bg-gradient-to-br from-yellow-900/40 to-orange-900/40 p-6 rounded-2xl border-2 ${
-                                            this.chiffrementSelectionne === sys.id ? 'border-yellow-400' : 'border-gray-500'
-                                        } hover:border-yellow-400 transition-all"
-                                             onclick="game.chiffrementSelectionne = '${sys.id}'; game.render();">
-                                            <h3 class="text-2xl font-bold text-yellow-300 mb-3">${sys.nom}</h3>
-                                            <p class="text-gray-300 mb-4">${sys.description}</p>
-                                            <div class="bg-black/40 p-4 rounded-lg">
-                                                <p class="text-yellow-200 font-mono">${sys.exemple}</p>
-                                            </div>
-                                            ${this.chiffrementSelectionne === sys.id ? `
-                                                <button onclick="if('${sys.correct}' === 'true') { game.ecran = 'messageFinal'; game.render(); } else { alert('❌ Ce système ne fonctionne pas !'); }"
-                                                        class="w-full mt-4 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white font-bold py-3 px-6 rounded-lg">
-                                                    ✓ Essayer ce système
-                                                </button>
-                                            ` : ''}
-                                        </div>
-                                    `).join('')}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
-            
-            renderCodeRoom() {
-                const room = ROOMS_CONFIG[this.roomActuelle];
-                const estDerniereRoom = this.roomActuelle === 4;
-                
-                return `
-                    <div class="min-h-screen bg-gradient-to-br ${room.couleur} flex items-center justify-center p-4">
-                        <div class="max-w-2xl w-full glass-panel rounded-3xl p-8 text-center">
-                            <div class="text-7xl mb-6">${room.icone}</div>
-                            <h2 class="text-4xl font-bold mb-6 text-white">ROOM ${this.roomActuelle + 1} TERMINÉE !</h2>
-                            
-                            <div class="bg-green-900/40 border-2 border-green-400 rounded-2xl p-8 mb-8">
-                                <div class="text-6xl mb-4">🔑</div>
-                                <p class="text-2xl text-gray-300 mb-4">Code d'accès :</p>
-                                <p class="text-5xl font-bold text-yellow-400 font-mono">${this.codesRooms[this.roomActuelle]}</p>
-                            </div>
-                            
-                            ${!estDerniereRoom ? `
-                                <div>
-                                    <p class="text-xl text-gray-300 mb-6">Entre ce code pour la room suivante :</p>
-                                    <input type="text" 
-                                           id="codeInput"
-                                           value="${this.codeEntree}"
-                                           placeholder="CODE..."
-                                           class="w-full p-4 bg-gray-800 border-2 border-purple-500/50 rounded-xl text-white text-2xl text-center font-bold uppercase focus:outline-none mb-4">
-                                    
-                                    ${this.erreurCode ? `
-                                        <div class="text-red-400 mb-4">
-                                            ❌ Code incorrect !
-                                        </div>
-                                    ` : ''}
-                                    
-                                    <button onclick="game.verifierCodeEntree()"
-                                            class="w-full btn-success text-white font-bold py-4 px-8 rounded-xl text-xl">
-                                        Valider le Code
-                                    </button>
-                                </div>
-                            ` : `
-                                <button onclick="game.ecran = 'messageFinal'; game.render();"
-                                        class="w-full bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-500 hover:to-orange-500 text-white font-bold py-4 px-8 rounded-xl text-xl">
-                                    Défi Final →
-                                </button>
-                            `}
-                        </div>
-                    </div>
-                `;
-            }
-            
-            renderMessageFinal() {
-                return `
-                    <div class="min-h-screen bg-gradient-to-br from-yellow-900 to-orange-900 flex items-center justify-center p-4">
-                        <div class="max-w-3xl w-full glass-panel rounded-3xl p-8">
-                            <div class="text-center mb-8">
-                                <div class="text-6xl mb-4">🔓</div>
-                                <h2 class="text-4xl font-bold mb-6 text-gradient font-orbitron">DÉFI FINAL</h2>
-                                <p class="text-xl text-green-400 font-bold">✅ Système correct ! Maintenant décrypte :</p>
-                            </div>
-                            
-                            <div class="bg-orange-900/40 border-2 border-orange-400 rounded-2xl p-6 mb-8">
-                                <h3 class="text-2xl font-bold text-orange-300 mb-4">🔐 Message Crypté :</h3>
-                                <div class="bg-black/60 p-6 rounded-lg">
-                                    <p class="text-3xl font-mono text-white text-center">Csbwp wpvt bwfa nbjusjuf mb ufdiopophjf</p>
-                                </div>
-                            </div>
-                            
-                            <div class="bg-yellow-900/30 border-2 border-yellow-500/50 rounded-xl p-6 mb-8">
-                                <h3 class="text-2xl font-bold text-yellow-300 mb-3">💡 Méthode César :</h3>
-                                <p class="text-gray-300 text-lg mb-3">Décalage de <span class="text-yellow-400 font-bold">1 lettre vers la GAUCHE</span></p>
-                                <div class="bg-black/40 p-4 rounded-lg">
-                                    <p class="text-center text-yellow-200 font-mono">B → A, C → B, D → C...</p>
-                                </div>
-                            </div>
-                            
-                            <input type="text" 
-                                   id="messageInput"
-                                   value="${this.messageDecrypte}"
-                                   placeholder="Message décrypté..."
-                                   class="w-full p-4 bg-gray-800 border-2 border-yellow-500/50 rounded-xl text-white text-xl focus:outline-none mb-6">
-                            
-                            <button onclick="game.decrypterMessage()"
-                                    class="w-full bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-500 hover:to-orange-500 text-white font-bold py-4 px-8 rounded-xl text-2xl">
-                                Décrypter
-                            </button>
-                        </div>
-                    </div>
-                `;
-            }
-            
-            renderVictoire() {
-                const position = this.classementLocal.findIndex(s => s.temps === this.formatTemps(this.tempsTotal)) + 1;
-                const estSurPodium = position <= 3;
-                
-                return `
-                    <div class="min-h-screen bg-gradient-to-br from-green-900 to-emerald-900 p-4 md:p-8">
-                        <div class="max-w-6xl mx-auto">
-                            <div class="glass-panel rounded-3xl p-8">
-                                <!-- Animation victoire -->
-                                <div class="text-center mb-8">
-                                    <div class="text-9xl mb-6 victory-animation">🎉</div>
-                                    <h1 class="text-6xl font-bold mb-6 text-gradient font-orbitron">VICTOIRE !</h1>
-                                    <div class="text-3xl text-white mb-8 font-bold">
-                                        Bravo vous avez maîtrisé la technologie
-                                    </div>
-                                </div>
-                                
-                                <!-- Temps et classement -->
-                                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-                                    <!-- Temps -->
-                                    <div class="bg-green-900/40 border-2 border-green-400 rounded-2xl p-8">
-                                        <div class="text-center">
-                                            <div class="text-6xl mb-4">🏆</div>
-                                            <p class="text-2xl text-gray-300 mb-3">Votre temps :</p>
-                                            <p class="text-5xl font-bold text-yellow-400 font-mono mb-6">
-                                                ${this.formatTemps(this.tempsTotal)}
-                                            </p>
-                                            
-                                            ${this.classementLocal.length > 0 ? `
-                                                <div class="mt-6 p-4 bg-slate-800/40 rounded-xl">
-                                                    <p class="text-xl text-gray-300 mb-2">📊 Sur ce poste :</p>
-                                                    ${estSurPodium ? `
-                                                        <div class="text-center p-4 bg-yellow-900/30 rounded-lg">
-                                                            <p class="text-2xl text-yellow-300 font-bold mb-2">
-                                                                ${position === 1 ? '🥇 CHAMPION LOCAL !' :
-                                                                  position === 2 ? '🥈 2ÈME LOCAL !' : '🥉 3ÈME LOCAL !'}
-                                                            </p>
-                                                            <p class="text-lg">Position ${position
+        }
+    </script>
+</body>
+</html>
