@@ -191,53 +191,49 @@
                 <!-- Questions chargées dynamiquement -->
             </div>
             <div id="secret-code0" class="code-display"></div>
-            <button id="next0" class="next-btn" onclick="nextRoom(0)">Pièce suivante →</button>
-            <button class="back-btn" onclick="backToHome()">Retour à l'accueil</button>
+            <button id="next0" class="next-btn" onclick="backToHome()">Retour à l'accueil</button>
         </div>
 
         <!-- Pièce 2 : Cybersécurité -->
         <div id="room1" class="theme-card">
-            <h2>Pièce 2 : Cybersécurité</h2>
             <div class="code-input">
                 <input type="text" id="code-input1" placeholder="Code secret de la Pièce 1" />
                 <button onclick="checkCode(1)">Valider le code</button>
             </div>
+            <h2>Pièce 2 : Cybersécurité</h2>
             <div id="questions1">
                 <!-- Questions chargées dynamiquement -->
             </div>
             <div id="secret-code1" class="code-display"></div>
-            <button id="next1" class="next-btn" onclick="nextRoom(1)">Pièce suivante →</button>
-            <button class="back-btn" onclick="backToHome()">Retour à l'accueil</button>
+            <button id="next1" class="next-btn" onclick="backToHome()">Retour à l'accueil</button>
         </div>
 
         <!-- Pièce 3 : Développement Durable -->
         <div id="room2" class="theme-card">
-            <h2>Pièce 3 : Développement Durable</h2>
             <div class="code-input">
                 <input type="text" id="code-input2" placeholder="Code secret de la Pièce 2" />
                 <button onclick="checkCode(2)">Valider le code</button>
             </div>
+            <h2>Pièce 3 : Développement Durable</h2>
             <div id="questions2">
                 <!-- Questions chargées dynamiquement -->
             </div>
             <div id="secret-code2" class="code-display"></div>
-            <button id="next2" class="next-btn" onclick="nextRoom(2)">Pièce suivante →</button>
-            <button class="back-btn" onclick="backToHome()">Retour à l'accueil</button>
+            <button id="next2" class="next-btn" onclick="backToHome()">Retour à l'accueil</button>
         </div>
 
         <!-- Pièce 4 : Expérience Utilisateur -->
         <div id="room3" class="theme-card">
-            <h2>Pièce 4 : Expérience Utilisateur</h2>
             <div class="code-input">
                 <input type="text" id="code-input3" placeholder="Code secret de la Pièce 3" />
                 <button onclick="checkCode(3)">Valider le code</button>
             </div>
+            <h2>Pièce 4 : Expérience Utilisateur</h2>
             <div id="questions3">
                 <!-- Questions chargées dynamiquement -->
             </div>
             <div id="secret-code3" class="code-display"></div>
             <button id="next3" class="next-btn" onclick="nextRoom(3)">Pièce finale →</button>
-            <button class="back-btn" onclick="backToHome()">Retour à l'accueil</button>
         </div>
 
         <!-- Pièce finale -->
@@ -295,18 +291,16 @@
             ]
         };
 
-        // Codes secrets pour chaque pièce (non liés à la phrase secrète finale)
+        // Codes secrets pour chaque pièce
         const codes = ["A7B2", "C3D9", "E5F1", "G8H4"];
         const MAGIC_CODE = "MAGIC2026";
         let correctAnswers = [[false, false, false, false], [false, false, false, false], [false, false, false, false], [false, false, false, false]];
-        let currentRoom = -1;
 
         // Démarrer un thème
         function startTheme(themeIndex) {
             if (themeIndex === 0 || (themeIndex > 0 && document.getElementById(`theme${themeIndex - 1}`).classList.contains('locked') === false)) {
                 document.getElementById('homePage').style.display = 'none';
                 document.getElementById(`room${themeIndex}`).style.display = 'block';
-                currentRoom = themeIndex;
                 loadQuestions(themeIndex);
             } else {
                 alert("Vous devez d'abord terminer la pièce précédente !");
@@ -357,7 +351,6 @@
             if (correctAnswers[roomIndex].every(answer => answer)) {
                 document.getElementById(`secret-code${roomIndex}`).textContent = `Code d'accès : ${codes[roomIndex]}`;
                 document.getElementById(`secret-code${roomIndex}`).style.display = 'block';
-                document.getElementById(`next${roomIndex}`).style.display = 'block';
                 if (roomIndex < 3) {
                     document.getElementById(`theme${roomIndex}`).classList.remove('locked');
                 }
@@ -368,18 +361,24 @@
         function checkCode(roomIndex) {
             const codeInput = document.getElementById(`code-input${roomIndex}`).value;
             if (codeInput === codes[roomIndex - 1]) {
-                document.getElementById(`room${roomIndex}`).style.display = 'block';
-                document.getElementById('homePage').style.display = 'none';
                 loadQuestions(roomIndex);
             } else {
                 alert("Code incorrect. Veuillez réessayer.");
             }
         }
 
-        // Passer à la pièce suivante
+        // Passer à la pièce finale
         function nextRoom(roomIndex) {
             document.getElementById(`room${roomIndex}`).style.display = 'none';
-            document.getElementById('homePage').style.display = 'block';
+            document.getElementById('finalRoom').style.display = 'block';
+            let codesList = document.getElementById('allCodes');
+            codesList.innerHTML = '';
+            codes.forEach(code => {
+                let li = document.createElement('li');
+                li.textContent = code;
+                codesList.appendChild(li);
+            });
+            document.getElementById('victory').style.display = 'block';
         }
     </script>
 </body>
