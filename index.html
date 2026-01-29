@@ -114,16 +114,28 @@
             background-color: #e8f5e9;
             border-radius: 5px;
         }
-        .next-btn {
+        .back-btn {
             display: block;
             margin: 20px auto;
             padding: 10px 20px;
-            background-color: var(--success-color);
+            background-color: #6c757d;
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            display: none;
+        }
+        .code-input-zone {
+            text-align: center;
+            margin: 15px 0;
+            padding: 20px;
+            background: #f1f1f1;
+            border-radius: 8px;
+        }
+        .code-input-zone input {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 200px;
         }
         .final-room {
             text-align: center;
@@ -136,31 +148,10 @@
             margin: 20px 0;
             display: none;
         }
-        .back-btn {
-            display: block;
-            margin: 20px auto;
-            padding: 10px 20px;
-            background-color: #6c757d;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .code-input {
-            text-align: center;
-            margin: 15px 0;
-        }
-        .code-input input {
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            width: 200px;
-        }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Page d'accueil avec toutes les pièces -->
         <div id="homePage" class="home-page">
             <h1>Escape Game Technologie</h1>
             <p>Cliquez sur une pièce pour commencer (l'ordre est important !).</p>
@@ -169,22 +160,21 @@
                     <h2><i class="fas fa-lightbulb"></i> Innovations</h2>
                     <p class="theme-number">Pièce 1</p>
                 </div>
-                <div class="theme-card-home locked" id="theme1">
+                <div class="theme-card-home locked" id="theme0" onclick="startTheme(1)">
                     <h2><i class="fas fa-shield-alt"></i> Cybersécurité</h2>
                     <p class="theme-number">Pièce 2</p>
                 </div>
-                <div class="theme-card-home locked" id="theme2">
+                <div class="theme-card-home locked" id="theme1" onclick="startTheme(2)">
                     <h2><i class="fas fa-leaf"></i> Développement Durable</h2>
                     <p class="theme-number">Pièce 3</p>
                 </div>
-                <div class="theme-card-home locked" id="theme3">
+                <div class="theme-card-home locked" id="theme2" onclick="startTheme(3)">
                     <h2><i class="fas fa-user"></i> Expérience Utilisateur</h2>
                     <p class="theme-number">Pièce 4</p>
                 </div>
             </div>
         </div>
 
-        <!-- Pièce 1 : Innovations -->
         <div id="room0" class="theme-card">
             <h2>Pièce 1 : Innovations de Rupture</h2>
             <div id="questions0"></div>
@@ -192,55 +182,54 @@
             <button class="back-btn" onclick="backToHome()">Retour à l'accueil</button>
         </div>
 
-        <!-- Pièce 2 : Cybersécurité -->
         <div id="room1" class="theme-card">
-            <div class="code-input">
-                <input type="text" id="code-input1" placeholder="Code secret de la Pièce 1" />
-                <button onclick="checkCode(1)">Valider le code</button>
+            <div id="lock-zone1" class="code-input-zone">
+                <p>Entrez le code secret de la pièce précédente :</p>
+                <input type="text" id="code-input1" placeholder="Code secret" />
+                <button class="validate-btn" onclick="checkCode(1)">Valider le code</button>
             </div>
-            <h2>Pièce 2 : Cybersécurité</h2>
-            <div id="questions1"></div>
-            <div id="secret-code1" class="code-display"></div>
+            <div id="content1" style="display:none;">
+                <h2>Pièce 2 : Cybersécurité</h2>
+                <div id="questions1"></div>
+                <div id="secret-code1" class="code-display"></div>
+            </div>
             <button class="back-btn" onclick="backToHome()">Retour à l'accueil</button>
         </div>
 
-        <!-- Pièce 3 : Développement Durable -->
         <div id="room2" class="theme-card">
-            <div class="code-input">
-                <input type="text" id="code-input2" placeholder="Code secret de la Pièce 2" />
-                <button onclick="checkCode(2)">Valider le code</button>
+            <div id="lock-zone2" class="code-input-zone">
+                <p>Entrez le code secret de la pièce précédente :</p>
+                <input type="text" id="code-input2" placeholder="Code secret" />
+                <button class="validate-btn" onclick="checkCode(2)">Valider le code</button>
             </div>
-            <h2>Pièce 3 : Développement Durable</h2>
-            <div id="questions2"></div>
-            <div id="secret-code2" class="code-display"></div>
+            <div id="content2" style="display:none;">
+                <h2>Pièce 3 : Développement Durable</h2>
+                <div id="questions2"></div>
+                <div id="secret-code2" class="code-display"></div>
+            </div>
             <button class="back-btn" onclick="backToHome()">Retour à l'accueil</button>
         </div>
 
-        <!-- Pièce 4 : Expérience Utilisateur -->
         <div id="room3" class="theme-card">
-            <div class="code-input">
-                <input type="text" id="code-input3" placeholder="Code secret de la Pièce 3" />
-                <button onclick="checkCode(3)">Valider le code</button>
+            <div id="lock-zone3" class="code-input-zone">
+                <p>Entrez le code secret de la pièce précédente :</p>
+                <input type="text" id="code-input3" placeholder="Code secret" />
+                <button class="validate-btn" onclick="checkCode(3)">Valider le code</button>
             </div>
-            <h2>Pièce 4 : Expérience Utilisateur</h2>
-            <div id="questions3"></div>
-            <div id="secret-code3" class="code-display"></div>
+            <div id="content3" style="display:none;">
+                <h2>Pièce 4 : Expérience Utilisateur</h2>
+                <div id="questions3"></div>
+                <div id="secret-code3" class="code-display"></div>
+            </div>
             <button class="back-btn" onclick="backToHome()">Retour à l'accueil</button>
         </div>
 
-        <!-- Pièce finale -->
-        <div class="final-room" id="finalRoom">
-            <h2>Pièce Finale : Décodage</h2>
-            <p>Félicitations ! Vous avez terminé toutes les pièces.</p>
-            <div class="victory" id="victory">
-                <h2>🎉 Bravo ! Vous avez réussi l'escape game ! 🎉</h2>
-            </div>
-            <button class="back-btn" onclick="backToHome()">Retour à l'accueil</button>
+        <div class="victory" id="victoryMessage">
+            <h2>🎉 Bravo ! Vous avez terminé l'escape game ! 🎉</h2>
         </div>
     </div>
 
     <script>
-        // Questions pour chaque pièce
         const questions = {
             0: [
                 { question: "Quelle innovation a permis de passer du téléphone fixe au mobile ?", answer: "portabilité" },
@@ -281,82 +270,79 @@
             ]
         };
 
-        // Codes secrets pour chaque pièce
         const codes = ["A7B2", "C3D9", "E5F1", "G8H4"];
-        const MAGIC_CODE = "MAGIC2026";
         let correctAnswers = [[false, false, false, false], [false, false, false, false], [false, false, false, false], [false, false, false, false]];
 
-        // Démarrer un thème
         function startTheme(themeIndex) {
-            if (themeIndex === 0 || (themeIndex > 0 && document.getElementById(`theme${themeIndex - 1}`).classList.contains('locked') === false)) {
+            const previousUnlocked = themeIndex === 0 || !document.getElementById(`theme${themeIndex - 1}`).classList.contains('locked');
+            
+            if (previousUnlocked) {
                 document.getElementById('homePage').style.display = 'none';
                 document.getElementById(`room${themeIndex}`).style.display = 'block';
-                loadQuestions(themeIndex);
+                if (themeIndex === 0) loadQuestions(0);
             } else {
-                alert("Vous devez d'abord terminer la pièce précédente !");
+                alert("Cette pièce est verrouillée ! Terminez la précédente.");
             }
         }
 
-        // Retour à l'accueil
         function backToHome() {
             document.querySelectorAll('.theme-card').forEach(el => el.style.display = 'none');
             document.getElementById('homePage').style.display = 'block';
         }
 
-        // Charger les questions aléatoires
         function loadQuestions(roomIndex) {
             const container = document.getElementById(`questions${roomIndex}`);
-            container.innerHTML = '';
+            if (container.innerHTML !== "") return; // Évite de recharger si déjà fait
+
             const selectedQuestions = [...questions[roomIndex]].sort(() => 0.5 - Math.random()).slice(0, 4);
             selectedQuestions.forEach((q, i) => {
                 container.innerHTML += `
                     <div class="question">
                         <p><strong>Question ${i+1} :</strong> ${q.question}</p>
                         <input type="text" class="answer-input" id="answer${roomIndex}-${i}" placeholder="Votre réponse" />
-                        <button class="validate-btn" onclick="checkAnswer(${roomIndex}, ${i}, '${q.answer}')">Valider</button>
+                        <button class="validate-btn" onclick="checkAnswer(${roomIndex}, ${i}, '${q.answer.replace(/'/g, "\\'")}')">Valider</button>
                         <div id="feedback${roomIndex}-${i}" class="feedback"></div>
                     </div>
                 `;
             });
         }
 
-        // Vérifier une réponse
         function checkAnswer(roomIndex, questionIndex, correctAnswer) {
-            const userAnswer = document.getElementById(`answer${roomIndex}-${questionIndex}`).value;
+            const userAnswer = document.getElementById(`answer${roomIndex}-${questionIndex}`).value.trim().toLowerCase();
             const feedback = document.getElementById(`feedback${roomIndex}-${questionIndex}`);
 
-            if (userAnswer === MAGIC_CODE || userAnswer.toLowerCase() === correctAnswer.toLowerCase()) {
+            if (userAnswer === correctAnswer.toLowerCase() || userAnswer === "magic2026") {
                 feedback.innerHTML = '<span class="success">✓ Bonne réponse !</span>';
-                document.getElementById(`answer${roomIndex}-${questionIndex}`).style.backgroundColor = "#d4edda";
+                document.getElementById(`answer${roomIndex}-${questionIndex}`).disabled = true;
                 correctAnswers[roomIndex][questionIndex] = true;
                 checkAllAnswers(roomIndex);
             } else {
-                feedback.innerHTML = '<span class="error">✗ Mauvaise réponse. Réessayez !</span>';
-                document.getElementById(`answer${roomIndex}-${questionIndex}`).style.backgroundColor = "#f8d7da";
+                feedback.innerHTML = '<span class="error">✗ Mauvaise réponse.</span>';
             }
         }
 
-        // Vérifier si toutes les réponses d'une pièce sont correctes
         function checkAllAnswers(roomIndex) {
-            if (correctAnswers[roomIndex].every(answer => answer)) {
-                document.getElementById(`secret-code${roomIndex}`).textContent = `Code d'accès : ${codes[roomIndex]}`;
+            if (correctAnswers[roomIndex].every(ans => ans === true)) {
+                document.getElementById(`secret-code${roomIndex}`).textContent = `Code d'accès obtenu : ${codes[roomIndex]}`;
                 document.getElementById(`secret-code${roomIndex}`).style.display = 'block';
                 if (roomIndex < 3) {
                     document.getElementById(`theme${roomIndex}`).classList.remove('locked');
+                } else {
+                    document.getElementById('victoryMessage').style.display = 'block';
                 }
             }
         }
 
-        // Vérifier le code secret pour accéder à une pièce
         function checkCode(roomIndex) {
-            const codeInput = document.getElementById(`code-input${roomIndex}`).value;
-            if (codeInput === codes[roomIndex - 1]) {
+            const val = document.getElementById(`code-input${roomIndex}`).value.toUpperCase();
+            if (val === codes[roomIndex - 1]) {
+                document.getElementById(`lock-zone${roomIndex}`).style.display = 'none';
+                document.getElementById(`content${roomIndex}`).style.display = 'block';
                 loadQuestions(roomIndex);
             } else {
-                alert("Code incorrect. Veuillez réessayer.");
+                alert("Code incorrect !");
             }
         }
     </script>
 </body>
 </html>
-
