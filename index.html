@@ -156,48 +156,6 @@
             border-radius: 4px;
             width: 200px;
         }
-        .coding-methods {
-            display: flex;
-            justify-content: space-around;
-            margin: 20px 0;
-            flex-wrap: wrap;
-        }
-        .coding-method {
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            width: 20%;
-            min-width: 150px;
-            margin: 5px;
-        }
-        .coded-phrase {
-            margin: 20px 0;
-            font-size: 1.2em;
-            font-weight: bold;
-        }
-        .solution-input {
-            margin: 20px 0;
-        }
-        .solution-input input {
-            padding: 10px;
-            width: 300px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        .show-puzzle-btn {
-            display: block;
-            margin: 20px auto;
-            padding: 10px 20px;
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .puzzle-display {
-            display: none;
-            margin: 20px 0;
-        }
     </style>
 </head>
 <body>
@@ -270,47 +228,12 @@
             <button class="back-btn" onclick="backToHome()">Retour à l'accueil</button>
         </div>
 
-        <!-- Pièce finale : Décodage -->
+        <!-- Pièce finale -->
         <div class="final-room" id="finalRoom">
             <h2>Pièce Finale : Décodage</h2>
-            <p>Entrez les 4 codes secrets obtenus pour accéder à l'énigme finale :</p>
-            <div class="code-input">
-                <input type="text" id="finalCodeInput" placeholder="Exemple : A7B2-C3D9-E5F1-G8H4" />
-                <button onclick="checkFinalCode()">Valider les codes</button>
-            </div>
-            <div class="puzzle-display" id="puzzleDisplay">
-                <h3>Systèmes de codage</h3>
-                <div class="coding-methods">
-                    <div class="coding-method">
-                        <h4>Binaire</h4>
-                        <p>01000001 = A</p>
-                    </div>
-                    <div class="coding-method">
-                        <h4>Morse</h4>
-                        <p>.- = A</p>
-                    </div>
-                    <div class="coding-method">
-                        <h4>César (+3)</h4>
-                        <p>D = A</p>
-                    </div>
-                    <div class="coding-method">
-                        <h4>Hexadécimal</h4>
-                        <p>41 = A</p>
-                    </div>
-                </div>
-                <button class="show-puzzle-btn" onclick="showPuzzle()">Afficher l'énigme</button>
-                <div id="codedPuzzle" style="display: none; margin: 20px 0;">
-                    <p class="coded-phrase">Phrase codée : 01001000 01000101 01001100 01001100 01001111</p>
-                    <div class="solution-input">
-                        <input type="text" id="puzzleSolution" placeholder="Votre solution" />
-                        <button onclick="checkSolution()">Valider la solution</button>
-                    </div>
-                </div>
-            </div>
+            <p>Félicitations ! Vous avez terminé toutes les pièces.</p>
             <div class="victory" id="victory">
-                <h2>🎉 Félicitations ! Vous avez réussi l'escape game ! 🎉</h2>
-                <p>Temps restant : <span id="remainingTime"></span> secondes</p>
-                <p>Prenez une capture d'écran de cette page et téléchargez-la sur JotForm avec votre nom, prénom et classe.</p>
+                <h2>🎉 Bravo ! Vous avez réussi l'escape game ! 🎉</h2>
             </div>
             <button class="back-btn" onclick="backToHome()">Retour à l'accueil</button>
         </div>
@@ -377,7 +300,6 @@
         // Retour à l'accueil
         function backToHome() {
             document.querySelectorAll('.theme-card').forEach(el => el.style.display = 'none');
-            document.getElementById('finalRoom').style.display = 'none';
             document.getElementById('homePage').style.display = 'block';
         }
 
@@ -432,32 +354,6 @@
                 loadQuestions(roomIndex);
             } else {
                 alert("Code incorrect. Veuillez réessayer.");
-            }
-        }
-
-        // Vérifier les codes finaux pour accéder à l'énigme
-        function checkFinalCode() {
-            const finalCodeInput = document.getElementById('finalCodeInput').value;
-            const expectedCode = codes.join('-');
-            if (finalCodeInput === expectedCode) {
-                document.getElementById('puzzleDisplay').style.display = 'block';
-            } else {
-                alert("Codes incorrects. Veuillez réessayer.");
-            }
-        }
-
-        // Afficher l'énigme
-        function showPuzzle() {
-            document.getElementById('codedPuzzle').style.display = 'block';
-        }
-
-        // Vérifier la solution de l'énigme
-        function checkSolution() {
-            const puzzleSolution = document.getElementById('puzzleSolution').value;
-            if (puzzleSolution.toLowerCase() === "hello") {
-                document.getElementById('victory').style.display = 'block';
-            } else {
-                alert("Solution incorrecte. Réessayez !");
             }
         }
     </script>
