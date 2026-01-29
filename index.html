@@ -23,7 +23,7 @@
             line-height: 1.6;
         }
         .container {
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
             background-color: var(--card-color);
             padding: 20px;
@@ -49,14 +49,20 @@
             padding: 20px;
             cursor: pointer;
             transition: transform 0.2s;
+            text-align: center;
         }
-        .theme-card-home:hover {
+        .theme-card-home:hover:not(.locked) {
             transform: scale(1.02);
         }
         .theme-card-home.locked {
             background-color: #f0f0f0;
             cursor: not-allowed;
             opacity: 0.7;
+        }
+        .theme-card-home .theme-number {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
         }
         .theme-card {
             background-color: var(--card-color);
@@ -103,6 +109,10 @@
             font-weight: bold;
             color: var(--success-color);
             display: none;
+            font-size: 1.2em;
+            padding: 10px;
+            background-color: #e8f5e9;
+            border-radius: 5px;
         }
         .next-btn {
             display: block;
@@ -140,160 +150,80 @@
 </head>
 <body>
     <div class="container">
-        <!-- Page d'accueil avec les thèmes -->
+        <!-- Page d'accueil avec toutes les pièces -->
         <div id="homePage" class="home-page">
             <h1>Escape Game Technologie</h1>
-            <p>Cliquez sur un thème pour commencer.</p>
+            <p>Cliquez sur une pièce pour commencer (l'ordre est important !).</p>
             <div class="theme-grid">
                 <div class="theme-card-home" onclick="startTheme(0)">
-                    <h2>Thème 1 : Innovations de Rupture</h2>
-                    <p><i class="fas fa-lightbulb"></i></p>
+                    <h2><i class="fas fa-lightbulb"></i> Innovations</h2>
+                    <p class="theme-number">Pièce 1</p>
                 </div>
                 <div class="theme-card-home locked" id="theme1">
-                    <h2>Thème 2 : Cybersécurité</h2>
-                    <p><i class="fas fa-shield-alt"></i></p>
+                    <h2><i class="fas fa-shield-alt"></i> Cybersécurité</h2>
+                    <p class="theme-number">Pièce 2</p>
                 </div>
                 <div class="theme-card-home locked" id="theme2">
-                    <h2>Thème 3 : Développement Durable</h2>
-                    <p><i class="fas fa-leaf"></i></p>
+                    <h2><i class="fas fa-leaf"></i> Développement Durable</h2>
+                    <p class="theme-number">Pièce 3</p>
                 </div>
                 <div class="theme-card-home locked" id="theme3">
-                    <h2>Thème 4 : Expérience Utilisateur</h2>
-                    <p><i class="fas fa-user"></i></p>
+                    <h2><i class="fas fa-user"></i> Expérience Utilisateur</h2>
+                    <p class="theme-number">Pièce 4</p>
                 </div>
             </div>
         </div>
 
-        <!-- Thème 1 -->
+        <!-- Pièce 1 : Innovations -->
         <div id="room0" class="theme-card">
-            <h2>Thème 1 : Innovations de Rupture</h2>
+            <h2>Pièce 1 : Innovations de Rupture</h2>
             <div id="questions0">
-                <div class="question">
-                    <p><strong>Question 1 :</strong> Quelle innovation a permis de passer du téléphone fixe au mobile ?</p>
-                    <input type="text" class="answer-input" id="answer0-0" placeholder="Votre réponse" />
-                    <button class="validate-btn" onclick="checkAnswer(0, 0, 'portabilité')">Valider</button>
-                    <div id="feedback0-0" class="feedback"></div>
-                </div>
-                <div class="question">
-                    <p><strong>Question 2 :</strong> En quelle année le premier iPhone est-il sorti ?</p>
-                    <input type="text" class="answer-input" id="answer0-1" placeholder="Votre réponse" />
-                    <button class="validate-btn" onclick="checkAnswer(0, 1, '2007')">Valider</button>
-                    <div id="feedback0-1" class="feedback"></div>
-                </div>
-                <div class="question">
-                    <p><strong>Question 3 :</strong> Comment appelle-t-on une innovation qui change radicalement un marché ?</p>
-                    <input type="text" class="answer-input" id="answer0-2" placeholder="Votre réponse" />
-                    <button class="validate-btn" onclick="checkAnswer(0, 2, 'rupture')">Valider</button>
-                    <div id="feedback0-2" class="feedback"></div>
-                </div>
-                <div class="question">
-                    <p><strong>Question 4 :</strong> Quelle est la famille de matériaux la plus légère ?</p>
-                    <input type="text" class="answer-input" id="answer0-3" placeholder="Votre réponse" />
-                    <button class="validate-btn" onclick="checkAnswer(0, 3, 'plastique')">Valider</button>
-                    <div id="feedback0-3" class="feedback"></div>
-                </div>
+                <!-- Les questions seront chargées dynamiquement -->
             </div>
             <div id="secret-code0" class="code-display"></div>
             <button id="next0" class="next-btn" onclick="nextRoom(0)">Pièce suivante →</button>
             <button class="back-btn" onclick="backToHome()">Retour à l'accueil</button>
         </div>
 
-        <!-- Thème 2 -->
+        <!-- Pièce 2 : Cybersécurité -->
         <div id="room1" class="theme-card">
-            <h2>Thème 2 : Cybersécurité</h2>
+            <h2>Pièce 2 : Cybersécurité</h2>
+            <div class="code-input">
+                <input type="password" id="code-input1" placeholder="Code secret de la Pièce 1" />
+                <button onclick="checkCode(1)">Valider le code</button>
+            </div>
             <div id="questions1">
-                <div class="question">
-                    <p><strong>Question 1 :</strong> Comment appelle-t-on un programme malveillant ?</p>
-                    <input type="text" class="answer-input" id="answer1-0" placeholder="Votre réponse" />
-                    <button class="validate-btn" onclick="checkAnswer(1, 0, 'virus')">Valider</button>
-                    <div id="feedback1-0" class="feedback"></div>
-                </div>
-                <div class="question">
-                    <p><strong>Question 2 :</strong> Combien de caractères minimum pour un mot de passe sûr ?</p>
-                    <input type="text" class="answer-input" id="answer1-1" placeholder="Votre réponse" />
-                    <button class="validate-btn" onclick="checkAnswer(1, 1, '12')">Valider</button>
-                    <div id="feedback1-1" class="feedback"></div>
-                </div>
-                <div class="question">
-                    <p><strong>Question 3 :</strong> Comment s'appelle l'usurpation d'identité par email ?</p>
-                    <input type="text" class="answer-input" id="answer1-2" placeholder="Votre réponse" />
-                    <button class="validate-btn" onclick="checkAnswer(1, 2, 'phishing')">Valider</button>
-                    <div id="feedback1-2" class="feedback"></div>
-                </div>
-                <div class="question">
-                    <p><strong>Question 4 :</strong> Quelle technique crypte un fichier ?</p>
-                    <input type="text" class="answer-input" id="answer1-3" placeholder="Votre réponse" />
-                    <button class="validate-btn" onclick="checkAnswer(1, 3, 'chiffrement')">Valider</button>
-                    <div id="feedback1-3" class="feedback"></div>
-                </div>
+                <!-- Les questions seront chargées dynamiquement -->
             </div>
             <div id="secret-code1" class="code-display"></div>
             <button id="next1" class="next-btn" onclick="nextRoom(1)">Pièce suivante →</button>
             <button class="back-btn" onclick="backToHome()">Retour à l'accueil</button>
         </div>
 
-        <!-- Thème 3 -->
+        <!-- Pièce 3 : Développement Durable -->
         <div id="room2" class="theme-card">
-            <h2>Thème 3 : Développement Durable</h2>
+            <h2>Pièce 3 : Développement Durable</h2>
+            <div class="code-input">
+                <input type="password" id="code-input2" placeholder="Code secret de la Pièce 2" />
+                <button onclick="checkCode(2)">Valider le code</button>
+            </div>
             <div id="questions2">
-                <div class="question">
-                    <p><strong>Question 1 :</strong> Combien de piliers du développement durable ?</p>
-                    <input type="text" class="answer-input" id="answer2-0" placeholder="Votre réponse" />
-                    <button class="validate-btn" onclick="checkAnswer(2, 0, '3')">Valider</button>
-                    <div id="feedback2-0" class="feedback"></div>
-                </div>
-                <div class="question">
-                    <p><strong>Question 2 :</strong> Sur combien est noté l'indice de réparabilité ?</p>
-                    <input type="text" class="answer-input" id="answer2-1" placeholder="Votre réponse" />
-                    <button class="validate-btn" onclick="checkAnswer(2, 1, '10')">Valider</button>
-                    <div id="feedback2-1" class="feedback"></div>
-                </div>
-                <div class="question">
-                    <p><strong>Question 3 :</strong> Quel métal précieux dans les smartphones ?</p>
-                    <input type="text" class="answer-input" id="answer2-2" placeholder="Votre réponse" />
-                    <button class="validate-btn" onclick="checkAnswer(2, 2, 'or')">Valider</button>
-                    <div id="feedback2-2" class="feedback"></div>
-                </div>
-                <div class="question">
-                    <p><strong>Question 4 :</strong> Quelle énergie provient du soleil ?</p>
-                    <input type="text" class="answer-input" id="answer2-3" placeholder="Votre réponse" />
-                    <button class="validate-btn" onclick="checkAnswer(2, 3, 'solaire')">Valider</button>
-                    <div id="feedback2-3" class="feedback"></div>
-                </div>
+                <!-- Les questions seront chargées dynamiquement -->
             </div>
             <div id="secret-code2" class="code-display"></div>
             <button id="next2" class="next-btn" onclick="nextRoom(2)">Pièce suivante →</button>
             <button class="back-btn" onclick="backToHome()">Retour à l'accueil</button>
         </div>
 
-        <!-- Thème 4 -->
+        <!-- Pièce 4 : Expérience Utilisateur -->
         <div id="room3" class="theme-card">
-            <h2>Thème 4 : Expérience Utilisateur</h2>
+            <h2>Pièce 4 : Expérience Utilisateur</h2>
+            <div class="code-input">
+                <input type="password" id="code-input3" placeholder="Code secret de la Pièce 3" />
+                <button onclick="checkCode(3)">Valider le code</button>
+            </div>
             <div id="questions3">
-                <div class="question">
-                    <p><strong>Question 1 :</strong> Comment s'appelle l'étude de l'adaptation à l'humain ?</p>
-                    <input type="text" class="answer-input" id="answer3-0" placeholder="Votre réponse" />
-                    <button class="validate-btn" onclick="checkAnswer(3, 0, 'ergonomie')">Valider</button>
-                    <div id="feedback3-0" class="feedback"></div>
-                </div>
-                <div class="question">
-                    <p><strong>Question 2 :</strong> Combien de clics max pour accéder à une info ?</p>
-                    <input type="text" class="answer-input" id="answer3-1" placeholder="Votre réponse" />
-                    <button class="validate-btn" onclick="checkAnswer(3, 1, '3')">Valider</button>
-                    <div id="feedback3-1" class="feedback"></div>
-                </div>
-                <div class="question">
-                    <p><strong>Question 3 :</strong> Comment s'appelle le document qui liste les exigences ?</p>
-                    <input type="text" class="answer-input" id="answer3-2" placeholder="Votre réponse" />
-                    <button class="validate-btn" onclick="checkAnswer(3, 2, 'cahier des charges')">Valider</button>
-                    <div id="feedback3-2" class="feedback"></div>
-                </div>
-                <div class="question">
-                    <p><strong>Question 4 :</strong> Quelle couleur pour les boutons de validation ?</p>
-                    <input type="text" class="answer-input" id="answer3-3" placeholder="Votre réponse" />
-                    <button class="validate-btn" onclick="checkAnswer(3, 3, 'vert')">Valider</button>
-                    <div id="feedback3-3" class="feedback"></div>
-                </div>
+                <!-- Les questions seront chargées dynamiquement -->
             </div>
             <div id="secret-code3" class="code-display"></div>
             <button id="next3" class="next-btn" onclick="nextRoom(3)">Pièce finale →</button>
@@ -303,8 +233,8 @@
         <!-- Pièce finale -->
         <div class="final-room" id="finalRoom">
             <h2>Pièce Finale : Décodage</h2>
-            <p>Félicitations ! Vous avez terminé tous les thèmes.</p>
-            <p>Codes secrets obtenus :</p>
+            <p>Félicitations ! Vous avez terminé toutes les pièces.</p>
+            <p>Voici les codes secrets que vous avez obtenus :</p>
             <ul id="allCodes"></ul>
             <div class="victory" id="victory">
                 <h2>🎉 Bravo ! Vous avez réussi l'escape game ! 🎉</h2>
@@ -314,18 +244,118 @@
     </div>
 
     <script>
-        // Codes secrets pour chaque thème
+        // Questions pour chaque pièce (20 questions par pièce)
+        const questions = {
+            0: [
+                { question: "Quelle innovation a permis de passer du téléphone fixe au mobile ?", answer: "portabilité", hint: "Ce qui permet de déplacer l'appareil." },
+                { question: "En quelle année le premier iPhone est-il sorti ?", answer: "2007", hint: "Entre 2000 et 2010." },
+                { question: "Comment appelle-t-on une innovation qui change radicalement un marché ?", answer: "rupture", hint: "Innovation de..." },
+                { question: "Quelle est la famille de matériaux la plus légère ?", answer: "plastique", hint: "Dérivé du pétrole." },
+                { question: "Quel matériau est issu d'un arbre ?", answer: "bois", hint: "Matériau naturel." },
+                { question: "Comment appelle-t-on le mélange de fer et de carbone ?", answer: "acier", hint: "Alliage métallique." },
+                { question: "Combien y a-t-il de grandes familles de matériaux ?", answer: "4", hint: "Métaux, plastiques..." },
+                { question: "Quel matériau conduit le mieux l'électricité ?", answer: "cuivre", hint: "Métal orangé." },
+                { question: "Quel matériau est recyclable à l'infini ?", answer: "aluminium", hint: "Métal léger." },
+                { question: "Comment s'appelle l'évolution qui prend en compte l'environnement ?", answer: "durable", hint: "Développement..." },
+                { question: "Quel objet a remplacé le walkman ?", answer: "baladeur numérique", hint: "Appareil pour écouter de la musique." },
+                { question: "Combien de générations de téléphones mobiles existe-t-il en 2026 ?", answer: "5", hint: "On parle de 5G." },
+                { question: "Quel matériau est transparent et cassant ?", answer: "verre", hint: "Pour les fenêtres." },
+                { question: "Quel métal ne rouille pas ?", answer: "inox", hint: "Acier inoxydable." },
+                { question: "Comment appelle-t-on un objet qui se connecte à Internet ?", answer: "connecté", hint: "Objet intelligent." },
+                { question: "Quelle propriété mesure la résistance à la rayure ?", answer: "dureté", hint: "Échelle de Mohs." },
+                { question: "Quel matériau composite est utilisé dans les avions ?", answer: "carbone", hint: "Fibre de..." },
+                { question: "À quelle température fond l'aluminium (en °C) ?", answer: "660", hint: "Entre 600 et 700." },
+                { question: "Comment appelle-t-on un matériau isolant électrique ?", answer: "isolant", hint: "Contraire de conducteur." },
+                { question: "Quel matériau biodégradable remplace le plastique ?", answer: "bioplastique", hint: "Bio + plastique." },
+                { question: "En quelle année a été créé le premier ordinateur personnel grand public ?", answer: "1977", hint: "Apple II." }
+            ],
+            1: [
+                { question: "Comment appelle-t-on un programme malveillant ?", answer: "virus", hint: "Comme une maladie." },
+                { question: "Combien de caractères minimum pour un mot de passe sûr ?", answer: "12", hint: "Plus de 10." },
+                { question: "Comment s'appelle l'usurpation d'identité par email ?", answer: "phishing", hint: "Commence par 'ph'." },
+                { question: "Quelle technique crypte un fichier ?", answer: "chiffrement", hint: "Rendre illisible." },
+                { question: "Comment appelle-t-on les traces laissées sur Internet ?", answer: "empreinte numérique", hint: "Tout ce qu'on fait en ligne." },
+                { question: "Quel protocole sécurise les sites web (avec un cadenas) ?", answer: "https", hint: "HTTP sécurisé." },
+                { question: "Combien d'octets dans 1 kilooctet ?", answer: "1024", hint: "Un peu plus que 1000." },
+                { question: "Quelle loi européenne protège les données personnelles ?", answer: "rgpd", hint: "Règlement Général..." },
+                { question: "Comment appelle-t-on l'authentification en deux étapes ?", answer: "double authentification", hint: "Deux vérifications." },
+                { question: "Que signifie CPU en informatique ?", answer: "unité centrale", hint: "Cerveau de l'ordinateur." },
+                { question: "Combien de bits dans un octet ?", answer: "8", hint: "Base de l'informatique." },
+                { question: "Comment s'appelle la mémoire vive de l'ordinateur ?", answer: "ram", hint: "Mémoire temporaire." },
+                { question: "Quel langage de programmation utilise des blocs visuels ?", answer: "scratch", hint: "Pour apprendre à coder." },
+                { question: "Comment s'appelle l'adresse d'un site web ?", answer: "url", hint: "Commence par http://." },
+                { question: "Combien de valeurs peut prendre un bit ?", answer: "2", hint: "0 ou 1." },
+                { question: "Comment s'appelle un réseau local ?", answer: "lan", hint: "Local Area Network." },
+                { question: "Comment s'appelle le stockage de données sur Internet ?", answer: "cloud", hint: "Nuage en anglais." },
+                { question: "Combien de mégaoctets dans 1 gigaoctet ?", answer: "1024", hint: "Comme pour les kilooctets." },
+                { question: "Comment s'appelle un logiciel espion ?", answer: "spyware", hint: "Espionne vos activités." },
+                { question: "Quel type d'attaque sature un serveur de requêtes ?", answer: "ddos", hint: "Attaque par déni de service." },
+                { question: "Comment s'appelle un pare-feu en anglais ?", answer: "firewall", hint: "Protège contre les intrusions." }
+            ],
+            2: [
+                { question: "Combien de piliers du développement durable ?", answer: "3", hint: "Économique, social, environnemental." },
+                { question: "Sur combien est noté l'indice de réparabilité ?", answer: "10", hint: "Comme une note sur 10." },
+                { question: "Quel métal précieux dans les smartphones ?", answer: "or", hint: "Métal jaune et précieux." },
+                { question: "Quelle énergie provient du soleil ?", answer: "solaire", hint: "Panneaux solaires." },
+                { question: "Comment s'appelle l'énergie du vent ?", answer: "éolienne", hint: "Éoliennes." },
+                { question: "Combien d'énergies renouvelables principales ?", answer: "5", hint: "Solaire, éolien, hydraulique, géothermique, biomasse." },
+                { question: "Quelle énergie utilise la force de l'eau ?", answer: "hydraulique", hint: "Barrages." },
+                { question: "Comment s'appelle l'énergie de la Terre ?", answer: "géothermique", hint: "Géo = Terre." },
+                { question: "Combien de litres d'eau pour fabriquer un jean ?", answer: "7500", hint: "Entre 7000 et 8000." },
+                { question: "Comment appelle-t-on le cycle de vie d'un produit ?", answer: "acv", hint: "De sa création à sa fin de vie." },
+                { question: "Quel est le principal gaz à effet de serre ?", answer: "co2", hint: "Dioxyde de carbone." },
+                { question: "Combien d'années pour dégrader une bouteille plastique ?", answer: "450", hint: "Plusieurs siècles." },
+                { question: "Comment appelle-t-on l'énergie qui se renouvelle naturellement ?", answer: "renouvelable", hint: "Contraire de fossile." },
+                { question: "Quel label garantit qu'un produit est respectueux de l'environnement ?", answer: "écolabel", hint: "Label écologique." },
+                { question: "Combien de watts consomme une ampoule LED standard ?", answer: "10", hint: "Moins qu'une ampoule classique." },
+                { question: "Quelle unité mesure l'énergie ?", answer: "joule", hint: "Symbole : J." },
+                { question: "Comment s'appelle la transformation de la lumière en électricité ?", answer: "photovoltaïque", hint: "Panneaux solaires." },
+                { question: "Quel pourcentage de l'électricité française est d'origine nucléaire en 2026 ?", answer: "50", hint: "En baisse depuis 2020." },
+                { question: "Quelle est l'unité de mesure de la puissance électrique ?", answer: "watt", hint: "Symbole : W." },
+                { question: "Quel est l'objectif maximal de réchauffement climatique selon l'Accord de Paris ?", answer: "1.5", hint: "En degrés Celsius." },
+                { question: "Comment s'appelle l'énergie stockée dans un objet en hauteur ?", answer: "potentielle", hint: "Énergie de position." },
+                { question: "Quelle énergie est produite par un objet en mouvement ?", answer: "cinétique", hint: "Énergie du mouvement." }
+            ],
+            3: [
+                { question: "Comment s'appelle l'étude de l'adaptation à l'humain ?", answer: "ergonomie", hint: "Confort et efficacité." },
+                { question: "Combien de clics max pour accéder à une info ?", answer: "3", hint: "Règle des 3 clics." },
+                { question: "Comment s'appelle le document qui définit les besoins pour un projet ?", answer: "cahier des charges", hint: "Liste des exigences." },
+                { question: "Quelle couleur pour les boutons de validation ?", answer: "vert", hint: "Comme un feu tricolore." },
+                { question: "Quelle fonction permet de ralentir un vélo ?", answer: "frein", hint: "Sécurité." },
+                { question: "Comment s'appelle la fonction qui guide ?", answer: "direction", hint: "Volant ou guidon." },
+                { question: "Quelle fonction permet de voir dans l'obscurité ?", answer: "éclairage", hint: "Phares ou lampe." },
+                { question: "Combien de fonctions principales un vélo doit-il assurer ?", answer: "5", hint: "Rouler, diriger, freiner, éclairer, transporter." },
+                { question: "Comment s'appelle le système de transmission ?", answer: "transmission", hint: "Chaîne et pignons." },
+                { question: "Comment s'appelle un mouvement circulaire complet ?", answer: "rotation", hint: "360 degrés." },
+                { question: "Comment s'appelle une instruction qui se répète ?", answer: "boucle", hint: "For ou while." },
+                { question: "Quelle structure fait un choix ?", answer: "condition", hint: "Si... alors..." },
+                { question: "Comment s'appelle une suite d'instructions ?", answer: "algorithme", hint: "Recette de cuisine pour l'ordinateur." },
+                { question: "Combien de valeurs pour une variable booléenne ?", answer: "2", hint: "Vrai ou faux." },
+                { question: "Comment s'appelle un bloc réutilisable ?", answer: "fonction", hint: "Sous-programme." },
+                { question: "Quel capteur mesure la distance ?", answer: "ultrason", hint: "Comme les chauves-souris." },
+                { question: "Comment s'appelle la carte Arduino ?", answer: "microcontrôleur", hint: "Mini-ordinateur." },
+                { question: "Combien de broches numériques sur Arduino Uno ?", answer: "14", hint: "Entre 10 et 20." },
+                { question: "Quelle fonction démarre Arduino ?", answer: "setup", hint: "Initialisation." },
+                { question: "Comment s'appelle la boucle principale Arduino ?", answer: "loop", hint: "Se répète." },
+                { question: "Quel composant émet de la lumière ?", answer: "led", hint: "Diode électroluminescente." }
+            ]
+        };
+
+        // Codes secrets pour chaque pièce
         const codes = ["INNO2026", "SECU2026", "DURA2026", "ERGO2026"];
         const MAGIC_CODE = "MAGIC2026";
         let correctAnswers = [[false, false, false, false], [false, false, false, false], [false, false, false, false], [false, false, false, false]];
-        let currentTheme = -1;
+        let currentRoom = -1;
 
         // Démarrer un thème
         function startTheme(themeIndex) {
             if (themeIndex === 0 || (themeIndex > 0 && document.getElementById(`theme${themeIndex - 1}`).classList.contains('locked') === false)) {
                 document.getElementById('homePage').style.display = 'none';
                 document.getElementById(`room${themeIndex}`).style.display = 'block';
-                currentTheme = themeIndex;
+                currentRoom = themeIndex;
+                loadQuestions(themeIndex);
+            } else {
+                alert("Vous devez d'abord terminer la pièce précédente !");
             }
         }
 
@@ -335,21 +365,40 @@
             document.getElementById('homePage').style.display = 'block';
         }
 
+        // Charger les questions aléatoires
+        function loadQuestions(roomIndex) {
+            const container = document.getElementById(`questions${roomIndex}`);
+            container.innerHTML = '';
+            const selectedQuestions = [...questions[roomIndex]].sort(() => 0.5 - Math.random()).slice(0, 4);
+            selectedQuestions.forEach((q, i) => {
+                container.innerHTML += `
+                    <div class="question">
+                        <p><strong>Question ${i+1} :</strong> ${q.question}</p>
+                        <input type="text" class="answer-input" id="answer${roomIndex}-${i}" placeholder="Votre réponse" />
+                        <button class="validate-btn" onclick="checkAnswer(${roomIndex}, ${i}, '${q.answer}')">Valider</button>
+                        <div id="feedback${roomIndex}-${i}" class="feedback"></div>
+                    </div>
+                `;
+            });
+        }
+
         // Vérifier une réponse
         function checkAnswer(roomIndex, questionIndex, correctAnswer) {
             const userAnswer = document.getElementById(`answer${roomIndex}-${questionIndex}`).value;
             const feedback = document.getElementById(`feedback${roomIndex}-${questionIndex}`);
 
-            if (userAnswer === MAGIC_CODE || userAnswer.toLowerCase() === correctAnswer) {
+            if (userAnswer === MAGIC_CODE || userAnswer.toLowerCase() === correctAnswer.toLowerCase()) {
                 feedback.innerHTML = '<span class="success">✓ Bonne réponse !</span>';
+                document.getElementById(`answer${roomIndex}-${questionIndex}`).style.backgroundColor = "#d4edda";
                 correctAnswers[roomIndex][questionIndex] = true;
                 checkAllAnswers(roomIndex);
             } else {
                 feedback.innerHTML = '<span class="error">✗ Mauvaise réponse. Réessayez !</span>';
+                document.getElementById(`answer${roomIndex}-${questionIndex}`).style.backgroundColor = "#f8d7da";
             }
         }
 
-        // Vérifier si toutes les réponses d'un thème sont correctes
+        // Vérifier si toutes les réponses d'une pièce sont correctes
         function checkAllAnswers(roomIndex) {
             if (correctAnswers[roomIndex].every(answer => answer)) {
                 document.getElementById(`secret-code${roomIndex}`).textContent = `Code secret : ${codes[roomIndex]}`;
@@ -358,6 +407,18 @@
                 if (roomIndex < 3) {
                     document.getElementById(`theme${roomIndex}`).classList.remove('locked');
                 }
+            }
+        }
+
+        // Vérifier le code secret pour accéder à une pièce
+        function checkCode(roomIndex) {
+            const codeInput = document.getElementById(`code-input${roomIndex}`).value;
+            if (codeInput === codes[roomIndex - 1]) {
+                document.getElementById(`room${roomIndex}`).style.display = 'block';
+                document.getElementById('homePage').style.display = 'none';
+                loadQuestions(roomIndex);
+            } else {
+                alert("Code incorrect. Veuillez réessayer.");
             }
         }
 
