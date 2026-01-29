@@ -16,6 +16,8 @@
             --pastel-pink: #ffb3c6;
             --pastel-green: #b7e4c7;
             --pastel-yellow: #ffdfba;
+            --success-color: #d4edda;
+            --error-color: #f8d7da;
         }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -41,12 +43,12 @@
             color: white;
             margin: -20px -20px 20px -20px;
         }
+        h1, h2, h3 {
+            color: var(--primary-color);
+        }
         h1 {
             margin: 0;
             font-size: 2.5rem;
-        }
-        h2 {
-            color: var(--primary-color);
         }
         .theme-card {
             background-color: var(--card-color);
@@ -144,6 +146,22 @@
             margin: 20px 0;
             display: none;
         }
+        .success {
+            background-color: var(--success-color);
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        .error {
+            background-color: var(--error-color);
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        .feedback {
+            margin-top: 5px;
+            font-weight: bold;
+        }
         #screenshot-btn {
             display: block;
             margin: 20px auto;
@@ -160,13 +178,23 @@
             font-size: 1.2rem;
             margin: 10px 0;
         }
+        .magic-code-input {
+            margin-top: 10px;
+            text-align: center;
+        }
+        .magic-code-input input {
+            width: 200px;
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
             <h1>Escape Game Technologie</h1>
-            <p>Bienvenue dans l'escape game ! Résolvez les énigmes pour avancer.</p>
+            <p>Bienvenue ! Résolvez les énigmes pour avancer.</p>
         </header>
 
         <div class="timer" id="timer">Temps restant : <span id="time">300</span> secondes</div>
@@ -193,6 +221,10 @@
         <div id="room0" class="theme-card">
             <h2>Thème : Innovations de Rupture</h2>
             <div id="questions0"></div>
+            <div class="magic-code-input">
+                <input type="text" id="magic-code0" placeholder="Code magique (optionnel)" />
+                <button onclick="useMagicCode(0)">Valider</button>
+            </div>
             <div id="secret-code0" class="code-input" style="display: none;">
                 Code secret : <span id="code0"></span>
             </div>
@@ -202,6 +234,10 @@
         <div id="room1" class="theme-card" style="display: none;">
             <h2>Thème : Cybersécurité</h2>
             <div id="questions1"></div>
+            <div class="magic-code-input">
+                <input type="text" id="magic-code1" placeholder="Code magique (optionnel)" />
+                <button onclick="useMagicCode(1)">Valider</button>
+            </div>
             <div id="secret-code1" class="code-input" style="display: none;">
                 Code secret : <span id="code1"></span>
             </div>
@@ -211,6 +247,10 @@
         <div id="room2" class="theme-card" style="display: none;">
             <h2>Thème : Développement Durable</h2>
             <div id="questions2"></div>
+            <div class="magic-code-input">
+                <input type="text" id="magic-code2" placeholder="Code magique (optionnel)" />
+                <button onclick="useMagicCode(2)">Valider</button>
+            </div>
             <div id="secret-code2" class="code-input" style="display: none;">
                 Code secret : <span id="code2"></span>
             </div>
@@ -220,6 +260,10 @@
         <div id="room3" class="theme-card" style="display: none;">
             <h2>Thème : Expérience Utilisateur</h2>
             <div id="questions3"></div>
+            <div class="magic-code-input">
+                <input type="text" id="magic-code3" placeholder="Code magique (optionnel)" />
+                <button onclick="useMagicCode(3)">Valider</button>
+            </div>
             <div id="secret-code3" class="code-input" style="display: none;">
                 Code secret : <span id="code3"></span>
             </div>
@@ -257,7 +301,7 @@
         <div class="victory" id="victory">
             <h2>Bravo ! Vous avez gagné !</h2>
             <p>Temps restant : <span id="remainingTime"></span></p>
-            <button id="screenshot-btn" onclick="alert('Prenez une capture d\'écran et téléchargez-la sur JotForm.')">Capture d'écran</button>
+            <button id="screenshot-btn" onclick="alert('Prenez une capture d\'écran et téléchargez-la sur JotForm avec votre nom, prénom, classe et le temps restant.')">Capture d'écran</button>
         </div>
     </div>
 
@@ -273,6 +317,25 @@
                 { question: "Comment appelle-t-on le mélange de fer et de carbone ?", answer: "acier", hint: "Alliage métallique." },
                 { question: "Combien y a-t-il de grandes familles de matériaux ?", answer: "4", hint: "Métaux, plastiques..." },
                 { question: "Quel matériau conduit le mieux l'électricité ?", answer: "cuivre", hint: "Métal orangé." },
+                { question: "Quel matériau est recyclable à l'infini ?", answer: "aluminium", hint: "Métal léger." },
+                { question: "Comment s'appelle l'évolution qui prend en compte l'environnement ?", answer: "durable", hint: "Développement..." },
+                { question: "Quel objet a remplacé le walkman ?", answer: "smartphone", hint: "Téléphone intelligent." },
+                { question: "Combien de générations de téléphones mobiles existe-t-il ?", answer: "5", hint: "On parle de 5G." },
+                { question: "Quel matériau est transparent et cassant ?", answer: "verre", hint: "Pour les fenêtres." },
+                { question: "Quel métal ne rouille pas ?", answer: "inox", hint: "Acier inoxydable." },
+                { question: "Comment appelle-t-on un objet qui se connecte à Internet ?", answer: "connecté", hint: "Objet..." },
+                { question: "Quelle propriété mesure la résistance à la déformation ?", answer: "dureté", hint: "Échelle de Mohs." },
+                { question: "Quel matériau composite est utilisé dans les avions ?", answer: "carbone", hint: "Fibre de..." },
+                { question: "À quelle température fond l'aluminium (en °C) ?", answer: "660", hint: "Entre 600 et 700." },
+                { question: "Comment appelle-t-on un matériau isolant électrique ?", answer: "isolant", hint: "Contraire de conducteur." },
+                { question: "Quel matériau biodégradable remplace le plastique ?", answer: "bioplastique", hint: "Bio + plastique." },
+                { question: "En quelle année a été créé le premier ordinateur personnel ?", answer: "1981", hint: "Années 1980." },
+                { question: "Qui a inventé le World Wide Web ?", answer: "Berners-Lee", hint: "Tim Berners-..." },
+                { question: "Quel pourcentage de plastiques est recyclé en France ?", answer: "26", hint: "Entre 20 et 30%." },
+                { question: "Comment s'appelle le procédé de chauffage du verre ?", answer: "trempe", hint: "Verre trempé." },
+                { question: "Quelle invention a permis le streaming vidéo ?", answer: "internet", hint: "Réseau mondial." },
+                { question: "Quel matériau est utilisé pour fabriquer les écrans tactiles ?", answer: "verre", hint: "Transparent et résistant." },
+                { question: "Quel est le premier ordinateur personnel grand public ?", answer: "Apple II", hint: "Créé par Steve Wozniak et Steve Jobs." }
             ],
             1: [
                 { question: "Comment appelle-t-on un programme malveillant ?", answer: "virus", hint: "Comme une maladie." },
@@ -281,6 +344,25 @@
                 { question: "Quelle technique crypte un fichier ?", answer: "chiffrement", hint: "Rendre illisible." },
                 { question: "Comment appelle-t-on les traces sur Internet ?", answer: "numériques", hint: "Traces..." },
                 { question: "Quel protocole sécurise les sites web ?", answer: "https", hint: "HTTP + S." },
+                { question: "Combien d'octets dans 1 kilooctet ?", answer: "1024", hint: "Un peu plus de 1000." },
+                { question: "Quelle loi protège les données en Europe ?", answer: "RGPD", hint: "4 lettres." },
+                { question: "Comment appelle-t-on l'authentification en deux étapes ?", answer: "double", hint: "Authentication..." },
+                { question: "Que signifie CPU ?", answer: "processeur", hint: "Cerveau de l'ordinateur." },
+                { question: "Combien de bits dans un octet ?", answer: "8", hint: "Moins de 10." },
+                { question: "Comment s'appelle la mémoire temporaire ?", answer: "RAM", hint: "3 lettres." },
+                { question: "Quel langage utilise des blocs visuels ?", answer: "Scratch", hint: "Pour débutants." },
+                { question: "Comment s'appelle l'adresse d'un site web ?", answer: "URL", hint: "3 lettres." },
+                { question: "Combien de valeurs pour un bit ?", answer: "2", hint: "0 et 1." },
+                { question: "Comment s'appelle un réseau local ?", answer: "LAN", hint: "Local Area Network." },
+                { question: "Comment s'appelle le stockage en ligne ?", answer: "cloud", hint: "Nuage en anglais." },
+                { question: "Combien de Mo dans 1 Go ?", answer: "1000", hint: "Environ 1000." },
+                { question: "Comment s'appelle un logiciel espion ?", answer: "spyware", hint: "Spy = espion." },
+                { question: "Quel type d'attaque sature un serveur ?", answer: "DDoS", hint: "4 lettres." },
+                { question: "Comment s'appelle un pare-feu en anglais ?", answer: "firewall", hint: "Fire + wall." },
+                { question: "Comment s'appelle un logiciel rançonneur ?", answer: "ransomware", hint: "Ransom = rançon." },
+                { question: "Quel protocole transfère des pages web ?", answer: "HTTP", hint: "4 lettres." },
+                { question: "Comment s'appelle un réseau privé virtuel ?", answer: "VPN", hint: "3 lettres." },
+                { question: "Quel appareil connecte plusieurs ordinateurs ?", answer: "switch", hint: "Commutateur." }
             ],
             2: [
                 { question: "Combien de piliers du développement durable ?", answer: "3", hint: "Économique, social, environnemental." },
@@ -289,19 +371,59 @@
                 { question: "Quelle énergie provient du soleil ?", answer: "solaire", hint: "Énergie..." },
                 { question: "Comment s'appelle l'énergie du vent ?", answer: "éolienne", hint: "Énergie..." },
                 { question: "Combien d'énergies renouvelables principales ?", answer: "5", hint: "Solaire, éolien..." },
+                { question: "Quelle énergie utilise la force de l'eau ?", answer: "hydraulique", hint: "Barrages." },
+                { question: "Comment s'appelle l'énergie de la Terre ?", answer: "géothermique", hint: "Géo = Terre." },
+                { question: "Combien de litres d'eau pour fabriquer un jean ?", answer: "7500", hint: "Entre 7000 et 8000." },
+                { question: "Comment appelle-t-on le cycle de vie d'un produit ?", answer: "berceau", hint: "Du... au tombeau." },
+                { question: "Quel gaz à effet de serre principal ?", answer: "CO2", hint: "Formule chimique." },
+                { question: "Combien d'années pour dégrader une bouteille plastique ?", answer: "450", hint: "Entre 400 et 500." },
+                { question: "Comment appelle-t-on l'énergie qui se renouvelle ?", answer: "renouvelable", hint: "Énergie..." },
+                { question: "Quel label garantit une production écologique ?", answer: "écolabel", hint: "Éco + label." },
+                { question: "Combien de Watts consomme une ampoule LED ?", answer: "10", hint: "Moins de 15W." },
+                { question: "Quelle unité mesure l'énergie ?", answer: "joule", hint: "Symbole : J." },
+                { question: "Comment s'appelle la transformation solaire en électricité ?", answer: "photovoltaïque", hint: "Photo = lumière." },
+                { question: "Quel pourcentage de l'électricité française est nucléaire ?", answer: "70", hint: "Environ 70%." },
+                { question: "Quelle est l'unité de puissance ?", answer: "watt", hint: "Symbole : W." },
+                { question: "Combien de degrés max selon l'Accord de Paris ?", answer: "2", hint: "Réchauffement." },
+                { question: "Comment s'appelle l'énergie stockée en hauteur ?", answer: "potentielle", hint: "Énergie..." },
+                { question: "Quelle énergie produit un vélo en mouvement ?", answer: "cinétique", hint: "Énergie du mouvement." },
+                { question: "Quel combustible fossile est le plus utilisé ?", answer: "pétrole", hint: "Or noir." },
+                { question: "Comment s'appelle l'énergie des aliments ?", answer: "chimique", hint: "Énergie..." },
+                { question: "Quelle est la tension du réseau français (en V) ?", answer: "230", hint: "Entre 220 et 240." }
             ],
             3: [
                 { question: "Comment s'appelle l'étude de l'adaptation à l'humain ?", answer: "ergonomie", hint: "Science du confort." },
                 { question: "Combien de clics max pour accéder à une info ?", answer: "3", hint: "Règle des ... clics." },
                 { question: "Comment s'appelle le document qui liste les exigences ?", answer: "cahier", hint: "... des charges." },
                 { question: "Quelle couleur pour les boutons de validation ?", answer: "vert", hint: "Feu pour avancer." },
+                { question: "Quelle fonction permet de ralentir un vélo ?", answer: "freiner", hint: "Fonction de..." },
                 { question: "Comment s'appelle la fonction qui guide ?", answer: "diriger", hint: "Volant, guidon." },
+                { question: "Quelle fonction permet de voir la nuit ?", answer: "éclairer", hint: "Phares." },
+                { question: "Combien de fonctions dans un vélo ?", answer: "5", hint: "Propulser, diriger..." },
+                { question: "Comment s'appelle le système de transmission ?", answer: "transmission", hint: "Chaîne, engrenages." },
+                { question: "Comment s'appelle le mouvement circulaire ?", answer: "rotation", hint: "Tourner." },
+                { question: "Comment s'appelle une instruction qui se répète ?", answer: "boucle", hint: "For, while." },
+                { question: "Quelle structure fait un choix ?", answer: "si", hint: "Instruction if." },
+                { question: "Comment s'appelle une suite d'instructions ?", answer: "algorithme", hint: "Méthode." },
+                { question: "Combien de valeurs pour une variable booléenne ?", answer: "2", hint: "Vrai ou faux." },
+                { question: "Comment s'appelle un bloc réutilisable ?", answer: "fonction", hint: "Sous-programme." },
                 { question: "Quel capteur mesure la distance ?", answer: "ultrason", hint: "Ultrasons." },
+                { question: "Comment s'appelle la carte Arduino ?", answer: "microcontrôleur", hint: "Mini-ordinateur." },
+                { question: "Combien de broches numériques sur Arduino Uno ?", answer: "14", hint: "Entre 10 et 20." },
+                { question: "Quelle fonction démarre Arduino ?", answer: "setup", hint: "Initialisation." },
+                { question: "Comment s'appelle la boucle principale Arduino ?", answer: "loop", hint: "Se répète." },
+                { question: "Quel composant émet de la lumière ?", answer: "LED", hint: "Diode." },
+                { question: "Quel symbole pour l'égalité en programmation ?", answer: "==", hint: "Deux égal." },
+                { question: "Valeur max PWM sur Arduino ?", answer: "255", hint: "8 bits." },
+                { question: "Comment s'appelle le logiciel Arduino ?", answer: "IDE", hint: "Environnement." },
+                { question: "Comment s'appelle le premier modèle d'un projet ?", answer: "prototype", hint: "Premier exemplaire." }
             ]
         };
 
         // Codes secrets pour chaque thème
         const codes = ["A7B2", "C3D9", "E5F1", "G8H4"];
+        // Code magique universel
+        const MAGIC_CODE = "MAGIC2026";
         let currentRoom = 0;
         let timeLeft = 300;
         let timer;
@@ -311,7 +433,10 @@
             timer = setInterval(() => {
                 timeLeft--;
                 document.getElementById('time').textContent = timeLeft;
-                if (timeLeft <= 0) clearInterval(timer);
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    alert("Temps écoulé !");
+                }
             }, 1000);
         }
 
@@ -334,9 +459,11 @@
                 container.innerHTML += `
                     <div class="question">
                         <p><strong>Question ${i+1} :</strong> ${q.question}</p>
-                        <input type="text" class="answer-input" id="answer${roomIndex}-${i}" placeholder="Votre réponse" onchange="checkAnswer(${roomIndex}, ${i}, '${q.answer}')">
+                        <input type="text" class="answer-input" id="answer${roomIndex}-${i}" placeholder="Votre réponse" />
                         <button class="hint-btn" onclick="showHint('hint${roomIndex}-${i}')">Indice</button>
                         <div id="hint${roomIndex}-${i}" class="hint">${q.hint}</div>
+                        <button onclick="checkAnswer(${roomIndex}, ${i}, '${q.answer}')">Valider</button>
+                        <div id="feedback${roomIndex}-${i}" class="feedback"></div>
                     </div>
                 `;
             });
@@ -345,9 +472,14 @@
         // Vérifier la réponse
         function checkAnswer(roomIndex, questionIndex, correctAnswer) {
             const userAnswer = document.getElementById(`answer${roomIndex}-${questionIndex}`).value.toLowerCase();
+            const feedback = document.getElementById(`feedback${roomIndex}-${questionIndex}`);
             if (userAnswer === correctAnswer) {
+                feedback.innerHTML = '<div class="success">Bonne réponse !</div>';
                 document.getElementById(`answer${roomIndex}-${questionIndex}`).style.backgroundColor = "#d4edda";
                 checkAllAnswers(roomIndex);
+            } else {
+                feedback.innerHTML = '<div class="error">Mauvaise réponse. Réessayez !</div>';
+                document.getElementById(`answer${roomIndex}-${questionIndex}`).style.backgroundColor = "#f8d7da";
             }
         }
 
@@ -366,6 +498,20 @@
                 document.getElementById(`code${roomIndex}`).textContent = codes[roomIndex];
                 document.getElementById(`next${roomIndex}`).style.display = 'block';
                 if (roomIndex < 3) document.getElementById(`door${roomIndex + 2}`).classList.remove('locked');
+            }
+        }
+
+        // Utiliser le code magique
+        function useMagicCode(roomIndex) {
+            const magicCodeInput = document.getElementById(`magic-code${roomIndex}`).value;
+            if (magicCodeInput === MAGIC_CODE) {
+                document.getElementById(`secret-code${roomIndex}`).style.display = 'block';
+                document.getElementById(`code${roomIndex}`).textContent = codes[roomIndex];
+                document.getElementById(`next${roomIndex}`).style.display = 'block';
+                if (roomIndex < 3) document.getElementById(`door${roomIndex + 2}`).classList.remove('locked');
+                alert("Code magique accepté ! Vous pouvez passer à la pièce suivante.");
+            } else {
+                alert("Code magique incorrect.");
             }
         }
 
