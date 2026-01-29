@@ -1,1 +1,453 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escape Game Technologie</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #6C63FF;
+            --secondary-color: #FF6584;
+            --background-color: #f8f9fa;
+            --card-color: #ffffff;
+            --text-color: #333333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background-color);
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: var(--card-color);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        header {
+            text-align: center;
+            padding: 20px 0;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: 15px 15px 0 0;
+            color: white;
+            margin: -20px -20px 20px -20px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+
+        h2 {
+            color: var(--primary-color);
+            border-bottom: 2px solid #FFD700;
+            padding-bottom: 10px;
+        }
+
+        #timer {
+            font-size: 1.5rem;
+            text-align: center;
+            margin: 20px 0;
+            color: var(--secondary-color);
+            font-weight: bold;
+        }
+
+        .room-selector {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+
+        .room-card {
+            background-color: var(--card-color);
+            border-radius: 10px;
+            padding: 20px;
+            width: 200px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            margin: 10px;
+            border: 2px solid transparent;
+        }
+
+        .room-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .room-card.active {
+            border-color: var(--primary-color);
+            background-color: #f0f4ff;
+        }
+
+        .room-card i {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .room {
+            display: none;
+        }
+
+        .room.active {
+            display: block;
+        }
+
+        .question-card {
+            background-color: var(--card-color);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid var(--primary-color);
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            margin: 15px 0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            margin: 10px 5px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #5a4fcf;
+        }
+
+        .hint-button {
+            background-color: #b7e4c7;
+            color: var(--text-color);
+        }
+
+        .hint-button:hover {
+            background-color: #95c9a1;
+        }
+
+        .code-display {
+            font-family: 'Courier New', monospace;
+            font-size: 1.5rem;
+            text-align: center;
+            margin: 20px 0;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 8px;
+            color: var(--secondary-color);
+            font-weight: bold;
+        }
+
+        #final-room {
+            text-align: center;
+        }
+
+        .coding-system {
+            background-color: var(--card-color);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        #coded-phrase {
+            font-family: monospace;
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .success-message {
+            color: #28a745;
+            font-size: 1.5rem;
+            text-align: center;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+
+        .error-message {
+            color: #dc3545;
+            font-size: 1.2rem;
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-laptop-code"></i> Escape Game Technologie</h1>
+        </header>
+
+        <div id="timer">Temps restant : 300 secondes</div>
+
+        <div id="room-selection" class="room active">
+            <h2>Sélectionnez une pièce à explorer</h2>
+            <div class="room-selector">
+                <div class="room-card" onclick="startRoom('evolution_techno')">
+                    <i class="fas fa-microchip"></i>
+                    <h3>Évolution Technologique</h3>
+                </div>
+                <div class="room-card" onclick="startRoom('materiaux')">
+                    <i class="fas fa-flask"></i>
+                    <h3>Matériaux</h3>
+                </div>
+                <div class="room-card" onclick="startRoom('energie')">
+                    <i class="fas fa-bolt"></i>
+                    <h3>Énergie</h3>
+                </div>
+                <div class="room-card" onclick="startRoom('informatique')">
+                    <i class="fas fa-desktop"></i>
+                    <h3>Informatique</h3>
+                </div>
+            </div>
+        </div>
+
+        <div id="evolution_techno" class="room">
+            <h2><i class="fas fa-microchip"></i> Évolution Technologique</h2>
+            <div class="question-card">
+                <p id="evolution_techno-question"></p>
+                <input type="text" id="evolution_techno-answer" placeholder="Votre réponse">
+                <div>
+                    <button onclick="checkAnswer('evolution_techno')">Valider</button>
+                    <button class="hint-button" onclick="showHint('evolution_techno')"><i class="fas fa-lightbulb"></i> Indice</button>
+                </div>
+                <div id="evolution_techno-hint" class="error-message" style="display: none;"></div>
+                <div id="evolution_techno-code" class="code-display"></div>
+            </div>
+        </div>
+
+        <div id="materiaux" class="room">
+            <h2><i class="fas fa-flask"></i> Matériaux</h2>
+            <div class="question-card">
+                <p id="materiaux-question"></p>
+                <input type="text" id="materiaux-answer" placeholder="Votre réponse">
+                <div>
+                    <button onclick="checkAnswer('materiaux')">Valider</button>
+                    <button class="hint-button" onclick="showHint('materiaux')"><i class="fas fa-lightbulb"></i> Indice</button>
+                </div>
+                <div id="materiaux-hint" class="error-message" style="display: none;"></div>
+                <div id="materiaux-code" class="code-display"></div>
+            </div>
+        </div>
+
+        <div id="energie" class="room">
+            <h2><i class="fas fa-bolt"></i> Énergie</h2>
+            <div class="question-card">
+                <p id="energie-question"></p>
+                <input type="text" id="energie-answer" placeholder="Votre réponse">
+                <div>
+                    <button onclick="checkAnswer('energie')">Valider</button>
+                    <button class="hint-button" onclick="showHint('energie')"><i class="fas fa-lightbulb"></i> Indice</button>
+                </div>
+                <div id="energie-hint" class="error-message" style="display: none;"></div>
+                <div id="energie-code" class="code-display"></div>
+            </div>
+        </div>
+
+        <div id="informatique" class="room">
+            <h2><i class="fas fa-desktop"></i> Informatique</h2>
+            <div class="question-card">
+                <p id="informatique-question"></p>
+                <input type="text" id="informatique-answer" placeholder="Votre réponse">
+                <div>
+                    <button onclick="checkAnswer('informatique')">Valider</button>
+                    <button class="hint-button" onclick="showHint('informatique')"><i class="fas fa-lightbulb"></i> Indice</button>
+                </div>
+                <div id="informatique-hint" class="error-message" style="display: none;"></div>
+                <div id="informatique-code" class="code-display"></div>
+            </div>
+        </div>
+
+        <div id="final-room" class="room">
+            <h2><i class="fas fa-lock-open"></i> Pièce Finale : Décodage</h2>
+            <p>Félicitations ! Voici un résumé des systèmes de codage :</p>
+            <div class="coding-system">
+                <h3><i class="fas fa-code"></i> Systèmes de Codage</h3>
+                <ul>
+                    <li><strong>Binaire</strong> : Utilise des 0 et des 1.</li>
+                    <li><strong>Morse</strong> : Points et traits.</li>
+                    <li><strong>Chiffre de César</strong> : Décalage de lettres.</li>
+                    <li><strong>Hexadécimal</strong> : Base 16 (0-9, A-F).</li>
+                </ul>
+            </div>
+            <p>Décodez cette phrase : <span id="coded-phrase">01001000 01000101 01001100 01001100 01001111</span></p>
+            <input type="text" id="final-answer" placeholder="Votre réponse">
+            <button onclick="checkFinalAnswer()">Valider</button>
+            <div id="final-result" class="success-message"></div>
+        </div>
+
+        <footer>
+            <p>Créé par M. Boivin pour la classe de 3ème - Année 2026</p>
+        </footer>
+    </div>
+
+    <script>
+        // Données des questions et indices
+        const questions = {
+            evolution_techno: [
+                { question: "Quel est le premier ordinateur personnel grand public ?", answer: "Apple II", code: "A1", hint: "Créé par Steve Wozniak et Steve Jobs en 1977." },
+                { question: "En quelle année est né le World Wide Web ?", answer: "1989", code: "B2", hint: "Inventé par Tim Berners-Lee au CERN." },
+                { question: "Quel est le nom du premier smartphone moderne ?", answer: "iPhone", code: "C3", hint: "Lancé par Apple en 2007." },
+                { question: "Qui a inventé le téléphone ?", answer: "Graham Bell", code: "D4", hint: "Brevet déposé en 1876." }
+            ],
+            materiaux: [
+                { question: "Quel est le matériau le plus recyclé au monde ?", answer: "acier", code: "E5", hint: "Utilisé dans les boîtes de conserve et les voitures." },
+                { question: "Quel matériau est utilisé pour fabriquer les bouteilles en plastique ?", answer: "PET", code: "F6", hint: "Un type de plastique transparent." },
+                { question: "Quel métal est liquide à température ambiante ?", answer: "mercure", code: "G7", hint: "Utilisé dans les thermomètres." },
+                { question: "Quel matériau est extrait de la bauxite ?", answer: "aluminium", code: "H8", hint: "Léger et résistant à la corrosion." }
+            ],
+            energie: [
+                { question: "Quel est le type d'énergie produit par les panneaux solaires ?", answer: "électrique", code: "I9", hint: "Utilisée pour alimenter les appareils." },
+                { question: "Quel gaz est produit par la combustion du charbon ?", answer: "CO2", code: "J0", hint: "Responsable de l'effet de serre." },
+                { question: "Quel type d'énergie utilise les éoliennes ?", answer: "cinétique", code: "K1", hint: "Liée au mouvement du vent." },
+                { question: "Quel est le principal gaz dans le biogaz ?", answer: "méthane", code: "L2", hint: "Produit par la fermentation de matières organiques." }
+            ],
+            informatique: [
+                { question: "Quel est le langage de programmation utilisé pour les pages web ?", answer: "HTML", code: "M3", hint: "Commence par H." },
+                { question: "Quel est le nom du système d'exploitation open source ?", answer: "Linux", code: "N4", hint: "Créé par Linus Torvalds." },
+                { question: "Quel est le nom du premier virus informatique ?", answer: "Creeper", code: "O5", hint: "Créé en 1971." },
+                { question: "Quel est le nom du fondateur de Microsoft ?", answer: "Bill Gates", code: "P6", hint: "Abandonna Harvard pour créer son entreprise." }
+            ]
+        };
+
+        const hints = {
+            evolution_techno: [
+                "Créé par Steve Wozniak et Steve Jobs en 1977.",
+                "Inventé par Tim Berners-Lee au CERN.",
+                "Lancé par Apple en 2007.",
+                "Brevet déposé en 1876."
+            ],
+            materiaux: [
+                "Utilisé dans les boîtes de conserve et les voitures.",
+                "Un type de plastique transparent.",
+                "Utilisé dans les thermomètres.",
+                "Léger et résistant à la corrosion."
+            ],
+            energie: [
+                "Utilisée pour alimenter les appareils.",
+                "Responsable de l'effet de serre.",
+                "Liée au mouvement du vent.",
+                "Produit par la fermentation de matières organiques."
+            ],
+            informatique: [
+                "Commence par H.",
+                "Créé par Linus Torvalds.",
+                "Créé en 1971.",
+                "Abandonna Harvard pour créer son entreprise."
+            ]
+        };
+
+        let currentRoom = null;
+        let currentQuestionIndex = 0;
+        let roomCodes = {};
+        let timeLeft = 300;
+
+        // Minuterie
+        const timerElement = document.getElementById('timer');
+        const timer = setInterval(() => {
+            timeLeft--;
+            timerElement.textContent = `Temps restant : ${timeLeft} secondes`;
+            if (timeLeft <= 0) {
+                clearInterval(timer);
+                alert("Temps écoulé ! Le jeu est terminé.");
+                document.querySelectorAll('.room').forEach(room => room.classList.remove('active'));
+                document.getElementById('room-selection').classList.add('active');
+            }
+        }, 1000);
+
+        // Fonction pour démarrer une pièce
+        function startRoom(roomId) {
+            document.querySelectorAll('.room').forEach(room => room.classList.remove('active'));
+            document.getElementById(roomId).classList.add('active');
+            currentRoom = roomId;
+            currentQuestionIndex = 0;
+            showQuestion(roomId);
+        }
+
+        // Fonction pour afficher une question
+        function showQuestion(roomId) {
+            const questionData = questions[roomId][currentQuestionIndex];
+            document.getElementById(`${roomId}-question`).textContent = questionData.question;
+            document.getElementById(`${roomId}-answer`).value = '';
+            document.getElementById(`${roomId}-hint`).style.display = 'none';
+        }
+
+        // Fonction pour vérifier une réponse
+        function checkAnswer(roomId) {
+            const answerInput = document.getElementById(`${roomId}-answer`);
+            const questionData = questions[roomId][currentQuestionIndex];
+            if (answerInput.value.toLowerCase() === questionData.answer.toLowerCase()) {
+                if (!roomCodes[roomId]) roomCodes[roomId] = '';
+                roomCodes[roomId] += questionData.code;
+                document.getElementById(`${roomId}-code`).textContent = `Code : ${roomCodes[roomId]}`;
+
+                currentQuestionIndex++;
+                if (currentQuestionIndex < questions[roomId].length) {
+                    showQuestion(roomId);
+                } else {
+                    setTimeout(() => {
+                        alert(`Pièce terminée ! Code final : ${roomCodes[roomId]}`);
+                        document.getElementById(roomId).classList.remove('active');
+                        document.getElementById('room-selection').classList.add('active');
+
+                        // Vérifier si toutes les pièces sont terminées
+                        if (Object.keys(roomCodes).length === 4) {
+                            document.getElementById('room-selection').classList.remove('active');
+                            document.getElementById('final-room').classList.add('active');
+                        }
+                    }, 500);
+                }
+            } else {
+                alert("Réponse incorrecte. Essayez encore !");
+            }
+        }
+
+        // Fonction pour afficher un indice
+        function showHint(roomId) {
+            const hintElement = document.getElementById(`${roomId}-hint`);
+            hintElement.textContent = hints[roomId][currentQuestionIndex];
+            hintElement.style.display = 'block';
+        }
+
+        // Fonction pour vérifier la réponse finale
+        function checkFinalAnswer() {
+            const answer = document.getElementById('final-answer').value.toLowerCase();
+            if (answer === 'hello') {
+                document.getElementById('final-result').textContent = 'Félicitations, vous avez réussi l\'escape game ! 🎉';
+            } else {
+                document.getElementById('final-result').textContent = 'Dommage, ce n\'est pas la bonne réponse. Essayez encore !';
+            }
+        }
+    </script>
+</body>
+</html>
 
