@@ -1,302 +1,528 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escape Game Technologie - Classe de 3ème</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        :root {
-            --primary-color: #6C63FF;
-            --secondary-color: #FF6584;
-            --background-color: #f8f9fa;
-            --card-color: #ffffff;
-            --text-color: #333333;
-            --pastel-blue: #a2d2ff;
-            --pastel-pink: #ffb3c6;
-            --pastel-green: #b7e4c7;
-            --pastel-yellow: #ffdfba;
-        }
+import React, { useState, useEffect } from 'react';
+import { Clock, Lightbulb, Lock, CheckCircle, XCircle, Key, Trophy, BookOpen } from 'lucide-react';
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--background-color);
-            margin: 0;
-            padding: 0;
-            color: var(--text-color);
-            line-height: 1.6;
-        }
+export default function EscapeGame() {
+  const TEMPS_PAR_ROOM = 600;
+  
+  const [ecran, setEcran] = useState('accueil');
+  const [roomActuelle, setRoomActuelle] = useState(0);
+  const [temps, setTemps] = useState(TEMPS_PAR_ROOM);
+  const [enigmeActuelle, setEnigmeActuelle] = useState(0);
+  const [enigmesSelectionnees, setEnigmesSelectionnees] = useState([]);
+  const [reponse, setReponse] = useState('');
+  const [erreur, setErreur] = useState(false);
+  const [enigmesResolues, setEnigmesResolues] = useState([false, false, false, false]);
+  const [indiceAffiche, setIndiceAffiche] = useState(false);
+  const [codesRooms, setCodesRooms] = useState([]);
+  const [codeEntree, setCodeEntree] = useState('');
+  const [erreurCode, setErreurCode] = useState(false);
+  const [messageDecrypte, setMessageDecrypte] = useState('');
+  const [tempsTotal, setTempsTotal] = useState(0);
+  const [chiffrementSelectionne, setChiffrementSelectionne] = useState(null);
 
-        .container {
-            max-width: 900px;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: var(--card-color);
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        }
+  // ==========================================
+  // BANQUE DE QUESTIONS - 4 THÈMES x 25 QUESTIONS
+  // ==========================================
+  const banqueEnigmes = {
+    // ROOM 1: ÉVOLUTION TECHNOLOGIQUE (25 questions - Matériaux + Innovation)
+    evolution: [
+      { question: "Quelle innovation a permis de passer du téléphone fixe au mobile ?", reponse: "portabilite", indice: "Ce qui permet de déplacer", type: "text" },
+      { question: "En quelle année le premier iPhone est-il sorti ?", reponse: "2007", indice: "Entre 2000 et 2010", type: "number" },
+      { question: "Comment appelle-t-on une innovation qui change radicalement un marché ?", reponse: "rupture", indice: "Innovation de...", type: "text" },
+      { question: "Quelle est la famille de matériaux la plus légère ?", reponse: "plastique", indice: "Dérivé du pétrole", type: "text" },
+      { question: "Quel matériau est issu d'un arbre ?", reponse: "bois", indice: "Matériau naturel", type: "text" },
+      { question: "Comment appelle-t-on le mélange de fer et de carbone ?", reponse: "acier", indice: "Alliage métallique", type: "text" },
+      { question: "Combien y a-t-il de grandes familles de matériaux ?", reponse: "4", indice: "Métaux, plastiques...", type: "number" },
+      { question: "Quel matériau conduit le mieux l'électricité ?", reponse: "cuivre", indice: "Métal orangé", type: "text" },
+      { question: "Quel matériau est recyclable à l'infini ?", reponse: "aluminium", indice: "Métal léger", type: "text" },
+      { question: "Comment s'appelle l'évolution qui prend en compte l'environnement ?", reponse: "durable", indice: "Développement...", type: "text" },
+      { question: "Quel objet a remplacé le walkman ?", reponse: "smartphone", indice: "Téléphone intelligent", type: "text" },
+      { question: "Combien de générations de téléphones mobiles existe-t-il ?", reponse: "5", indice: "On parle de 5G", type: "number" },
+      { question: "Quel matériau est transparent et cassant ?", reponse: "verre", indice: "Pour les fenêtres", type: "text" },
+      { question: "Quel métal ne rouille pas ?", reponse: "inox", indice: "Acier inoxydable", type: "text" },
+      { question: "Comment appelle-t-on un objet qui se connecte à Internet ?", reponse: "connecte", indice: "Objet...", type: "text" },
+      { question: "Quelle propriété mesure la résistance à la déformation ?", reponse: "durete", indice: "Échelle de Mohs", type: "text" },
+      { question: "Quel matériau composite est utilisé dans les avions ?", reponse: "carbone", indice: "Fibre de...", type: "text" },
+      { question: "À quelle température fond l'aluminium (en °C) ?", reponse: "660", indice: "Entre 600 et 700", type: "number" },
+      { question: "Comment appelle-t-on un matériau isolant électrique ?", reponse: "isolant", indice: "Contraire de conducteur", type: "text" },
+      { question: "Quel matériau biodégradable remplace le plastique ?", reponse: "bioplastique", indice: "Bio + plastique", type: "text" },
+      { question: "En quelle année a été créé le premier ordinateur personnel ?", reponse: "1981", indice: "Années 1980", type: "number" },
+      { question: "Qui a inventé le World Wide Web ?", reponse: "berners", indice: "Tim Berners-...", type: "text" },
+      { question: "Quel pourcentage de plastiques est recyclé en France ?", reponse: "26", indice: "Entre 20 et 30%", type: "number" },
+      { question: "Comment s'appelle le procédé de chauffage du verre ?", reponse: "trempe", indice: "Verre trempé", type: "text" },
+      { question: "Quelle invention a permis le streaming vidéo ?", reponse: "internet", indice: "Réseau mondial", type: "text" }
+    ],
 
-        header {
-            text-align: center;
-            padding: 20px 0;
-            background: linear-gradient(135deg, var(--pastel-blue), var(--pastel-pink));
-            border-radius: 15px 15px 0 0;
-            color: white;
-            margin: -20px -20px 20px -20px;
-        }
+    // ROOM 2: CYBERSÉCURITÉ (25 questions - Informatique + Sécurité)
+    cybersecurite: [
+      { question: "Comment appelle-t-on un programme malveillant ?", reponse: "virus", indice: "Comme une maladie", type: "text" },
+      { question: "Combien de caractères min pour un mot de passe sûr ?", reponse: "12", indice: "Plus de 10", type: "number" },
+      { question: "Comment s'appelle l'usurpation d'identité par email ?", reponse: "phishing", indice: "Commence par 'ph'", type: "text" },
+      { question: "Quelle technique crypte un fichier ?", reponse: "chiffrement", indice: "Rendre illisible", type: "text" },
+      { question: "Comment appelle-t-on les traces sur Internet ?", reponse: "numeriques", indice: "Traces...", type: "text" },
+      { question: "Quel protocole sécurise les sites web ?", reponse: "https", indice: "HTTP + S", type: "text" },
+      { question: "Combien d'octets dans 1 kilooctet ?", reponse: "1024", indice: "Un peu plus de 1000", type: "number" },
+      { question: "Quelle loi protège les données en Europe ?", reponse: "rgpd", indice: "4 lettres", type: "text" },
+      { question: "Comment appelle-t-on l'authentification en deux étapes ?", reponse: "double", indice: "Authentification...", type: "text" },
+      { question: "Que signifie CPU ?", reponse: "processeur", indice: "Cerveau de l'ordinateur", type: "text" },
+      { question: "Combien de bits dans un octet ?", reponse: "8", indice: "Moins de 10", type: "number" },
+      { question: "Comment s'appelle la mémoire temporaire ?", reponse: "ram", indice: "3 lettres", type: "text" },
+      { question: "Quel langage utilise des blocs visuels ?", reponse: "scratch", indice: "Pour débutants", type: "text" },
+      { question: "Comment s'appelle l'adresse d'un site web ?", reponse: "url", indice: "3 lettres", type: "text" },
+      { question: "Combien de valeurs pour un bit ?", reponse: "2", indice: "0 et 1", type: "number" },
+      { question: "Comment s'appelle un réseau local ?", reponse: "lan", indice: "Local Area Network", type: "text" },
+      { question: "Comment s'appelle le stockage en ligne ?", reponse: "cloud", indice: "Nuage en anglais", type: "text" },
+      { question: "Combien de Mo dans 1 Go ?", reponse: "1000", indice: "Environ 1000", type: "number" },
+      { question: "Comment s'appelle un logiciel espion ?", reponse: "spyware", indice: "Spy = espion", type: "text" },
+      { question: "Quel type d'attaque sature un serveur ?", reponse: "ddos", indice: "4 lettres", type: "text" },
+      { question: "Comment s'appelle un pare-feu en anglais ?", reponse: "firewall", indice: "Fire + wall", type: "text" },
+      { question: "Comment s'appelle un logiciel rançonneur ?", reponse: "ransomware", indice: "Ransom = rançon", type: "text" },
+      { question: "Quel protocole transfère des pages web ?", reponse: "http", indice: "4 lettres", type: "text" },
+      { question: "Comment s'appelle un réseau privé virtuel ?", reponse: "vpn", indice: "3 lettres", type: "text" },
+      { question: "Quel appareil connecte plusieurs ordinateurs ?", reponse: "switch", indice: "Commutateur", type: "text" }
+    ],
 
-        h1 {
-            margin: 0;
-            font-size: 2.5rem;
-        }
+    // ROOM 3: DÉVELOPPEMENT DURABLE (25 questions - Énergies + Environnement)
+    durable: [
+      { question: "Combien de piliers du développement durable ?", reponse: "3", indice: "Économique, social...", type: "number" },
+      { question: "Sur combien est noté l'indice de réparabilité ?", reponse: "10", indice: "Comme une note", type: "number" },
+      { question: "Quel métal précieux dans les smartphones ?", reponse: "or", indice: "Métal jaune", type: "text" },
+      { question: "Quelle énergie provient du soleil ?", reponse: "solaire", indice: "Énergie...", type: "text" },
+      { question: "Comment s'appelle l'énergie du vent ?", reponse: "eolienne", indice: "Énergie...", type: "text" },
+      { question: "Combien d'énergies renouvelables principales ?", reponse: "5", indice: "Solaire, éolien...", type: "number" },
+      { question: "Quelle énergie utilise la force de l'eau ?", reponse: "hydraulique", indice: "Barrages", type: "text" },
+      { question: "Comment s'appelle l'énergie de la Terre ?", reponse: "geothermique", indice: "Géo = Terre", type: "text" },
+      { question: "Combien de litres d'eau pour fabriquer un jean ?", reponse: "7500", indice: "Entre 7000 et 8000", type: "number" },
+      { question: "Comment s'appelle le cycle de vie d'un produit ?", reponse: "berceau", indice: "Du... au tombeau", type: "text" },
+      { question: "Quel gaz à effet de serre principal ?", reponse: "co2", indice: "Formule chimique", type: "text" },
+      { question: "Combien d'années pour dégrader une bouteille plastique ?", reponse: "450", indice: "Entre 400 et 500", type: "number" },
+      { question: "Comment appelle-t-on l'énergie qui se renouvelle ?", reponse: "renouvelable", indice: "Énergie...", type: "text" },
+      { question: "Quel label garantit une production écologique ?", reponse: "ecolabel", indice: "Éco + label", type: "text" },
+      { question: "Combien de Watts consomme une ampoule LED ?", reponse: "10", indice: "Moins de 15W", type: "number" },
+      { question: "Quelle unité mesure l'énergie ?", reponse: "joule", indice: "Symbole : J", type: "text" },
+      { question: "Comment s'appelle la transformation solaire en électricité ?", reponse: "photovoltaique", indice: "Photo = lumière", type: "text" },
+      { question: "Quel pourcentage de l'électricité française est nucléaire ?", reponse: "70", indice: "Environ 70%", type: "number" },
+      { question: "Quelle est l'unité de puissance ?", reponse: "watt", indice: "Symbole : W", type: "text" },
+      { question: "Combien de degrés max selon l'Accord de Paris ?", reponse: "2", indice: "Réchauffement", type: "number" },
+      { question: "Comment s'appelle l'énergie stockée en hauteur ?", reponse: "potentielle", indice: "Énergie...", type: "text" },
+      { question: "Quelle énergie produit un vélo en mouvement ?", reponse: "cinetique", indice: "Énergie du mouvement", type: "text" },
+      { question: "Quel combustible fossile est le plus utilisé ?", reponse: "petrole", indice: "Or noir", type: "text" },
+      { question: "Comment s'appelle l'énergie des aliments ?", reponse: "chimique", indice: "Énergie...", type: "text" },
+      { question: "Quelle est la tension du réseau français (en V) ?", reponse: "230", indice: "Entre 220 et 240", type: "number" }
+    ],
 
-        h2 {
-            color: var(--primary-color);
-            border-bottom: 2px solid var(--pastel-yellow);
-            padding-bottom: 10px;
-        }
+    // ROOM 4: EXPÉRIENCE UTILISATEUR (25 questions - Fonctions + Programmation)
+    utilisateur: [
+      { question: "Comment s'appelle l'étude de l'adaptation à l'humain ?", reponse: "ergonomie", indice: "Science du confort", type: "text" },
+      { question: "Combien de clics max pour accéder à une info ?", reponse: "3", indice: "Règle des ... clics", type: "number" },
+      { question: "Comment s'appelle le document qui liste les exigences ?", reponse: "cahier", indice: "... des charges", type: "text" },
+      { question: "Quelle couleur pour les boutons de validation ?", reponse: "vert", indice: "Feu pour avancer", type: "text" },
+      { question: "Quelle fonction permet de ralentir un vélo ?", reponse: "freiner", indice: "Fonction de...", type: "text" },
+      { question: "Comment s'appelle la fonction qui guide ?", reponse: "diriger", indice: "Volant, guidon", type: "text" },
+      { question: "Quelle fonction permet de voir la nuit ?", reponse: "eclairer", indice: "Phares", type: "text" },
+      { question: "Combien de fonctions dans un vélo ?", reponse: "5", indice: "Propulser, diriger...", type: "number" },
+      { question: "Comment s'appelle le système de transmission ?", reponse: "transmission", indice: "Chaîne, engrenages", type: "text" },
+      { question: "Comment s'appelle le mouvement circulaire ?", reponse: "rotation", indice: "Tourner", type: "text" },
+      { question: "Comment s'appelle une instruction qui se répète ?", reponse: "boucle", indice: "For, while", type: "text" },
+      { question: "Quelle structure fait un choix ?", reponse: "si", indice: "Instruction if", type: "text" },
+      { question: "Comment s'appelle une suite d'instructions ?", reponse: "algorithme", indice: "Méthode", type: "text" },
+      { question: "Combien de valeurs pour une variable booléenne ?", reponse: "2", indice: "Vrai ou faux", type: "number" },
+      { question: "Comment s'appelle un bloc réutilisable ?", reponse: "fonction", indice: "Sous-programme", type: "text" },
+      { question: "Quel capteur mesure la distance ?", reponse: "ultrason", indice: "Ultrasons", type: "text" },
+      { question: "Comment s'appelle la carte Arduino ?", reponse: "microcontroleur", indice: "Mini-ordinateur", type: "text" },
+      { question: "Combien de broches numériques sur Arduino Uno ?", reponse: "14", indice: "Entre 10 et 20", type: "number" },
+      { question: "Quelle fonction démarre Arduino ?", reponse: "setup", indice: "Initialisation", type: "text" },
+      { question: "Comment s'appelle la boucle principale Arduino ?", reponse: "loop", indice: "Se répète", type: "text" },
+      { question: "Quel composant émet de la lumière ?", reponse: "led", indice: "Diode", type: "text" },
+      { question: "Quel symbole pour l'égalité en programmation ?", reponse: "==", indice: "Deux égal", type: "text" },
+      { question: "Valeur max PWM sur Arduino ?", reponse: "255", indice: "8 bits", type: "number" },
+      { question: "Comment s'appelle le logiciel Arduino ?", reponse: "ide", indice: "Environnement", type: "text" },
+      { question: "Comment s'appelle le premier modèle d'un projet ?", reponse: "prototype", indice: "Premier exemplaire", type: "text" }
+    ]
+  };
 
-        #timer {
-            font-size: 1.5rem;
-            text-align: center;
-            margin: 20px 0;
-            color: var(--secondary-color);
-            font-weight: bold;
-        }
+  const roomsConfig = [
+    { nom: "Évolution Technologique", theme: "evolution", couleur: "from-purple-900 via-blue-900", icone: "🔬" },
+    { nom: "Cybersécurité", theme: "cybersecurite", couleur: "from-red-900 via-orange-900", icone: "🔐" },
+    { nom: "Développement Durable", theme: "durable", couleur: "from-green-900 via-emerald-900", icone: "🌍" },
+    { nom: "Expérience Utilisateur", theme: "utilisateur", couleur: "from-blue-900 via-cyan-900", icone: "👤" },
+    { nom: "Décryptage Final", theme: "crypto", couleur: "from-amber-900 via-yellow-900", icone: "🔑" }
+  ];
 
-        .room-selector {
-            display: flex;
-            justify-content: space-around;
-            flex-wrap: wrap;
-            margin: 20px 0;
-        }
+  const systemesCodeage = [
+    {
+      id: 'cesar',
+      nom: 'Chiffre de César',
+      description: 'Décalage de chaque lettre dans l\'alphabet d\'un nombre fixe de positions.',
+      exemple: 'A → D (décalage +3) ou B → A (décalage -1)',
+      correct: true
+    },
+    {
+      id: 'atbash',
+      nom: 'Chiffre Atbash',
+      description: 'Inversion de l\'alphabet : A devient Z, B devient Y, etc.',
+      exemple: 'A → Z, B → Y, C → X',
+      correct: false
+    },
+    {
+      id: 'morse',
+      nom: 'Code Morse',
+      description: 'Codage en points et traits. Chaque lettre a une combinaison unique.',
+      exemple: 'A = .- , B = -... , S = ...',
+      correct: false
+    },
+    {
+      id: 'binaire',
+      nom: 'Code Binaire',
+      description: 'Codage en 0 et 1. Chaque lettre correspond à 8 bits.',
+      exemple: 'A = 01000001, B = 01000010',
+      correct: false
+    }
+  ];
 
-        .room-card {
-            background-color: var(--card-color);
-            border-radius: 10px;
-            padding: 20px;
-            width: 200px;
-            text-align: center;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s, box-shadow 0.3s;
-            cursor: pointer;
-            margin: 10px;
-            border: 2px solid transparent;
-        }
+  const tirerEnigmes = (theme) => {
+    const banque = [...banqueEnigmes[theme]];
+    return banque.sort(() => Math.random() - 0.5).slice(0, 4);
+  };
 
-        .room-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-        }
+  const genererCode = (index) => {
+    const prefixes = ['EVO', 'CYB', 'DUR', 'UX', 'CRY'];
+    return prefixes[index] + Math.floor(1000 + Math.random() * 9000);
+  };
 
-        .room-card.active {
-            border-color: var(--primary-color);
-            background-color: #f0f4ff;
-        }
+  useEffect(() => {
+    if (ecran === 'room' && temps > 0) {
+      const timer = setInterval(() => {
+        setTemps(t => t - 1);
+        setTempsTotal(tt => tt + 1);
+      }, 1000);
+      return () => clearInterval(timer);
+    }
+  }, [ecran, temps]);
 
-        .room-card i {
-            font-size: 3rem;
-            color: var(--primary-color);
-            margin-bottom: 10px;
-        }
+  const formatTemps = (s) => {
+    const mins = Math.floor(s / 60);
+    const secs = s % 60;
+    return mins.toString().padStart(2, '0') + ':' + secs.toString().padStart(2, '0');
+  };
 
-        .room {
-            display: none;
-            animation: fadeIn 0.5s;
-        }
+  const resetGame = () => {
+    setEcran('accueil');
+    setRoomActuelle(0);
+    setCodesRooms([]);
+    setTempsTotal(0);
+    setChiffrementSelectionne(null);
+  };
 
-        .room.active {
-            display: block;
-        }
+  const demarrerJeu = () => {
+    setCodesRooms([0, 1, 2, 3, 4].map(i => genererCode(i)));
+    demarrerRoom(0);
+  };
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
+  const demarrerRoom = (index) => {
+    if (index === 4) {
+      setRoomActuelle(index);
+      setTemps(TEMPS_PAR_ROOM);
+      setEcran('room5Crypto');
+    } else {
+      setEnigmesSelectionnees(tirerEnigmes(roomsConfig[index].theme));
+      setRoomActuelle(index);
+      setEnigmeActuelle(0);
+      setEnigmesResolues([false, false, false, false]);
+      setTemps(TEMPS_PAR_ROOM);
+      setReponse('');
+      setErreur(false);
+      setIndiceAffiche(false);
+      setEcran('room');
+    }
+  };
 
-        .question-card {
-            background-color: var(--card-color);
-            border-radius: 10px;
-            padding: 20px;
-            margin: 20px 0;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            border-left: 5px solid var(--primary-color);
-        }
+  const verifierReponse = () => {
+    const enigme = enigmesSelectionnees[enigmeActuelle];
+    if (reponse.toLowerCase().trim() === enigme.reponse.toLowerCase()) {
+      const newResolues = [...enigmesResolues];
+      newResolues[enigmeActuelle] = true;
+      setEnigmesResolues(newResolues);
+      setErreur(false);
+      if (newResolues.every(r => r)) {
+        setTimeout(() => setEcran('codeRoom'), 1000);
+      } else {
+        setTimeout(() => {
+          setEnigmeActuelle(enigmeActuelle + 1);
+          setReponse('');
+          setIndiceAffiche(false);
+        }, 1000);
+      }
+    } else {
+      setErreur(true);
+    }
+  };
 
-        input[type="text"] {
-            width: 100%;
-            padding: 12px;
-            margin: 15px 0;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 1rem;
-        }
+  const verifierCodeEntree = () => {
+    if (codeEntree.toUpperCase() === codesRooms[roomActuelle]) {
+      setCodeEntree('');
+      setErreurCode(false);
+      roomActuelle < 4 ? demarrerRoom(roomActuelle + 1) : setEcran('messageFinal');
+    } else {
+      setErreurCode(true);
+    }
+  };
 
-        button {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            margin: 10px 5px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: background-color 0.3s;
-        }
+  const essayerSysteme = (systemeId) => {
+    const systeme = systemesCodeage.find(s => s.id === systemeId);
+    if (systeme.correct) {
+      setEcran('messageFinal');
+    } else {
+      alert("❌ Ce n'est pas le bon système de codage ! Essayez-en un autre.");
+    }
+  };
 
-        button:hover {
-            background-color: #5a4fcf;
-        }
+  const decrypterMessage = () => {
+    if (messageDecrypte.toLowerCase().trim() === "bravo vous avez maitrise la technologie") {
+      setEcran('victoire');
+    } else {
+      alert("Ce n'est pas la bonne réponse. Réessayez !");
+    }
+  };
 
-        .hint-button {
-            background-color: var(--pastel-green);
-            color: var(--text-color);
-        }
-
-        .hint-button:hover {
-            background-color: #95c9a1;
-        }
-
-        .code-display {
-            font-family: 'Courier New', monospace;
-            font-size: 1.5rem;
-            text-align: center;
-            margin: 20px 0;
-            padding: 10px;
-            background-color: #f0f0f0;
-            border-radius: 8px;
-            color: var(--secondary-color);
-            font-weight: bold;
-        }
-
-        #final-room {
-            text-align: center;
-        }
-
-        .coding-system {
-            background-color: var(--card-color);
-            border-radius: 10px;
-            padding: 15px;
-            margin: 15px 0;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        #coded-phrase {
-            font-family: monospace;
-            font-size: 1.2rem;
-            color: var(--primary-color);
-            font-weight: bold;
-        }
-
-        .success-message {
-            color: #28a745;
-            font-size: 1.5rem;
-            text-align: center;
-            margin: 20px 0;
-            font-weight: bold;
-        }
-
-        .error-message {
-            color: #dc3545;
-            font-size: 1.2rem;
-            text-align: center;
-            margin: 10px 0;
-        }
-
-        footer {
-            text-align: center;
-            margin-top: 30px;
-            color: #6c757d;
-            font-size: 0.9rem;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <header>
-            <h1><i class="fas fa-laptop-code"></i> Escape Game Technologie</h1>
-        </header>
-
-        <div id="timer">Temps restant : 300 secondes</div>
-
-        <div id="room-selection" class="room active">
-            <h2>Sélectionnez une pièce à explorer</h2>
-            <div class="room-selector">
-                <div class="room-card" onclick="startRoom('evolution_techno')">
-                    <i class="fas fa-microchip"></i>
-                    <h3>Évolution Technologique</h3>
-                </div>
-                <div class="room-card" onclick="startRoom('materiaux')">
-                    <i class="fas fa-flask"></i>
-                    <h3>Matériaux</h3>
-                </div>
-                <div class="room-card" onclick="startRoom('energie')">
-                    <i class="fas fa-bolt"></i>
-                    <h3>Énergie</h3>
-                </div>
-                <div class="room-card" onclick="startRoom('informatique')">
-                    <i class="fas fa-desktop"></i>
-                    <h3>Informatique</h3>
-                </div>
-            </div>
+  if (ecran === 'accueil') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-black flex items-center justify-center p-4">
+        <div className="max-w-4xl w-full bg-black/60 backdrop-blur-xl rounded-3xl p-8 border border-purple-500/40 shadow-2xl">
+          <h1 className="text-6xl font-bold text-center mb-6 bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+            🎯 Escape Game Technologie
+          </h1>
+          <p className="text-xl text-center text-gray-300 mb-6">
+            4 rooms thématiques + 1 défi de décryptage final !
+          </p>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 my-6">
+            {roomsConfig.map((room, i) => (
+              <div key={i} className={'bg-gradient-to-r ' + room.couleur + ' to-black p-4 rounded-lg border border-white/20 hover:scale-105 transition-all'}>
+                <div className="text-4xl mb-2">{room.icone}</div>
+                <div className="text-white font-bold text-sm">{room.nom}</div>
+              </div>
+            ))}
+          </div>
+          <div className="bg-purple-900/40 p-6 rounded-xl border border-purple-500/30 mb-8">
+            <h3 className="font-bold text-2xl mb-3 text-purple-300">📋 Règles :</h3>
+            <ul className="list-disc list-inside space-y-2 text-lg text-gray-300">
+              <li>4 rooms : 4 énigmes en 10 min</li>
+              <li>Room 5 : Choisir le bon système de codage</li>
+              <li>Décrypter le message final !</li>
+            </ul>
+          </div>
+          <button onClick={demarrerJeu} className="w-full bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 hover:from-purple-500 hover:via-pink-500 hover:to-red-500 text-white font-bold py-5 px-8 rounded-xl text-2xl transition-all hover:scale-105">
+            🚀 Commencer
+          </button>
         </div>
+      </div>
+    );
+  }
 
-        <div id="evolution_techno" class="room">
-            <h2><i class="fas fa-microchip"></i> Évolution Technologique</h2>
-            <div class="question-card">
-                <p id="evolution_techno-question"></p>
-                <input type="text" id="evolution_techno-answer" placeholder="Votre réponse">
-                <div>
-                    <button onclick="checkAnswer('evolution_techno')">Valider</button>
-                    <button class="hint-button" onclick="showHint('evolution_techno')"><i class="fas fa-lightbulb"></i> Indice</button>
-                </div>
-                <div id="evolution_techno-hint" class="error-message" style="display: none;"></div>
-                <div id="evolution_techno-code" class="code-display"></div>
+  if (ecran === 'room5Crypto') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-amber-900 via-yellow-900 to-black p-4">
+        <div className="max-w-6xl mx-auto">
+          <div className="bg-black/60 backdrop-blur-xl rounded-3xl p-8 border border-yellow-500/40">
+            <div className="text-center mb-8">
+              <div className="text-6xl mb-4">🔑</div>
+              <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">
+                Room 5 : Systèmes de Codage
+              </h1>
+              <p className="text-xl text-gray-300">Choisissez le bon système pour décrypter le message !</p>
             </div>
-        </div>
-
-        <div id="materiaux" class="room">
-            <h2><i class="fas fa-flask"></i> Matériaux</h2>
-            <div class="question-card">
-                <p id="materiaux-question"></p>
-                <input type="text" id="materiaux-answer" placeholder="Votre réponse">
-                <div>
-                    <button onclick="checkAnswer('materiaux')">Valider</button>
-                    <button class="hint-button" onclick="showHint('materiaux')"><i class="fas fa-lightbulb"></i> Indice</button>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+              {systemesCodeage.map((sys) => (
+                <div key={sys.id} onClick={() => setChiffrementSelectionne(sys.id === chiffrementSelectionne ? null : sys.id)}
+                  className={'cursor-pointer bg-gradient-to-br from-yellow-900/40 to-orange-900/40 p-6 rounded-2xl border-2 transition-all hover:scale-105 ' + 
+                    (chiffrementSelectionne === sys.id ? 'border-yellow-400 shadow-lg' : 'border-gray-500')}>
+                  <h3 className="text-2xl font-bold text-yellow-300 mb-3">{sys.nom}</h3>
+                  <p className="text-gray-300 mb-4">{sys.description}</p>
+                  <div className="bg-black/40 p-4 rounded-lg mb-4">
+                    <p className="text-yellow-200 font-mono">{sys.exemple}</p>
+                  </div>
+                  {chiffrementSelectionne === sys.id && (
+                    <button onClick={(e) => { e.stopPropagation(); essayerSysteme(sys.id); }}
+                      className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white font-bold py-3 px-6 rounded-lg mt-4">
+                      ✓ Utiliser ce système
+                    </button>
+                  )}
                 </div>
-                <div id="materiaux-hint" class="error-message" style="display: none;"></div>
-                <div id="materiaux-code" class="code-display"></div>
+              ))}
             </div>
+            <div className="bg-orange-900/30 border-2 border-orange-400 rounded-xl p-6 text-center">
+              <p className="text-xl text-orange-300 font-bold">💡 Conseil :</p>
+              <p className="text-gray-300 mt-2">Cliquez sur chaque système pour le découvrir, puis choisissez celui qui vous semble correct !</p>
+            </div>
+          </div>
         </div>
+      </div>
+    );
+  }
 
-        <div id="energie" class="room">
-            <h2><i class="fas fa-bolt"></i> Énergie</h2>
-            <div class="question-card">
-                <p id="energie-question"></p>
-                <input type="text" id="energie-answer" placeholder="Votre réponse">
-                <div>
-                    <button onclick="checkAnswer('energie')">Valider</button>
-                    <button class="hint-button" onclick="showHint('energie')"><i class="fas fa-lightbulb"></i> Indice</button>
+  if (ecran === 'codeRoom') {
+    const room = roomsConfig[roomActuelle];
+    return (
+      <div className={'min-h-screen bg-gradient-to-br ' + room.couleur + ' to-black flex items-center justify-center p-4'}>
+        <div className="max-w-2xl w-full bg-black/60 backdrop-blur-xl rounded-3xl p-8 border border-white/30 text-center">
+          <div className="text-7xl mb-6">{room.icone}</div>
+          <h2 className="text-4xl font-bold mb-6 text-white">Room {roomActuelle + 1} Terminée !</h2>
+          <div className="bg-green-900/40 border-2 border-green-400 rounded-2xl p-8 mb-8">
+            <Key className="mx-auto text-yellow-400 mb-4" size={64} />
+            <p className="text-2xl text-gray-300 mb-4">Code d'accès :</p>
+            <p className="text-6xl font-bold text-yellow-400 tracking-widest">{codesRooms[roomActuelle]}</p>
+          </div>
+          {roomActuelle < 4 ? (
+            <div>
+              <p className="text-xl text-gray-300 mb-6">Entrez ce code :</p>
+              <input type="text" value={codeEntree} onChange={(e) => setCodeEntree(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && verifierCodeEntree()} placeholder="CODE..."
+                className="w-full bg-gray-800 border-2 border-purple-500/50 rounded-xl px-6 py-4 text-white text-2xl text-center font-bold uppercase focus:outline-none mb-4" />
+              {erreurCode && (
+                <div className="flex items-center justify-center gap-2 text-red-400 mb-4">
+                  <XCircle size={28} />
+                  <span>Code incorrect !</span>
                 </div>
-                <div id="energie-hint" class="error-message" style="display: none;"></div>
-                <div id="energie-code" class="code-display"></div>
+              )}
+              <button onClick={verifierCodeEntree} className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white font-bold py-4 px-8 rounded-xl text-xl">
+                Valider
+              </button>
             </div>
+          ) : (
+            <button onClick={() => setEcran('messageFinal')} className="w-full bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-500 hover:to-orange-500 text-white font-bold py-4 px-8 rounded-xl text-xl">
+              Défi Final →
+            </button>
+          )}
         </div>
+      </div>
+    );
+  }
 
-        <div id="informatique" class="room">
-            <h2><i class="fas fa-desktop"></i> Informatique</h2>
-            <div class="question-card">
-                <p id="informatique-question"></p>
-                <input type="text" id="informatique-answer" placeholder="Votre réponse">
-                <div>
-                    <button onclick="checkAnswer('informatique')">Valider</button>
-                    <button class="hint-button" onclick="showHint('informatique')"><i class="fas fa-lightbulb"></i> Indice</button>
-                </div>
-                <div id="informatique-hint" class="error-message" style="display: none;"></div>
-                <div id="informatique-code" class="code-display"></div>
+  if (ecran === 'messageFinal') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-yellow-900 via-orange-900 to-black flex items-center justify-center p-4">
+        <div className="max-w-3xl w-full bg-black/60 backdrop-blur-xl rounded-3xl p-8 border border-yellow-500/40">
+          <div className="text-center mb-8">
+            <div className="text-6xl mb-4">🔓</div>
+            <h2 className="text-5xl font-bold mb-6 bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">Défi Final</h2>
+            <p className="text-xl text-green-400 font-bold">✅ Bon système choisi ! Maintenant décryptez :</p>
+          </div>
+          <div className="bg-orange-900/40 border-2 border-orange-400 rounded-2xl p-6 mb-8">
+            <h3 className="text-2xl font-bold text-orange-300 mb-4">🔐 Message Crypté :</h3>
+            <div className="bg-black/60 p-6 rounded-lg">
+              <p className="text-4xl font-mono text-white text-center">Csbwp wpvt bwfa nbjusjuf mb ufdiopophjf</p>
             </div>
+          </div>
+          <div className="bg-yellow-900/30 border-2 border-yellow-500/50 rounded-xl p-6 mb-8">
+            <h3 className="text-2xl font-bold text-yellow-300 mb-3">💡 Méthode César :</h3>
+            <p className="text-gray-300 text-lg mb-3">Décalage de <span className="text-yellow-400 font-bold">1 lettre vers la GAUCHE</span></p>
+            <div className="bg-black/40 p-4 rounded-lg">
+              <p className="text-center text-yellow-200 font-mono">B → A, C → B, D → C...</p>
+            </div>
+          </div>
+          <input type="text" value={messageDecrypte} onChange={(e) => setMessageDecrypte(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && decrypterMessage()} placeholder="Message décrypté..."
+            className="w-full bg-gray-800 border-2 border-yellow-500/50 rounded-xl px-6 py-4 text-white text-xl focus:outline-none mb-6" />
+          <button onClick={decrypterMessage} className="w-full bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-500 hover:to-orange-500 text-white font-bold py-5 px-8 rounded-xl text-2xl">
+            Décrypter
+          </button>
         </div>
+      </div>
+    );
+  }
 
-        <div id="final-room" class="room">
-            <h2><i class="fas fa-lock-open"></i> Pièce Finale : Décodage</h2>
-            
+  if (ecran === 'victoire') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-900 via-emerald-900 to-black flex items-center justify-center p-4">
+        <div className="max-w-3xl w-full bg-black/60 backdrop-blur-xl rounded-3xl p-8 border border-green-500/40 text-center">
+          <div className="text-9xl mb-6">🎉</div>
+          <h1 className="text-7xl font-bold mb-6 bg-gradient-to-r from-green-400 via-emerald-400 to-cyan-400 bg-clip-text text-transparent">VICTOIRE !</h1>
+          <div className="text-4xl text-white mb-8 font-bold">Bravo vous avez maîtrisé la technologie</div>
+          <div className="bg-green-900/40 border-2 border-green-400 rounded-2xl p-8 mb-8">
+            <Trophy className="mx-auto text-yellow-400 mb-4" size={100} />
+            <p className="text-3xl text-gray-300 mb-3">Temps total :</p>
+            <p className="text-6xl font-bold text-yellow-400">{formatTemps(tempsTotal)}</p>
+          </div>
+          <button onClick={resetGame} className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bold py-5 px-10 rounded-xl text-2xl">
+            🔄 Rejouer
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const room = roomsConfig[roomActuelle];
+  const enigme = enigmesSelectionnees[enigmeActuelle];
+  const progression = (enigmesResolues.filter(Boolean).length / 4) * 100;
+
+  return (
+    <div className={'min-h-screen bg-gradient-to-br ' + room.couleur + ' to-black p-4'}>
+      <div className="max-w-4xl mx-auto mb-6">
+        <div className="bg-black/60 backdrop-blur-lg rounded-2xl p-5 border border-white/30">
+          <div className="flex justify-between items-center mb-4">
+            <div className="flex items-center gap-4">
+              <div className="text-4xl">{room.icone}</div>
+              <div>
+                <div className="text-white font-bold text-2xl">Room {roomActuelle + 1}: {room.nom}</div>
+                <div className="text-gray-300">Énigme {enigmeActuelle + 1} / 4</div>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <Clock className={temps < 60 ? "text-red-400" : "text-yellow-400"} size={32} />
+              <span className={'text-4xl font-bold ' + (temps < 60 ? 'text-red-400' : 'text-yellow-400')}>{formatTemps(temps)}</span>
+            </div>
+          </div>
+          <div className="w-full bg-gray-700 rounded-full h-5">
+            <div className="bg-gradient-to-r from-green-500 to-emerald-500 h-5 rounded-full transition-all" style={{ width: progression + '%' }} />
+          </div>
+        </div>
+      </div>
+      <div className="max-w-4xl mx-auto">
+        <div className="bg-black/60 backdrop-blur-lg rounded-3xl p-8 border border-white/30">
+          <div className="flex items-center gap-4 mb-6">
+            <Lock className="text-white" size={40} />
+            <h2 className="text-4xl font-bold text-white">Énigme {enigmeActuelle + 1}</h2>
+          </div>
+          <div className="bg-white/10 p-8 rounded-2xl border border-white/20 mb-6">
+            <p className="text-2xl text-white">{enigme.question}</p>
+          </div>
+          {indiceAffiche && (
+            <div className="bg-yellow-900/40 border-2 border-yellow-500/50 p-5 rounded-lg mb-6 flex items-start gap-3">
+              <Lightbulb className="text-yellow-400 flex-shrink-0 mt-1" size={28} />
+              <p className="text-yellow-200 text-xl">💡 {enigme.indice}</p>
+            </div>
+          )}
+          <div className="space-y-5">
+            <input type={enigme.type} value={reponse} onChange={(e) => setReponse(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && verifierReponse()} disabled={enigmesResolues[enigmeActuelle]}
+              placeholder="Votre réponse..." className="w-full bg-gray-800 border-2 border-white/30 rounded-xl px-6 py-5 text-white text-2xl focus:outline-none disabled:opacity-50" />
+            {erreur && (
+              <div className="flex items-center gap-3 text-red-400 text-xl">
+                <XCircle size={28} />
+                <span>❌ Incorrect !</span>
+              </div>
+            )}
+            {enigmesResolues[enigmeActuelle] && (
+              <div className="flex items-center gap-3 text-green-400 text-xl">
+                <CheckCircle size={28} />
+                <span>✅ Résolue !</span>
+              </div>
+            )}
+            <div className="flex gap-4">
+              <button onClick={verifierReponse} disabled={enigmesResolues[enigmeActuelle] || !reponse}
+                className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 disabled:from-gray-600 disabled:to-gray-600 text-white font-bold py-5 px-6 rounded-xl text-xl disabled:cursor-not-allowed">
+                Valider
+              </button>
+              {!indiceAffiche && !enigmesResolues[enigmeActuelle] && (
+                <button onClick={() => setIndiceAffiche(true)} className="bg-yellow-600 hover:bg-yellow-500 text-white font-bold py-5 px-8 rounded-xl flex items-center gap-3">
+                  <Lightbulb size={24} />
+                  Indice
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
