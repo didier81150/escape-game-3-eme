@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escape Game Technologie</title>
+    <title>Escape Game Technologie - Classe de 3ème</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         :root {
@@ -12,6 +12,10 @@
             --background-color: #f8f9fa;
             --card-color: #ffffff;
             --text-color: #333333;
+            --pastel-blue: #a2d2ff;
+            --pastel-pink: #ffb3c6;
+            --pastel-green: #b7e4c7;
+            --pastel-yellow: #ffdfba;
         }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -23,8 +27,26 @@
         }
         .container {
             max-width: 900px;
-            margin: 0 auto;
+            margin: 20px auto;
             padding: 20px;
+            background-color: var(--card-color);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        header {
+            text-align: center;
+            padding: 20px 0;
+            background: linear-gradient(135deg, var(--pastel-blue), var(--pastel-pink));
+            border-radius: 15px 15px 0 0;
+            color: white;
+            margin: -20px -20px 20px -20px;
+        }
+        h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+        h2 {
+            color: var(--primary-color);
         }
         .theme-card {
             background-color: var(--card-color);
@@ -32,11 +54,7 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             padding: 20px;
             margin-bottom: 20px;
-        }
-        .theme-title {
-            color: var(--primary-color);
-            border-bottom: 2px solid var(--primary-color);
-            padding-bottom: 10px;
+            border-left: 5px solid var(--primary-color);
         }
         .question {
             margin-bottom: 15px;
@@ -70,50 +88,307 @@
             background-color: #e9f7fe;
             border-radius: 4px;
         }
+        .timer {
+            font-size: 1.5rem;
+            text-align: center;
+            margin: 20px 0;
+            color: var(--secondary-color);
+        }
+        .door {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+        }
+        .door-item {
+            text-align: center;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 10px;
+            background-color: var(--pastel-green);
+            width: 20%;
+        }
+        .door-item.locked {
+            background-color: #ddd;
+            cursor: not-allowed;
+        }
+        .code-input {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .code-input input {
+            font-size: 1.2rem;
+            text-align: center;
+            padding: 10px;
+            border: 2px solid var(--primary-color);
+            border-radius: 5px;
+        }
+        .final-room {
+            text-align: center;
+            display: none;
+        }
+        .coding-methods {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+        }
+        .coding-method {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: 20%;
+        }
+        .victory {
+            text-align: center;
+            font-size: 2rem;
+            color: var(--secondary-color);
+            margin: 20px 0;
+            display: none;
+        }
+        #screenshot-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #secret-code {
+            font-weight: bold;
+            color: var(--secondary-color);
+            font-size: 1.2rem;
+            margin: 10px 0;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Escape Game Technologie</h1>
-        <p>Répondez aux questions pour avancer dans l'escape game !</p>
+        <header>
+            <h1>Escape Game Technologie</h1>
+            <p>Bienvenue dans l'escape game ! Résolvez les énigmes pour avancer.</p>
+        </header>
 
-        <!-- Thème Évolution Technologique -->
-        <div class="theme-card">
-            <h2 class="theme-title">Évolution Technologique</h2>
-            <div class="question">
-                <p><strong>Question :</strong> Quel est le premier ordinateur personnel grand public ?</p>
-                <input type="text" class="answer-input" placeholder="Votre réponse">
-                <button class="hint-btn" onclick="showHint('hint1')">Indice</button>
-                <div id="hint1" class="hint">Créé par Steve Wozniak et Steve Jobs.</div>
+        <div class="timer" id="timer">Temps restant : <span id="time">300</span> secondes</div>
+
+        <div class="door" id="doors">
+            <div class="door-item" onclick="enterRoom(0)">
+                <i class="fas fa-door-closed"></i>
+                <p>Innovations</p>
             </div>
-            <div class="question">
-                <p><strong>Question :</strong> En quelle année est né le World Wide Web ?</p>
-                <input type="text" class="answer-input" placeholder="Votre réponse">
-                <button class="hint-btn" onclick="showHint('hint2')">Indice</button>
-                <div id="hint2" class="hint">Inventé par Tim Berners-Lee.</div>
+            <div class="door-item locked" id="door2">
+                <i class="fas fa-door-closed"></i>
+                <p>Cybersécurité</p>
+            </div>
+            <div class="door-item locked" id="door3">
+                <i class="fas fa-door-closed"></i>
+                <p>Durable</p>
+            </div>
+            <div class="door-item locked" id="door4">
+                <i class="fas fa-door-closed"></i>
+                <p>Expérience</p>
             </div>
         </div>
 
-        <!-- Thème Matériaux -->
-        <div class="theme-card">
-            <h2 class="theme-title">Matériaux</h2>
-            <div class="question">
-                <p><strong>Question :</strong> Quel matériau est utilisé pour fabriquer les écrans tactiles ?</p>
-                <input type="text" class="answer-input" placeholder="Votre réponse">
-                <button class="hint-btn" onclick="showHint('hint3')">Indice</button>
-                <div id="hint3" class="hint">Un matériau transparent et résistant.</div>
+        <div id="room0" class="theme-card">
+            <h2>Thème : Innovations de Rupture</h2>
+            <div id="questions0"></div>
+            <div id="secret-code0" class="code-input" style="display: none;">
+                Code secret : <span id="code0"></span>
             </div>
+            <button onclick="nextRoom(0)" id="next0" style="display: none;">Terminé</button>
+        </div>
+
+        <div id="room1" class="theme-card" style="display: none;">
+            <h2>Thème : Cybersécurité</h2>
+            <div id="questions1"></div>
+            <div id="secret-code1" class="code-input" style="display: none;">
+                Code secret : <span id="code1"></span>
+            </div>
+            <button onclick="nextRoom(1)" id="next1" style="display: none;">Terminé</button>
+        </div>
+
+        <div id="room2" class="theme-card" style="display: none;">
+            <h2>Thème : Développement Durable</h2>
+            <div id="questions2"></div>
+            <div id="secret-code2" class="code-input" style="display: none;">
+                Code secret : <span id="code2"></span>
+            </div>
+            <button onclick="nextRoom(2)" id="next2" style="display: none;">Terminé</button>
+        </div>
+
+        <div id="room3" class="theme-card" style="display: none;">
+            <h2>Thème : Expérience Utilisateur</h2>
+            <div id="questions3"></div>
+            <div id="secret-code3" class="code-input" style="display: none;">
+                Code secret : <span id="code3"></span>
+            </div>
+            <button onclick="nextRoom(3)" id="next3" style="display: none;">Terminé</button>
+        </div>
+
+        <div class="final-room" id="finalRoom">
+            <h2>Pièce Finale : Décodage</h2>
+            <p>Utilisez les codes secrets pour décoder la phrase mystère.</p>
+            <div class="coding-methods">
+                <div class="coding-method">
+                    <h3>Binaire</h3>
+                    <p>01001100 01100101</p>
+                </div>
+                <div class="coding-method">
+                    <h3>Morse</h3>
+                    <p>.- .. -.-. ---</p>
+                </div>
+                <div class="coding-method">
+                    <h3>César</h3>
+                    <p>Lippsvsphm</p>
+                </div>
+                <div class="coding-method">
+                    <h3>Hexadécimal</h3>
+                    <p>48 65 78 61</p>
+                </div>
+            </div>
+            <p id="codedPhrase"></p>
+            <div class="code-input">
+                <input type="text" id="finalAnswer" placeholder="Phrase décodée" />
+                <button onclick="validateFinalAnswer()">Valider</button>
+            </div>
+        </div>
+
+        <div class="victory" id="victory">
+            <h2>Bravo ! Vous avez gagné !</h2>
+            <p>Temps restant : <span id="remainingTime"></span></p>
+            <button id="screenshot-btn" onclick="alert('Prenez une capture d\'écran et téléchargez-la sur JotForm.')">Capture d'écran</button>
         </div>
     </div>
 
     <script>
+        // Questions pour chaque thème
+        const questions = {
+            0: [
+                { question: "Quelle innovation a permis de passer du téléphone fixe au mobile ?", answer: "portabilité", hint: "Ce qui permet de déplacer." },
+                { question: "En quelle année le premier iPhone est-il sorti ?", answer: "2007", hint: "Entre 2000 et 2010." },
+                { question: "Comment appelle-t-on une innovation qui change radicalement un marché ?", answer: "rupture", hint: "Innovation de..." },
+                { question: "Quelle est la famille de matériaux la plus légère ?", answer: "plastique", hint: "Dérivé du pétrole." },
+                { question: "Quel matériau est issu d'un arbre ?", answer: "bois", hint: "Matériau naturel." },
+                { question: "Comment appelle-t-on le mélange de fer et de carbone ?", answer: "acier", hint: "Alliage métallique." },
+                { question: "Combien y a-t-il de grandes familles de matériaux ?", answer: "4", hint: "Métaux, plastiques..." },
+                { question: "Quel matériau conduit le mieux l'électricité ?", answer: "cuivre", hint: "Métal orangé." },
+            ],
+            1: [
+                { question: "Comment appelle-t-on un programme malveillant ?", answer: "virus", hint: "Comme une maladie." },
+                { question: "Combien de caractères min pour un mot de passe sûr ?", answer: "12", hint: "Plus de 10." },
+                { question: "Comment s'appelle l'usurpation d'identité par email ?", answer: "phishing", hint: "Commence par 'ph'." },
+                { question: "Quelle technique crypte un fichier ?", answer: "chiffrement", hint: "Rendre illisible." },
+                { question: "Comment appelle-t-on les traces sur Internet ?", answer: "numériques", hint: "Traces..." },
+                { question: "Quel protocole sécurise les sites web ?", answer: "https", hint: "HTTP + S." },
+            ],
+            2: [
+                { question: "Combien de piliers du développement durable ?", answer: "3", hint: "Économique, social, environnemental." },
+                { question: "Sur combien est noté l'indice de réparabilité ?", answer: "10", hint: "Comme une note." },
+                { question: "Quel métal précieux dans les smartphones ?", answer: "or", hint: "Métal jaune." },
+                { question: "Quelle énergie provient du soleil ?", answer: "solaire", hint: "Énergie..." },
+                { question: "Comment s'appelle l'énergie du vent ?", answer: "éolienne", hint: "Énergie..." },
+                { question: "Combien d'énergies renouvelables principales ?", answer: "5", hint: "Solaire, éolien..." },
+            ],
+            3: [
+                { question: "Comment s'appelle l'étude de l'adaptation à l'humain ?", answer: "ergonomie", hint: "Science du confort." },
+                { question: "Combien de clics max pour accéder à une info ?", answer: "3", hint: "Règle des ... clics." },
+                { question: "Comment s'appelle le document qui liste les exigences ?", answer: "cahier", hint: "... des charges." },
+                { question: "Quelle couleur pour les boutons de validation ?", answer: "vert", hint: "Feu pour avancer." },
+                { question: "Comment s'appelle la fonction qui guide ?", answer: "diriger", hint: "Volant, guidon." },
+                { question: "Quel capteur mesure la distance ?", answer: "ultrason", hint: "Ultrasons." },
+            ]
+        };
+
+        // Codes secrets pour chaque thème
+        const codes = ["A7B2", "C3D9", "E5F1", "G8H4"];
+        let currentRoom = 0;
+        let timeLeft = 300;
+        let timer;
+
+        // Démarrer le chronomètre
+        function startTimer() {
+            timer = setInterval(() => {
+                timeLeft--;
+                document.getElementById('time').textContent = timeLeft;
+                if (timeLeft <= 0) clearInterval(timer);
+            }, 1000);
+        }
+
+        // Entrer dans une pièce
+        function enterRoom(roomIndex) {
+            if (roomIndex > currentRoom) return;
+            document.querySelectorAll('.theme-card').forEach(el => el.style.display = 'none');
+            document.getElementById(`room${roomIndex}`).style.display = 'block';
+            currentRoom = roomIndex;
+            loadQuestions(roomIndex);
+            if (roomIndex === 0) startTimer();
+        }
+
+        // Charger les questions
+        function loadQuestions(roomIndex) {
+            const container = document.getElementById(`questions${roomIndex}`);
+            container.innerHTML = '';
+            const selectedQuestions = questions[roomIndex].sort(() => 0.5 - Math.random()).slice(0, 4);
+            selectedQuestions.forEach((q, i) => {
+                container.innerHTML += `
+                    <div class="question">
+                        <p><strong>Question ${i+1} :</strong> ${q.question}</p>
+                        <input type="text" class="answer-input" id="answer${roomIndex}-${i}" placeholder="Votre réponse" onchange="checkAnswer(${roomIndex}, ${i}, '${q.answer}')">
+                        <button class="hint-btn" onclick="showHint('hint${roomIndex}-${i}')">Indice</button>
+                        <div id="hint${roomIndex}-${i}" class="hint">${q.hint}</div>
+                    </div>
+                `;
+            });
+        }
+
+        // Vérifier la réponse
+        function checkAnswer(roomIndex, questionIndex, correctAnswer) {
+            const userAnswer = document.getElementById(`answer${roomIndex}-${questionIndex}`).value.toLowerCase();
+            if (userAnswer === correctAnswer) {
+                document.getElementById(`answer${roomIndex}-${questionIndex}`).style.backgroundColor = "#d4edda";
+                checkAllAnswers(roomIndex);
+            }
+        }
+
+        // Vérifier si toutes les réponses sont correctes
+        function checkAllAnswers(roomIndex) {
+            let allCorrect = true;
+            for (let i = 0; i < 4; i++) {
+                const answerInput = document.getElementById(`answer${roomIndex}-${i}`);
+                if (!answerInput || answerInput.style.backgroundColor !== "rgb(212, 237, 218)") {
+                    allCorrect = false;
+                    break;
+                }
+            }
+            if (allCorrect) {
+                document.getElementById(`secret-code${roomIndex}`).style.display = 'block';
+                document.getElementById(`code${roomIndex}`).textContent = codes[roomIndex];
+                document.getElementById(`next${roomIndex}`).style.display = 'block';
+                if (roomIndex < 3) document.getElementById(`door${roomIndex + 2}`).classList.remove('locked');
+            }
+        }
+
+        // Afficher un indice
         function showHint(hintId) {
             const hint = document.getElementById(hintId);
-            if (hint.style.display === "none") {
-                hint.style.display = "block";
-            } else {
-                hint.style.display = "none";
+            hint.style.display = hint.style.display === 'none' ? 'block' : 'none';
+        }
+
+        // Passer à la pièce suivante
+        function nextRoom(roomIndex) {
+            document.getElementById(`room${roomIndex}`).style.display = 'none';
+            if (roomIndex === 3) {
+                document.getElementById('finalRoom').style.display = 'block';
+                document.getElementById('codedPhrase').textContent = `Phrase codée : ${codes.join('-')}`;
             }
+        }
+
+        // Valider la réponse finale
+        function validateFinalAnswer() {
+            clearInterval(timer);
+            document.getElementById('victory').style.display = 'block';
+            document.getElementById('remainingTime').textContent = timeLeft;
         }
     </script>
 </body>
