@@ -3,167 +3,450 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escape Game Technologie Collège</title>
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Escape Game Technologie</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #6C63FF;
+            --secondary-color: #FF6584;
+            --background-color: #f8f9fa;
+            --card-color: #ffffff;
+            --text-color: #333333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background-color);
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: var(--card-color);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        header {
+            text-align: center;
+            padding: 20px 0;
+            background: linear-gradient(135deg, #6C63FF, #FF6584);
+            border-radius: 15px 15px 0 0;
+            color: white;
+            margin: -20px -20px 20px -20px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+
+        h2 {
+            color: var(--primary-color);
+            border-bottom: 2px solid #FFD700;
+            padding-bottom: 10px;
+        }
+
+        #timer {
+            font-size: 1.5rem;
+            text-align: center;
+            margin: 20px 0;
+            color: var(--secondary-color);
+            font-weight: bold;
+        }
+
+        .room-selector {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+
+        .room-card {
+            background-color: var(--card-color);
+            border-radius: 10px;
+            padding: 20px;
+            width: 200px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            margin: 10px;
+            border: 2px solid transparent;
+        }
+
+        .room-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .room-card.active {
+            border-color: var(--primary-color);
+            background-color: #f0f4ff;
+        }
+
+        .room-card i {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .room {
+            display: none;
+        }
+
+        .room.active {
+            display: block;
+        }
+
+        .question-card {
+            background-color: var(--card-color);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid var(--primary-color);
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            margin: 15px 0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            margin: 10px 5px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #5a4fcf;
+        }
+
+        .hint-button {
+            background-color: #b7e4c7;
+            color: var(--text-color);
+        }
+
+        .hint-button:hover {
+            background-color: #95c9a1;
+        }
+
+        .code-display {
+            font-family: 'Courier New', monospace;
+            font-size: 1.5rem;
+            text-align: center;
+            margin: 20px 0;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 8px;
+            color: var(--secondary-color);
+            font-weight: bold;
+        }
+
+        #final-room {
+            text-align: center;
+        }
+
+        .coding-system {
+            background-color: var(--card-color);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        #coded-phrase {
+            font-family: monospace;
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .success-message {
+            color: #28a745;
+            font-size: 1.5rem;
+            text-align: center;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+
+        .error-message {
+            color: #dc3545;
+            font-size: 1.2rem;
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+    </style>
 </head>
 <body>
-    <div id="root"></div>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-laptop-code"></i> Escape Game Technologie</h1>
+        </header>
 
-    <script type="text/babel">
-        const { useState, useEffect } = React;
+        <div id="timer">Temps restant : 300 secondes</div>
 
-        // Icônes Lucide en SVG
-        const Clock = ({ className, size = 24 }) => (
-            <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="12" cy="12" r="10"/>
-                <path d="M12 6v6l4 2"/>
-            </svg>
-        );
+        <div id="room-selection" class="room active">
+            <h2>Sélectionnez une pièce à explorer</h2>
+            <div class="room-selector">
+                <div class="room-card" onclick="startRoom('evolution_techno')">
+                    <i class="fas fa-microchip"></i>
+                    <h3>Évolution Technologique</h3>
+                </div>
+                <div class="room-card" onclick="startRoom('materiaux')">
+                    <i class="fas fa-flask"></i>
+                    <h3>Matériaux</h3>
+                </div>
+                <div class="room-card" onclick="startRoom('energie')">
+                    <i class="fas fa-bolt"></i>
+                    <h3>Énergie</h3>
+                </div>
+                <div class="room-card" onclick="startRoom('informatique')">
+                    <i class="fas fa-desktop"></i>
+                    <h3>Informatique</h3>
+                </div>
+            </div>
+        </div>
 
-        const Lightbulb = ({ className, size = 24 }) => (
-            <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M9 18h6"/>
-                <path d="M10 22h4"/>
-                <path d="M15.09 14c.18-.98.45-1.73.45-3a6 6 0 1 0-12 0c0 1.27.27 2.02.45 3"/>
-            </svg>
-        );
+        <div id="evolution_techno" class="room">
+            <h2><i class="fas fa-microchip"></i> Évolution Technologique</h2>
+            <div class="question-card">
+                <p id="evolution_techno-question"></p>
+                <input type="text" id="evolution_techno-answer" placeholder="Votre réponse">
+                <div>
+                    <button onclick="checkAnswer('evolution_techno')">Valider</button>
+                    <button class="hint-button" onclick="showHint('evolution_techno')"><i class="fas fa-lightbulb"></i> Indice</button>
+                </div>
+                <div id="evolution_techno-hint" class="error-message" style="display: none;"></div>
+                <div id="evolution_techno-code" class="code-display"></div>
+            </div>
+        </div>
 
-        const Lock = ({ className, size = 24 }) => (
-            <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-            </svg>
-        );
+        <div id="materiaux" class="room">
+            <h2><i class="fas fa-flask"></i> Matériaux</h2>
+            <div class="question-card">
+                <p id="materiaux-question"></p>
+                <input type="text" id="materiaux-answer" placeholder="Votre réponse">
+                <div>
+                    <button onclick="checkAnswer('materiaux')">Valider</button>
+                    <button class="hint-button" onclick="showHint('materiaux')"><i class="fas fa-lightbulb"></i> Indice</button>
+                </div>
+                <div id="materiaux-hint" class="error-message" style="display: none;"></div>
+                <div id="materiaux-code" class="code-display"></div>
+            </div>
+        </div>
 
-        const CheckCircle = ({ className, size = 24 }) => (
-            <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="12" cy="12" r="10"/>
-                <path d="m9 12 2 2 4-4"/>
-            </svg>
-        );
+        <div id="energie" class="room">
+            <h2><i class="fas fa-bolt"></i> Énergie</h2>
+            <div class="question-card">
+                <p id="energie-question"></p>
+                <input type="text" id="energie-answer" placeholder="Votre réponse">
+                <div>
+                    <button onclick="checkAnswer('energie')">Valider</button>
+                    <button class="hint-button" onclick="showHint('energie')"><i class="fas fa-lightbulb"></i> Indice</button>
+                </div>
+                <div id="energie-hint" class="error-message" style="display: none;"></div>
+                <div id="energie-code" class="code-display"></div>
+            </div>
+        </div>
 
-        const XCircle = ({ className, size = 24 }) => (
-            <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="12" cy="12" r="10"/>
-                <path d="m15 9-6 6"/>
-                <path d="m9 9 6 6"/>
-            </svg>
-        );
+        <div id="informatique" class="room">
+            <h2><i class="fas fa-desktop"></i> Informatique</h2>
+            <div class="question-card">
+                <p id="informatique-question"></p>
+                <input type="text" id="informatique-answer" placeholder="Votre réponse">
+                <div>
+                    <button onclick="checkAnswer('informatique')">Valider</button>
+                    <button class="hint-button" onclick="showHint('informatique')"><i class="fas fa-lightbulb"></i> Indice</button>
+                </div>
+                <div id="informatique-hint" class="error-message" style="display: none;"></div>
+                <div id="informatique-code" class="code-display"></div>
+            </div>
+        </div>
 
-        const Key = ({ className, size = 24 }) => (
-            <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="7.5" cy="15.5" r="5.5"/>
-                <path d="m21 2-9.6 9.6"/>
-                <path d="m15.5 7.5 3 3L22 7l-3-3"/>
-            </svg>
-        );
+        <div id="final-room" class="room">
+            <h2><i class="fas fa-lock-open"></i> Pièce Finale : Décodage</h2>
+            <p>Félicitations ! Voici un résumé des systèmes de codage :</p>
+            <div class="coding-system">
+                <h3><i class="fas fa-code"></i> Systèmes de Codage</h3>
+                <ul>
+                    <li><strong>Binaire</strong> : Utilise des 0 et des 1.</li>
+                    <li><strong>Morse</strong> : Points et traits.</li>
+                    <li><strong>Chiffre de César</strong> : Décalage de lettres.</li>
+                    <li><strong>Hexadécimal</strong> : Base 16 (0-9, A-F).</li>
+                </ul>
+            </div>
+            <p>Décodez cette phrase : <span id="coded-phrase">01001000 01000101 01001100 01001100 01001111</span></p>
+            <input type="text" id="final-answer" placeholder="Votre réponse">
+            <button onclick="checkFinalAnswer()">Valider</button>
+            <div id="final-result" class="success-message"></div>
+        </div>
 
-        const Trophy = ({ className, size = 24 }) => (
-            <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
-                <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
-                <path d="M4 22h16"/>
-                <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/>
-                <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/>
-                <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>
-            </svg>
-        );
+        <footer>
+            <p>Créé par M. Boivin pour la classe de 3ème - Année 2026</p>
+        </footer>
+    </div>
 
-        const BookOpen = ({ className, size = 24 }) => (
-            <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
-                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
-            </svg>
-        );
+    <script>
+        // Données des questions et indices
+        const questions = {
+            evolution_techno: [
+                { question: "Quel est le premier ordinateur personnel grand public ?", answer: "Apple II", code: "A1", hint: "Créé par Steve Wozniak et Steve Jobs en 1977." },
+                { question: "En quelle année est né le World Wide Web ?", answer: "1989", code: "B2", hint: "Inventé par Tim Berners-Lee au CERN." },
+                { question: "Quel est le nom du premier smartphone moderne ?", answer: "iPhone", code: "C3", hint: "Lancé par Apple en 2007." },
+                { question: "Qui a inventé le téléphone ?", answer: "Graham Bell", code: "D4", hint: "Brevet déposé en 1876." }
+            ],
+            materiaux: [
+                { question: "Quel est le matériau le plus recyclé au monde ?", answer: "acier", code: "E5", hint: "Utilisé dans les boîtes de conserve et les voitures." },
+                { question: "Quel matériau est utilisé pour fabriquer les bouteilles en plastique ?", answer: "PET", code: "F6", hint: "Un type de plastique transparent." },
+                { question: "Quel métal est liquide à température ambiante ?", answer: "mercure", code: "G7", hint: "Utilisé dans les thermomètres." },
+                { question: "Quel matériau est extrait de la bauxite ?", answer: "aluminium", code: "H8", hint: "Léger et résistant à la corrosion." }
+            ],
+            energie: [
+                { question: "Quel est le type d'énergie produit par les panneaux solaires ?", answer: "électrique", code: "I9", hint: "Utilisée pour alimenter les appareils." },
+                { question: "Quel gaz est produit par la combustion du charbon ?", answer: "CO2", code: "J0", hint: "Responsable de l'effet de serre." },
+                { question: "Quel type d'énergie utilise les éoliennes ?", answer: "cinétique", code: "K1", hint: "Liée au mouvement du vent." },
+                { question: "Quel est le principal gaz dans le biogaz ?", answer: "méthane", code: "L2", hint: "Produit par la fermentation de matières organiques." }
+            ],
+            informatique: [
+                { question: "Quel est le langage de programmation utilisé pour les pages web ?", answer: "HTML", code: "M3", hint: "Commence par H." },
+                { question: "Quel est le nom du système d'exploitation open source ?", answer: "Linux", code: "N4", hint: "Créé par Linus Torvalds." },
+                { question: "Quel est le nom du premier virus informatique ?", answer: "Creeper", code: "O5", hint: "Créé en 1971." },
+                { question: "Quel est le nom du fondateur de Microsoft ?", answer: "Bill Gates", code: "P6", hint: "Abandonna Harvard pour créer son entreprise." }
+            ]
+        };
 
-        function EscapeGame() {
-            const TEMPS_PAR_ROOM = 600;
-            
-            const [ecran, setEcran] = useState('accueil');
-            const [roomActuelle, setRoomActuelle] = useState(0);
-            const [temps, setTemps] = useState(TEMPS_PAR_ROOM);
-            const [enigmeActuelle, setEnigmeActuelle] = useState(0);
-            const [enigmesSelectionnees, setEnigmesSelectionnees] = useState([]);
-            const [reponse, setReponse] = useState('');
-            const [erreur, setErreur] = useState(false);
-            const [enigmesResolues, setEnigmesResolues] = useState([false, false, false, false]);
-            const [indiceAffiche, setIndiceAffiche] = useState(false);
-            const [codesRooms, setCodesRooms] = useState([]);
-            const [codeEntree, setCodeEntree] = useState('');
-            const [erreurCode, setErreurCode] = useState(false);
-            const [messageDecrypte, setMessageDecrypte] = useState('');
-            const [tempsTotal, setTempsTotal] = useState(0);
-            const [chiffrementSelectionne, setChiffrementSelectionne] = useState(null);
+        const hints = {
+            evolution_techno: [
+                "Créé par Steve Wozniak et Steve Jobs en 1977.",
+                "Inventé par Tim Berners-Lee au CERN.",
+                "Lancé par Apple en 2007.",
+                "Brevet déposé en 1876."
+            ],
+            materiaux: [
+                "Utilisé dans les boîtes de conserve et les voitures.",
+                "Un type de plastique transparent.",
+                "Utilisé dans les thermomètres.",
+                "Léger et résistant à la corrosion."
+            ],
+            energie: [
+                "Utilisée pour alimenter les appareils.",
+                "Responsable de l'effet de serre.",
+                "Liée au mouvement du vent.",
+                "Produit par la fermentation de matières organiques."
+            ],
+            informatique: [
+                "Commence par H.",
+                "Créé par Linus Torvalds.",
+                "Créé en 1971.",
+                "Abandonna Harvard pour créer son entreprise."
+            ]
+        };
 
-            const banqueEnigmes = {
-                evolution: [
-                    { question: "Quelle innovation a permis de passer du téléphone fixe au mobile ?", reponse: "portabilite", indice: "Ce qui permet de déplacer", type: "text" },
-                    { question: "En quelle année le premier iPhone est-il sorti ?", reponse: "2007", indice: "Entre 2000 et 2010", type: "number" },
-                    { question: "Comment appelle-t-on une innovation qui change radicalement un marché ?", reponse: "rupture", indice: "Innovation de...", type: "text" },
-                    { question: "Quelle est la famille de matériaux la plus légère ?", reponse: "plastique", indice: "Dérivé du pétrole", type: "text" },
-                    { question: "Quel matériau est issu d'un arbre ?", reponse: "bois", indice: "Matériau naturel", type: "text" },
-                    { question: "Comment appelle-t-on le mélange de fer et de carbone ?", reponse: "acier", indice: "Alliage métallique", type: "text" },
-                    { question: "Combien y a-t-il de grandes familles de matériaux ?", reponse: "4", indice: "Métaux, plastiques...", type: "number" },
-                    { question: "Quel matériau conduit le mieux l'électricité ?", reponse: "cuivre", indice: "Métal orangé", type: "text" },
-                    { question: "Quel matériau est recyclable à l'infini ?", reponse: "aluminium", indice: "Métal léger", type: "text" },
-                    { question: "Comment s'appelle l'évolution qui prend en compte l'environnement ?", reponse: "durable", indice: "Développement...", type: "text" },
-                    { question: "Quel objet a remplacé le walkman ?", reponse: "smartphone", indice: "Téléphone intelligent", type: "text" },
-                    { question: "Combien de générations de téléphones mobiles existe-t-il ?", reponse: "5", indice: "On parle de 5G", type: "number" },
-                    { question: "Quel matériau est transparent et cassant ?", reponse: "verre", indice: "Pour les fenêtres", type: "text" },
-                    { question: "Quel métal ne rouille pas ?", reponse: "inox", indice: "Acier inoxydable", type: "text" },
-                    { question: "Comment appelle-t-on un objet qui se connecte à Internet ?", reponse: "connecte", indice: "Objet...", type: "text" },
-                    { question: "Quelle propriété mesure la résistance à la déformation ?", reponse: "durete", indice: "Échelle de Mohs", type: "text" },
-                    { question: "Quel matériau composite est utilisé dans les avions ?", reponse: "carbone", indice: "Fibre de...", type: "text" },
-                    { question: "À quelle température fond l'aluminium (en °C) ?", reponse: "660", indice: "Entre 600 et 700", type: "number" },
-                    { question: "Comment appelle-t-on un matériau isolant électrique ?", reponse: "isolant", indice: "Contraire de conducteur", type: "text" },
-                    { question: "Quel matériau biodégradable remplace le plastique ?", reponse: "bioplastique", indice: "Bio + plastique", type: "text" },
-                    { question: "En quelle année a été créé le premier ordinateur personnel ?", reponse: "1981", indice: "Années 1980", type: "number" },
-                    { question: "Qui a inventé le World Wide Web ?", reponse: "berners", indice: "Tim Berners-...", type: "text" },
-                    { question: "Quel pourcentage de plastiques est recyclé en France ?", reponse: "26", indice: "Entre 20 et 30%", type: "number" },
-                    { question: "Comment s'appelle le procédé de chauffage du verre ?", reponse: "trempe", indice: "Verre trempé", type: "text" },
-                    { question: "Quelle invention a permis le streaming vidéo ?", reponse: "internet", indice: "Réseau mondial", type: "text" }
-                ],
-                cybersecurite: [
-                    { question: "Comment appelle-t-on un programme malveillant ?", reponse: "virus", indice: "Comme une maladie", type: "text" },
-                    { question: "Combien de caractères min pour un mot de passe sûr ?", reponse: "12", indice: "Plus de 10", type: "number" },
-                    { question: "Comment s'appelle l'usurpation d'identité par email ?", reponse: "phishing", indice: "Commence par 'ph'", type: "text" },
-                    { question: "Quelle technique crypte un fichier ?", reponse: "chiffrement", indice: "Rendre illisible", type: "text" },
-                    { question: "Comment appelle-t-on les traces sur Internet ?", reponse: "numeriques", indice: "Traces...", type: "text" },
-                    { question: "Quel protocole sécurise les sites web ?", reponse: "https", indice: "HTTP + S", type: "text" },
-                    { question: "Combien d'octets dans 1 kilooctet ?", reponse: "1024", indice: "Un peu plus de 1000", type: "number" },
-                    { question: "Quelle loi protège les données en Europe ?", reponse: "rgpd", indice: "4 lettres", type: "text" },
-                    { question: "Comment appelle-t-on l'authentification en deux étapes ?", reponse: "double", indice: "Authentification...", type: "text" },
-                    { question: "Que signifie CPU ?", reponse: "processeur", indice: "Cerveau de l'ordinateur", type: "text" },
-                    { question: "Combien de bits dans un octet ?", reponse: "8", indice: "Moins de 10", type: "number" },
-                    { question: "Comment s'appelle la mémoire temporaire ?", reponse: "ram", indice: "3 lettres", type: "text" },
-                    { question: "Quel langage utilise des blocs visuels ?", reponse: "scratch", indice: "Pour débutants", type: "text" },
-                    { question: "Comment s'appelle l'adresse d'un site web ?", reponse: "url", indice: "3 lettres", type: "text" },
-                    { question: "Combien de valeurs pour un bit ?", reponse: "2", indice: "0 et 1", type: "number" },
-                    { question: "Comment s'appelle un réseau local ?", reponse: "lan", indice: "Local Area Network", type: "text" },
-                    { question: "Comment s'appelle le stockage en ligne ?", reponse: "cloud", indice: "Nuage en anglais", type: "text" },
-                    { question: "Combien de Mo dans 1 Go ?", reponse: "1000", indice: "Environ 1000", type: "number" },
-                    { question: "Comment s'appelle un logiciel espion ?", reponse: "spyware", indice: "Spy = espion", type: "text" },
-                    { question: "Quel type d'attaque sature un serveur ?", reponse: "ddos", indice: "4 lettres", type: "text" },
-                    { question: "Comment s'appelle un pare-feu en anglais ?", reponse: "firewall", indice: "Fire + wall", type: "text" },
-                    { question: "Comment s'appelle un logiciel rançonneur ?", reponse: "ransomware", indice: "Ransom = rançon", type: "text" },
-                    { question: "Quel protocole transfère des pages web ?", reponse: "http", indice: "4 lettres", type: "text" },
-                    { question: "Comment s'appelle un réseau privé virtuel ?", reponse: "vpn", indice: "3 lettres", type: "text" },
-                    { question: "Quel appareil connecte plusieurs ordinateurs ?", reponse: "switch", indice: "Commutateur", type: "text" }
-                ],
-                durable: [
-                    { question: "Combien de piliers compte le développement durable ?", reponse: "3", indice: "Économique, social...", type: "number" },
-                    { question: "Sur combien est noté l'indice de réparabilité ?", reponse: "10", indice: "Comme une note", type: "number" },
-                    { question: "Quel métal précieux dans les smartphones ?", reponse: "or", indice: "Métal jaune", type: "text" },
-                    { question: "Quelle énergie provient du soleil ?", reponse: "solaire", indice: "Énergie...", type: "text" },
-                    { question: "Comment s'appelle l'énergie du vent ?", reponse: "eolienne", indice: "Énergie...", type: "text" },
-                    { question: "Combien d'énergies renouvelables principales ?", reponse: "5", indice: "Solaire, éolien...", type: "number" },
-                    { question: "Quelle énergie utilise la force de l'eau ?", reponse: "hydraulique", indice: "Barrages", type: "text" },
-                    { question: "Comment s'appelle l'énergie de la Terre ?", reponse: "geothermique", indice: "Géo = Terre", type: "text" },
-                    { question: "Combien de litres d'eau pour fabriquer un jean ?", reponse: "7500", indice: "Entre 7000 et 8000", type: "number" },
-                    { question: "Comment s'appelle le cycle de vie d'un produit ?", reponse: "berceau", indice: "Du... au tombeau", type: "text" },
-                    { question: "Quel gaz à effet de serre principal ?", reponse: "co2", indice: "Formule chimique", type: "text" },
-                    { question: "Combien d'années pour dégrader une bouteille plastique ?", reponse: "450", indice: "Entre 400 et 500", type: "number" },
-                    { question: "Comment appelle-t-on l'énergie qui se renouvelle ?", reponse: "renouvelable", indice: "Énergie...
+        let currentRoom = null;
+        let currentQuestionIndex = 0;
+        let roomCodes = {};
+        let timeLeft = 300;
+
+        // Minuterie
+        const timerElement = document.getElementById('timer');
+        const timer = setInterval(() => {
+            timeLeft--;
+            timerElement.textContent = `Temps restant : ${timeLeft} secondes`;
+            if (timeLeft <= 0) {
+                clearInterval(timer);
+                alert("Temps écoulé ! Le jeu est terminé.");
+                document.querySelectorAll('.room').forEach(room => room.classList.remove('active'));
+                document.getElementById('room-selection').classList.add('active');
+            }
+        }, 1000);
+
+        // Fonction pour démarrer une pièce
+        function startRoom(roomId) {
+            document.querySelectorAll('.room').forEach(room => room.classList.remove('active'));
+            document.getElementById(roomId).classList.add('active');
+            currentRoom = roomId;
+            currentQuestionIndex = 0;
+            showQuestion(roomId);
+        }
+
+        // Fonction pour afficher une question
+        function showQuestion(roomId) {
+            const questionData = questions[roomId][currentQuestionIndex];
+            document.getElementById(`${roomId}-question`).textContent = questionData.question;
+            document.getElementById(`${roomId}-answer`).value = '';
+            document.getElementById(`${roomId}-hint`).style.display = 'none';
+        }
+
+        // Fonction pour vérifier une réponse
+        function checkAnswer(roomId) {
+            const answerInput = document.getElementById(`${roomId}-answer`);
+            const questionData = questions[roomId][currentQuestionIndex];
+            if (answerInput.value.toLowerCase() === questionData.answer.toLowerCase()) {
+                if (!roomCodes[roomId]) roomCodes[roomId] = '';
+                roomCodes[roomId] += questionData.code;
+                document.getElementById(`${roomId}-code`).textContent = `Code : ${roomCodes[roomId]}`;
+
+                currentQuestionIndex++;
+                if (currentQuestionIndex < questions[roomId].length) {
+                    showQuestion(roomId);
+                } else {
+                    setTimeout(() => {
+                        alert(`Pièce terminée ! Code final : ${roomCodes[roomId]}`);
+                        document.getElementById(roomId).classList.remove('active');
+                        document.getElementById('room-selection').classList.add('active');
+
+                        // Vérifier si toutes les pièces sont terminées
+                        if (Object.keys(roomCodes).length === 4) {
+                            document.getElementById('room-selection').classList.remove('active');
+                            document.getElementById('final-room').classList.add('active');
+                        }
+                    }, 500);
+                }
+            } else {
+                alert("Réponse incorrecte. Essayez encore !");
+            }
+        }
+
+        // Fonction pour afficher un indice
+        function showHint(roomId) {
+            const hintElement = document.getElementById(`${roomId}-hint`);
+            hintElement.textContent = hints[roomId][currentQuestionIndex];
+            hintElement.style.display = 'block';
+        }
+
+        // Fonction pour vérifier la réponse finale
+        function checkFinalAnswer() {
+            const answer = document.getElementById('final-answer').value.toLowerCase();
+            if (answer === 'hello') {
+                document.getElementById('final-result').textContent = 'Félicitations, vous avez réussi l\'escape game ! 🎉';
+            } else {
+                document.getElementById('final-result').textContent = 'Dommage, ce n\'est pas la bonne réponse. Essayez encore !';
+            }
+        }
+    </script>
+</body>
+</html>
