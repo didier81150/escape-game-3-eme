@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escape Game Technologie - Version Professeur</title>
+    <title>Escape Game Technologie - Version Finale</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         :root {
@@ -19,7 +19,7 @@
             background-color: var(--background-color);
             margin: 0;
             padding: 20px;
-            color: var(--text-color);
+            color: #333;
             line-height: 1.6;
         }
         .container {
@@ -61,21 +61,15 @@
             border-radius: 4px;
             cursor: pointer;
         }
-        .magic-btn {
-            background-color: var(--success-color);
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-left: 10px;
-        }
         .feedback {
             margin-top: 5px;
             font-weight: bold;
         }
         .success {
             color: var(--success-color);
+        }
+        .error {
+            color: var(--error-color);
         }
         .code-display {
             text-align: center;
@@ -111,7 +105,7 @@
 <body>
     <div class="container">
         <h1>Escape Game Technologie</h1>
-        <p>Utilisez le code <strong>MAGIC2026</strong> pour valider chaque question.</p>
+        <p>Entrez <strong>MAGIC2026</strong> dans n'importe quel champ de réponse pour valider la question.</p>
 
         <!-- Thème 1 -->
         <div id="room0" class="theme-card">
@@ -121,28 +115,24 @@
                     <p><strong>Question 1 :</strong> Quelle innovation a permis de passer du téléphone fixe au mobile ?</p>
                     <input type="text" class="answer-input" id="answer0-0" placeholder="Votre réponse" />
                     <button class="validate-btn" onclick="checkAnswer(0, 0, 'portabilité')">Valider</button>
-                    <button class="magic-btn" onclick="useMagicCode(0, 0)">Code Magique</button>
                     <div id="feedback0-0" class="feedback"></div>
                 </div>
                 <div class="question">
                     <p><strong>Question 2 :</strong> En quelle année le premier iPhone est-il sorti ?</p>
                     <input type="text" class="answer-input" id="answer0-1" placeholder="Votre réponse" />
                     <button class="validate-btn" onclick="checkAnswer(0, 1, '2007')">Valider</button>
-                    <button class="magic-btn" onclick="useMagicCode(0, 1)">Code Magique</button>
                     <div id="feedback0-1" class="feedback"></div>
                 </div>
                 <div class="question">
                     <p><strong>Question 3 :</strong> Comment appelle-t-on une innovation qui change radicalement un marché ?</p>
                     <input type="text" class="answer-input" id="answer0-2" placeholder="Votre réponse" />
                     <button class="validate-btn" onclick="checkAnswer(0, 2, 'rupture')">Valider</button>
-                    <button class="magic-btn" onclick="useMagicCode(0, 2)">Code Magique</button>
                     <div id="feedback0-2" class="feedback"></div>
                 </div>
                 <div class="question">
                     <p><strong>Question 4 :</strong> Quelle est la famille de matériaux la plus légère ?</p>
                     <input type="text" class="answer-input" id="answer0-3" placeholder="Votre réponse" />
                     <button class="validate-btn" onclick="checkAnswer(0, 3, 'plastique')">Valider</button>
-                    <button class="magic-btn" onclick="useMagicCode(0, 3)">Code Magique</button>
                     <div id="feedback0-3" class="feedback"></div>
                 </div>
             </div>
@@ -158,28 +148,24 @@
                     <p><strong>Question 1 :</strong> Comment appelle-t-on un programme malveillant ?</p>
                     <input type="text" class="answer-input" id="answer1-0" placeholder="Votre réponse" />
                     <button class="validate-btn" onclick="checkAnswer(1, 0, 'virus')">Valider</button>
-                    <button class="magic-btn" onclick="useMagicCode(1, 0)">Code Magique</button>
                     <div id="feedback1-0" class="feedback"></div>
                 </div>
                 <div class="question">
                     <p><strong>Question 2 :</strong> Combien de caractères minimum pour un mot de passe sûr ?</p>
                     <input type="text" class="answer-input" id="answer1-1" placeholder="Votre réponse" />
                     <button class="validate-btn" onclick="checkAnswer(1, 1, '12')">Valider</button>
-                    <button class="magic-btn" onclick="useMagicCode(1, 1)">Code Magique</button>
                     <div id="feedback1-1" class="feedback"></div>
                 </div>
                 <div class="question">
                     <p><strong>Question 3 :</strong> Comment s'appelle l'usurpation d'identité par email ?</p>
                     <input type="text" class="answer-input" id="answer1-2" placeholder="Votre réponse" />
                     <button class="validate-btn" onclick="checkAnswer(1, 2, 'phishing')">Valider</button>
-                    <button class="magic-btn" onclick="useMagicCode(1, 2)">Code Magique</button>
                     <div id="feedback1-2" class="feedback"></div>
                 </div>
                 <div class="question">
                     <p><strong>Question 4 :</strong> Quelle technique crypte un fichier ?</p>
                     <input type="text" class="answer-input" id="answer1-3" placeholder="Votre réponse" />
                     <button class="validate-btn" onclick="checkAnswer(1, 3, 'chiffrement')">Valider</button>
-                    <button class="magic-btn" onclick="useMagicCode(1, 3)">Code Magique</button>
                     <div id="feedback1-3" class="feedback"></div>
                 </div>
             </div>
@@ -195,28 +181,24 @@
                     <p><strong>Question 1 :</strong> Combien de piliers du développement durable ?</p>
                     <input type="text" class="answer-input" id="answer2-0" placeholder="Votre réponse" />
                     <button class="validate-btn" onclick="checkAnswer(2, 0, '3')">Valider</button>
-                    <button class="magic-btn" onclick="useMagicCode(2, 0)">Code Magique</button>
                     <div id="feedback2-0" class="feedback"></div>
                 </div>
                 <div class="question">
                     <p><strong>Question 2 :</strong> Sur combien est noté l'indice de réparabilité ?</p>
                     <input type="text" class="answer-input" id="answer2-1" placeholder="Votre réponse" />
                     <button class="validate-btn" onclick="checkAnswer(2, 1, '10')">Valider</button>
-                    <button class="magic-btn" onclick="useMagicCode(2, 1)">Code Magique</button>
                     <div id="feedback2-1" class="feedback"></div>
                 </div>
                 <div class="question">
                     <p><strong>Question 3 :</strong> Quel métal précieux dans les smartphones ?</p>
                     <input type="text" class="answer-input" id="answer2-2" placeholder="Votre réponse" />
                     <button class="validate-btn" onclick="checkAnswer(2, 2, 'or')">Valider</button>
-                    <button class="magic-btn" onclick="useMagicCode(2, 2)">Code Magique</button>
                     <div id="feedback2-2" class="feedback"></div>
                 </div>
                 <div class="question">
                     <p><strong>Question 4 :</strong> Quelle énergie provient du soleil ?</p>
                     <input type="text" class="answer-input" id="answer2-3" placeholder="Votre réponse" />
                     <button class="validate-btn" onclick="checkAnswer(2, 3, 'solaire')">Valider</button>
-                    <button class="magic-btn" onclick="useMagicCode(2, 3)">Code Magique</button>
                     <div id="feedback2-3" class="feedback"></div>
                 </div>
             </div>
@@ -232,28 +214,24 @@
                     <p><strong>Question 1 :</strong> Comment s'appelle l'étude de l'adaptation à l'humain ?</p>
                     <input type="text" class="answer-input" id="answer3-0" placeholder="Votre réponse" />
                     <button class="validate-btn" onclick="checkAnswer(3, 0, 'ergonomie')">Valider</button>
-                    <button class="magic-btn" onclick="useMagicCode(3, 0)">Code Magique</button>
                     <div id="feedback3-0" class="feedback"></div>
                 </div>
                 <div class="question">
                     <p><strong>Question 2 :</strong> Combien de clics max pour accéder à une info ?</p>
                     <input type="text" class="answer-input" id="answer3-1" placeholder="Votre réponse" />
                     <button class="validate-btn" onclick="checkAnswer(3, 1, '3')">Valider</button>
-                    <button class="magic-btn" onclick="useMagicCode(3, 1)">Code Magique</button>
                     <div id="feedback3-1" class="feedback"></div>
                 </div>
                 <div class="question">
                     <p><strong>Question 3 :</strong> Comment s'appelle le document qui liste les exigences ?</p>
                     <input type="text" class="answer-input" id="answer3-2" placeholder="Votre réponse" />
                     <button class="validate-btn" onclick="checkAnswer(3, 2, 'cahier des charges')">Valider</button>
-                    <button class="magic-btn" onclick="useMagicCode(3, 2)">Code Magique</button>
                     <div id="feedback3-2" class="feedback"></div>
                 </div>
                 <div class="question">
                     <p><strong>Question 4 :</strong> Quelle couleur pour les boutons de validation ?</p>
                     <input type="text" class="answer-input" id="answer3-3" placeholder="Votre réponse" />
                     <button class="validate-btn" onclick="checkAnswer(3, 3, 'vert')">Valider</button>
-                    <button class="magic-btn" onclick="useMagicCode(3, 3)">Code Magique</button>
                     <div id="feedback3-3" class="feedback"></div>
                 </div>
             </div>
@@ -280,26 +258,15 @@
 
         // Vérifier une réponse
         function checkAnswer(roomIndex, questionIndex, correctAnswer) {
-            const userAnswer = document.getElementById(`answer${roomIndex}-${questionIndex}`).value.toLowerCase();
+            const userAnswer = document.getElementById(`answer${roomIndex}-${questionIndex}`).value;
             const feedback = document.getElementById(`feedback${roomIndex}-${questionIndex}`);
-            if (userAnswer === correctAnswer) {
+
+            if (userAnswer === MAGIC_CODE || userAnswer.toLowerCase() === correctAnswer) {
                 feedback.innerHTML = '<span class="success">✓ Bonne réponse !</span>';
                 correctAnswers[roomIndex][questionIndex] = true;
                 checkAllAnswers(roomIndex);
             } else {
                 feedback.innerHTML = '<span class="error">✗ Mauvaise réponse. Réessayez !</span>';
-            }
-        }
-
-        // Utiliser le code magique pour valider une question
-        function useMagicCode(roomIndex, questionIndex) {
-            const magicCode = prompt("Entrez le code magique :");
-            if (magicCode === MAGIC_CODE) {
-                document.getElementById(`feedback${roomIndex}-${questionIndex}`).innerHTML = '<span class="success">✓ Code magique accepté !</span>';
-                correctAnswers[roomIndex][questionIndex] = true;
-                checkAllAnswers(roomIndex);
-            } else {
-                alert("Code incorrect.");
             }
         }
 
