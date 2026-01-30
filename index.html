@@ -80,7 +80,7 @@
 
         .theme-grid { 
             display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
             gap: 20px; 
             margin: 40px 0; 
         }
@@ -117,6 +117,27 @@
             opacity: 0.4; 
             cursor: not-allowed; 
             filter: grayscale(1);
+        }
+
+        .theme-card-home.wide {
+            grid-column: 1 / -1;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            padding: 25px;
+        }
+
+        .theme-card-home.wide i.icon-main {
+            margin-bottom: 0;
+        }
+
+        .grid-codes {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
         }
 
         .theme-card-home i.icon-main {
@@ -389,7 +410,7 @@
             
             data.forEach((d, i) => {
                 const card = document.createElement('div');
-                card.className = `theme-card-home ${unlocked[i] ? '' : 'locked'}`;
+                card.className = `theme-card-home ${unlocked[i] ? '' : 'locked'} ${i === 4 ? 'wide' : ''}`;
                 card.onclick = () => startRoom(i);
                 
                 let status = '';
@@ -399,8 +420,10 @@
                 card.innerHTML = `
                     ${status}
                     <i class="fas ${d.icon} icon-main"></i>
-                    <h2>Pièce ${i+1}</h2>
-                    <p>${d.name}</p>
+                    <div>
+                        <h2>Pièce ${i+1}</h2>
+                        <p>${d.name}</p>
+                    </div>
                 `;
                 grid.appendChild(card);
             });
