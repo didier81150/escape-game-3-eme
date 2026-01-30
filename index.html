@@ -80,7 +80,7 @@
 
         .theme-grid { 
             display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
             gap: 20px; 
             margin: 40px 0; 
         }
@@ -117,27 +117,6 @@
             opacity: 0.4; 
             cursor: not-allowed; 
             filter: grayscale(1);
-        }
-
-        .theme-card-home.wide {
-            grid-column: 1 / -1;
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
-            padding: 25px;
-        }
-
-        .theme-card-home.wide i.icon-main {
-            margin-bottom: 0;
-        }
-
-        .grid-codes {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 15px;
-            margin: 20px 0;
         }
 
         .theme-card-home i.icon-main {
@@ -245,14 +224,31 @@
             filter: drop-shadow(0 0 20px rgba(251, 191, 36, 0.4));
         }
 
-        .modification-guide {
-            margin-top: 80px;
-            padding-top: 40px;
-            border-top: 1px solid rgba(255,255,255,0.1);
+        /* Pièce 5 s'adapte en fonction du nombre de colonnes */
+        .theme-card-home:nth-child(5) {
+            grid-column: span 2;
         }
-        .modification-guide h2 { color: var(--text-muted); font-size: 1.1em; text-transform: uppercase; letter-spacing: 2px; }
-        .guide-steps { background: rgba(255,255,255,0.02); padding: 30px; border-radius: 16px; font-size: 0.9em; color: var(--text-muted); }
-        .guide-steps code { background: #0f172a; padding: 2px 6px; border-radius: 4px; color: var(--secondary); }
+        
+        /* Si on peut afficher 3 colonnes ou plus, la pièce 5 prend 4 colonnes */
+        @media (min-width: 720px) {
+            .theme-card-home:nth-child(5) {
+                grid-column: span 4;
+            }
+        }
+        
+        /* Si on peut afficher seulement 2 colonnes, la pièce 5 prend 2 colonnes */
+        @media (max-width: 719px) and (min-width: 400px) {
+            .theme-card-home:nth-child(5) {
+                grid-column: span 2;
+            }
+        }
+        
+        /* Sur mobile très petit, toutes les cartes prennent toute la largeur */
+        @media (max-width: 399px) {
+            .theme-card-home:nth-child(5) {
+                grid-column: span 1;
+            }
+        }
 
         #lockout-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -293,18 +289,7 @@
                 <!-- Dynamically filled -->
             </div>
 
-            <div class="modification-guide">
-                <h2><i class="fas fa-terminal"></i> Zone Professeurs / Élèves Experts</h2>
-                <div class="guide-steps">
-                    <p>Ce jeu est conçu pour être hacké ! Voici comment changer le contenu :</p>
-                    <ol>
-                        <li>Ouvrez <code>index.html</code> dans un éditeur (Bloc-notes, VS Code...).</li>
-                        <li>Localisez la variable <code>banqueQuestions</code> pour changer les défis.</li>
-                        <li>Modifiez <code>ROOM_TIME_LIMIT</code> pour ajuster la difficulté (en secondes).</li>
-                        <li>Changez les <code>codes</code> pour créer votre propre version de l'escape game.</li>
-                    </ol>
-                </div>
-            </div>
+
         </div>
 
         <div id="roomContainer"></div>
@@ -410,7 +395,7 @@
             
             data.forEach((d, i) => {
                 const card = document.createElement('div');
-                card.className = `theme-card-home ${unlocked[i] ? '' : 'locked'} ${i === 4 ? 'wide' : ''}`;
+                card.className = `theme-card-home ${unlocked[i] ? '' : 'locked'}`;
                 card.onclick = () => startRoom(i);
                 
                 let status = '';
@@ -420,10 +405,8 @@
                 card.innerHTML = `
                     ${status}
                     <i class="fas ${d.icon} icon-main"></i>
-                    <div>
-                        <h2>Pièce ${i+1}</h2>
-                        <p>${d.name}</p>
-                    </div>
+                    <h2>Pièce ${i+1}</h2>
+                    <p>${d.name}</p>
                 `;
                 grid.appendChild(card);
             });
