@@ -14,8 +14,8 @@
         .container { max-width: 900px; margin: 0 auto; background: var(--card-color); padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
         .home-page { text-align: center; }
         .theme-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin: 20px 0; }
-        .theme-card-home { border: 2px solid #ddd; padding: 15px; border-radius: 8px; cursor: pointer; text-align: center; transition: 0.3s; background: white; }
-        .theme-card-home.locked { background: #eee; opacity: 0.6; cursor: not-allowed; border-style: dashed; }
+        .theme-card-home { border: 2px solid #ddd; padding: 15px; border-radius: 8px; cursor: pointer; text-align: center; transition: 0.3s; background: white; position: relative; }
+        .theme-card-home.locked { background: #eee; opacity: 0.7; cursor: not-allowed; border-style: dashed; }
         .theme-card { display: none; padding: 15px; border: 1px solid #ddd; border-radius: 8px; }
         .question { margin-bottom: 10px; padding: 10px; border-left: 3px solid var(--secondary-color); background: #f9f9f9; }
         .answer-input { width: 100%; padding: 8px; margin: 5px 0; border: 1px solid #ccc; border-radius: 4px; }
@@ -29,6 +29,7 @@
         @keyframes rainbow { 0%{color: #6C63FF;} 25%{color: #FF6584;} 50%{color: #28a745;} 75%{color: #ffc107;} 100%{color: #6C63FF;} }
         .victory-anim { display: none; text-align: center; animation: rainbow 1s infinite; font-size: 2.5em; font-weight: bold; margin-top: 30px; }
         #timer { font-size: 1.2em; color: #555; font-weight: bold; text-align: center; margin-bottom: 10px; background: #eee; padding: 5px; border-radius: 5px; }
+        .lock-icon { color: #dc3545; margin-left: 5px; }
     </style>
 </head>
 <body>
@@ -38,11 +39,21 @@
         <div id="homePage" class="home-page">
             <h1>Escape Game Technologie</h1>
             <div class="theme-grid">
-                <div class="theme-card-home" onclick="startTheme(0)"><h2>Pièce 1</h2><p>Innovations</p></div>
-                <div class="theme-card-home locked" id="theme0" onclick="startTheme(1)"><h2>Pièce 2</h2><p>🔒 Codée</p></div>
-                <div class="theme-card-home locked" id="theme1" onclick="startTheme(2)"><h2>Pièce 3</h2><p>🔒 Codée</p></div>
-                <div class="theme-card-home locked" id="theme2" onclick="startTheme(3)"><h2>Pièce 4</h2><p>🔒 Codée</p></div>
-                <div class="theme-card-home locked" id="theme3" onclick="startTheme(4)"><h2>Pièce 5</h2><p>🔒 Final</p></div>
+                <div class="theme-card-home" id="btn0" onclick="startTheme(0)">
+                    <h2>Pièce 1</h2><p>Innovations</p>
+                </div>
+                <div class="theme-card-home locked" id="theme0" onclick="startTheme(1)">
+                    <h2>Pièce 2</h2><p>Cybersécurité <i id="lock-icon0" class="fas fa-lock lock-icon"></i></p>
+                </div>
+                <div class="theme-card-home locked" id="theme1" onclick="startTheme(2)">
+                    <h2>Pièce 3</h2><p>Dév. Durable <i id="lock-icon1" class="fas fa-lock lock-icon"></i></p>
+                </div>
+                <div class="theme-card-home locked" id="theme2" onclick="startTheme(3)">
+                    <h2>Pièce 4</h2><p>UX Design <i id="lock-icon2" class="fas fa-lock lock-icon"></i></p>
+                </div>
+                <div class="theme-card-home locked" id="theme3" onclick="startTheme(4)">
+                    <h2>Pièce 5</h2><p>Décodage Final <i id="lock-icon3" class="fas fa-lock lock-icon"></i></p>
+                </div>
             </div>
         </div>
 
@@ -61,7 +72,7 @@
 
         <div id="room2" class="theme-card">
             <div id="lock2" class="lock-zone"><h3>Entrée Sécurisée</h3><input type="text" id="pass2" placeholder="Code de la Pièce 2" class="answer-input"><br><button class="validate-btn" onclick="unlockRoom(2)">Ouvrir la porte</button></div>
-            <div id="content2" style="display:none;"><h2>Pièce 3 : Dév. Durable</h2><div id="questions2"></div><div id="secret-code2" class="code-display"></div></div>
+            <div id="content2" style="display:none;"><h2>Pièce 3 : Développement Durable</h2><div id="questions2"></div><div id="secret-code2" class="code-display"></div></div>
             <button class="back-btn" onclick="backToHome()">Retour</button>
         </div>
 
@@ -74,21 +85,21 @@
         <div id="room4" class="theme-card">
             <h2>Pièce 5 : Chambre du Décodage</h2>
             <div id="lock4" class="lock-zone">
-                <p>Insérez les clés de sécurité (Codes 1, 2, 3 et 4) :</p>
+                <p>Codes 1, 2, 3 et 4 requis :</p>
                 <div class="grid-codes">
                     <input type="text" id="c1" placeholder="Code 1" class="answer-input">
                     <input type="text" id="c2" placeholder="Code 2" class="answer-input">
                     <input type="text" id="c3" placeholder="Code 3" class="answer-input">
                     <input type="text" id="c4" placeholder="Code 4" class="answer-input">
                 </div>
-                <button class="validate-btn" onclick="unlockFinal()">Vérifier le système</button>
+                <button class="validate-btn" onclick="unlockFinal()">Vérifier les clés</button>
             </div>
             <div id="finalContent" style="display:none;">
-                <div class="codage-box"><strong>Indice :</strong> Le code César (décalage de 3) transforme 'D' en 'A', 'E' en 'B'...</div>
+                <div class="codage-box"><strong>Outil :</strong> César (Décalage de 3). 'A' devient 'X', 'B' devient 'Y', 'D' devient 'A'.</div>
                 <div class="question">
                     <p>Déchiffrez : <strong>"OD WHFKQRORJLH HVW PDJLTXH"</strong></p>
-                    <input type="text" id="finalAns" class="answer-input" placeholder="La réponse...">
-                    <button class="validate-btn" onclick="finishGame()">SORTIR DE L'ESCAPE GAME</button>
+                    <input type="text" id="finalAns" class="answer-input" placeholder="Traduction...">
+                    <button class="validate-btn" onclick="finishGame()">TERMINER</button>
                 </div>
             </div>
             <button class="back-btn" onclick="backToHome()">Retour</button>
@@ -103,13 +114,13 @@
     <script>
         const codes = ["A7B2", "C3D9", "E5F1", "K9L1"];
         const questions = {
-            0: [{q:"Mobilité téléphone ?", a:"portabilité"}, {q:"Année iPhone ?", a:"2007"}, {q:"Innovation changeant le marché ?", a:"rupture"}, {q:"Nb familles matériaux ?", a:"4"}],
+            0: [{q:"Mobilité téléphone ?", a:"portabilité"}, {q:"Année iPhone ?", a:"2007"}, {q:"Innovation radicale ?", a:"rupture"}, {q:"Nb familles matériaux ?", a:"4"}],
             1: [{q:"Logiciel malveillant ?", a:"virus"}, {q:"Taille mdp sûr ?", a:"12"}, {q:"Mail frauduleux ?", a:"phishing"}, {q:"Protocole sécurisé web ?", a:"https"}],
-            2: [{q:"Piliers dév. durable ?", a:"3"}, {q:"Note max réparabilité ?", a:"10"}, {q:"Métal smartphone ?", a:"or"}, {q:"Énergie vent ?", a:"éolienne"}],
+            2: [{q:"Nb piliers dév. durable ?", a:"3"}, {q:"Note max réparabilité ?", a:"10"}, {q:"Métal smartphone ?", a:"or"}, {q:"Énergie vent ?", a:"éolienne"}],
             3: [{q:"Étude confort humain ?", a:"ergonomie"}, {q:"Nb clics max ?", a:"3"}, {q:"Cahier des ... ?", a:"charges"}, {q:"Bouton validation ?", a:"vert"}]
         };
 
-        let progress = {0:[f=false,f,f,f], 1:[f,f,f,f], 2:[f,f,f,f], 3:[f,f,f,f]};
+        let progress = {0:[false,false,false,false], 1:[false,false,false,false], 2:[false,false,false,false], 3:[false,false,false,false]};
         let startTime = Date.now();
         setInterval(() => {
             let d = Math.floor((Date.now()-startTime)/1000);
@@ -121,7 +132,7 @@
                 document.getElementById('homePage').style.display = 'none';
                 document.getElementById(`room${i}`).style.display = 'block';
                 if(i < 4) loadQs(i);
-            } else { alert("Terminez et obtenez le code de la pièce précédente !"); }
+            } else { alert("Pièce verrouillée ! Obtenez le code de la pièce précédente."); }
         }
 
         function loadQs(r) {
@@ -138,16 +149,21 @@
                 document.getElementById(`in${r}-${i}`).style.background = "#d4edda";
                 document.getElementById(`in${r}-${i}`).disabled = true;
                 progress[r][i] = true;
+                
                 if (progress[r].every(v => v === true)) {
                     document.getElementById(`secret-code${r}`).textContent = "CODE SECRET OBTENU : " + codes[r];
                     document.getElementById(`secret-code${r}`).style.display = "block";
+                    // Déverrouillage visuel à l'accueil
                     document.getElementById(`theme${r}`).classList.remove('locked');
+                    let icon = document.getElementById(`lock-icon${r}`);
+                    if(icon) icon.style.display = "none"; 
                 }
-            } else { alert("Incorrect"); }
+            } else { alert("Réponse incorrecte"); }
         }
 
         function unlockRoom(r) {
             if (document.getElementById(`pass${r}`).value.toUpperCase() === codes[r-1]) {
+                document.getElementById(`lock1`).parentElement.id === "room1" ? null : null; // Safety
                 document.getElementById(`lock${r}`).style.display = 'none';
                 document.getElementById(`content${r}`).style.display = 'block';
                 loadQs(r);
@@ -161,15 +177,15 @@
                 document.getElementById('c4').value.toUpperCase() === codes[3]) {
                 document.getElementById('lock4').style.display = 'none';
                 document.getElementById('finalContent').style.display = 'block';
-            } else { alert("Codes de sécurité invalides"); }
+            } else { alert("Combinaison erronée"); }
         }
 
         function finishGame() {
             if (document.getElementById('finalAns').value.toLowerCase().trim() === "la technologie est magique") {
                 document.getElementById('room4').style.display = 'none';
                 document.getElementById('victory').style.display = 'block';
-                document.getElementById('finalTime').textContent = "Temps : " + document.getElementById('time').textContent;
-            } else { alert("Traduction erronée"); }
+                document.getElementById('finalTime').textContent = "Temps final : " + document.getElementById('time').textContent;
+            } else { alert("Traduction fausse"); }
         }
 
         function backToHome() {
